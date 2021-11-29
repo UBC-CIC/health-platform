@@ -7,9 +7,6 @@ import ReactDOM from "react-dom";
 import { MeetingDetail } from "../../common/types/API";
 import { UserContextType } from "../../context/UserContext";
 import MeetingNotes from "../common/MeetingNotes";
-import Specialists from "../common/Specialists";
-import JoinMeeting from "../meeting/JoinMeeting";
-import MapJoinMeetingButton from "./MapJoinMeetingButton";
 import "./MeetingMap.css";
 
 type MeetingBubbleProps = {
@@ -43,15 +40,6 @@ const MeetingBubble = (props: MeetingBubbleProps) => {
       <div className="actions">
         {meeting_status === "ACTIVE" ? (
           <div className="action-buttons">
-            <Specialists
-              status="AVAILABLE"
-              external_meeting_id={external_meeting_id}
-            />{" "}
-            <MapJoinMeetingButton
-              user={user}
-              externalMeetingId={external_meeting_id}
-              meetingId={meeting_id}
-            />
             <MeetingNotes meetingDetail={meeting} />{" "}
           </div>
         ) : (

@@ -1,0 +1,17 @@
+{
+  "HealthPlatformAppSync": {
+    "GraphQLEndpoint": "https://qmrigqbzxncszjyg326orqiq3i.appsync-api.ca-central-1.amazonaws.com/graphql",
+    "GraphQLAuthorizationType": "AMAZON_COGNITO_USER_POOLS",
+    "Region": "ca-central-1",
+    "DangerouslyConnectToHTTPEndpointForTesting": true
+  },
+  "HealthPlatformCognito": {
+    "UserPoolClientId": "5fb2g4673vdbfg6bltl4j8m51d",
+    "UserPoolId": "ca-central-1_dDRk56n8P",
+    "AuthenticatedRole": "arn:aws:iam::022810127093:role/HealthPlatform_Website_Authenticated_Role",
+    "IdentityPoolId": "ca-central-1:fd154228-f16f-4ad6-b1de-b9178344c9a6",
+    "UserPoolDomainPrefix": "HealthPlatformUserPoolClient",
+    "UnauthenticatedRole": "arn:aws:iam::022810127093:role/HealthPlatform_Website_Unauthenticated_Role",
+    "Region": "ca-central-1"
+  }
+}

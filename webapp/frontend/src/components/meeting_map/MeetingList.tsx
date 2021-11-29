@@ -5,7 +5,7 @@ import {
     faTimes,
     faMapMarkerAlt
   } from "@fortawesome/free-solid-svg-icons"
-import { GeolocationCoordinates, MeetingDetail } from "../../common/types/API";
+import { MeetingDetail } from "../../common/types/API";
 type MeetingListProps = {
   meetings: MeetingDetail[];
   zoom: (location: GeolocationCoordinates) => void
@@ -13,20 +13,13 @@ type MeetingListProps = {
 
 const MeetingList = ({ meetings, zoom}: MeetingListProps) => {
 
-
-    const handleClick = (detail: MeetingDetail) => {
-        if (detail.location) {
-            zoom(detail.location)
-        }
-    }
-
   return (
     <ListGroup className="meeting-list-root">
       {meetings.map((detail) => {
         return (
-          <ListGroup.Item action href={detail.location ? undefined : "/dashboard"} onClick={() => handleClick(detail)}>
+          <ListGroup.Item>
             <div className="flex row align justify meeting-list-icon">
-              <FontAwesomeIcon icon={detail.location ? faMapMarkerAlt : faTimes}/>
+              <FontAwesomeIcon icon={faTimes}/>
               <div className="flex col">
                 <div className="title">{detail.meeting_title || "Unnamed Meeting"}</div>
                 <div className="list-subtitle subtitle">

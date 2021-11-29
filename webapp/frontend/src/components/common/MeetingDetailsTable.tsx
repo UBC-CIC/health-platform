@@ -19,14 +19,8 @@ import {
   Tooltip,
 } from "react-bootstrap";
 import {
-  AttendeeState,
-  AttendeeType,
-  MeetingDetail,
-  GeolocationCoordinates
+  MeetingDetail
 } from "../../common/types/API";
-import Attendees from "./Attendees";
-import Specialists from "./Specialists";
-import JoinMeeting from "../meeting/JoinMeeting";
 import "./meetingDetailsTable.css";
 import { API } from "aws-amplify";
 import MeetingNotes from "./MeetingNotes";
@@ -60,17 +54,6 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
       .join(":");
   };
 
-  const getServiceDeskAttendee = (item: MeetingDetail) => {
-    if (item.attendees) {
-      for (let attendee of item.attendees) {
-        if (attendee?.attendee_type === AttendeeType.SERVICE_DESK) {
-          return attendee.username;
-        }
-      }
-    }
-    return null;
-  };
-
   const onModifyTitle = async (meetingDetail: MeetingDetail, event: any) => {
     event.preventDefault();
     event.stopPropagation();
@@ -87,49 +70,6 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
     }
   };
 
-  const handleKickUser = async (
-    meetingDetail?: MeetingDetail | null,
-    attendeeId?: string | null
-  ): Promise<boolean> => {
-    if (!meetingDetail?.attendees || !meetingDetail.meeting_id || !attendeeId) {
-      console.error("KICKUSER: meetingDetail or Attendee id is null");
-      return false;
-    }
-
-    const attendeesClone = Array.from(meetingDetail.attendees);
-    const attendeeIndex = attendeesClone.findIndex(
-      (attendee) => attendeeId === attendee?.attendee_id
-    );
-    if (attendeeIndex < 0 || !attendeesClone[attendeeIndex]) {
-      console.error("KICKUSER: No attendee found with id", attendeeId);
-      return false;
-    }
-    let kickedAttendee = attendeesClone[attendeeIndex];
-    kickedAttendee!.attendee_state = AttendeeState.KICKED;
-    attendeesClone[attendeeIndex] = kickedAttendee;
-    try {
-      const data: any = await API.graphql({
-        query: updateMeetingDetail,
-        variables: {
-          input: {
-            meeting_id: meetingDetail.meeting_id,
-            attendees: attendeesClone,
-          },
-        },
-      });
-      console.log(
-        `Kicked ${attendeeId} from ${meetingDetail.external_meeting_id}`
-      );
-      if (data.data) {
-        return true;
-      }
-    } catch (e) {
-      console.log("Mutation returned error", e);
-      return false;
-    }
-    return false;
-  };
-
   const onEndMeeting = async (meetingId?: string | null) => {
     try {
       console.log("End meeting " + meetingId);
@@ -142,7 +82,7 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
           },
         },
       });
-    } catch (e) {
+    } catch (e: any) {
       console.log("End meeting errors:", e.errors);
     }
   };
@@ -204,66 +144,11 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
                   <Badge variant="secondary">{item.meeting_status}</Badge>
                 )}
               </td>
-              <td>
-                {item.attendees &&
-                item.attendees.filter(
-                  (a) =>
-                    a?.attendee_state === AttendeeState.IN_CALL ||
-                    a?.attendee_state === AttendeeState.KICKED ||
-                    a?.attendee_state === AttendeeState.PAGED
-                ).length > 0 ? (
-                  <Attendees
-                    handleKick={async (attendeeId) => {
-                      await handleKickUser(item, attendeeId);
-                    }}
-                    attendeeList={item.attendees.filter(
-                      (a) =>
-                        a?.attendee_state === AttendeeState.IN_CALL ||
-                        a?.attendee_state === AttendeeState.KICKED ||
-                        a?.attendee_state === AttendeeState.PAGED
-                    )}
-                  />
-                ) : (
-                  <div>
-                    <Button variant="light" disabled>
-                      <FontAwesomeIcon icon={faUser} />{" "}
-                      <Badge pill variant="dark">
-                        {0}
-                      </Badge>
-                    </Button>
-                  </div>
-                )}
-              </td>
               {item.meeting_status === "ACTIVE" ? (
                 <td>
-                  <Specialists
-                    status="AVAILABLE"
-                    external_meeting_id={item.external_meeting_id}
-                  />{" "}
-                  <JoinMeeting 
-                    meetingId={item.meeting_id} 
-                    externalMeetingId={item.external_meeting_id}
-                  />{" "}
                   <Button variant="danger" title="End Meeting" onClick={() => onEndMeeting(item.meeting_id)}>
                       <FontAwesomeIcon icon={faPhoneAlt} />{"  "}
                    </Button>{" "}
-                  {item.location ? <OverlayTrigger
-                    overlay={
-                      <Tooltip id={`tooltip-${item.meeting_id}`}>
-                        {getLocation(item.location)}
-                      </Tooltip>
-                    }
-                  >
-                    <Button
-                      style={{ marginRight: ".3em" }}
-                      variant={item.location ? "primary" : "secondary"}
-                      title="End Meeting"
-                      as="a"
-                      href={`/map?lat=${item.location.latitude}&long=${item.location.longitude}`}
-                    >
-                        <FontAwesomeIcon icon={faMapMarkerAlt} />
-                    </Button>
-                  </OverlayTrigger> : null}
                   <MeetingNotes meetingDetail={item} />{" "}
                 </td>
               ) : (
@@ -280,17 +165,6 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
                       day: "numeric",
                     })
                   : item.create_date_time}
-              </td>
-              <td>
-                {item.attendees && item.attendees.length > 0 ? (
-                  <>
-                    {item.attendees[0]?.phone_number
-                      ? item.attendees[0]?.phone_number
-                      : "App"}
-                  </>
-                ) : (
-                  <>Unknown</>
-                )}
               </td>
               <td style={{ width: "64px" }}>
                 {item.meeting_status === "ACTIVE" &&
@@ -309,16 +183,6 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
                       {timeSince(item.create_date_time, item.end_date_time)}
                     </div>
                   )}
-              </td>
-              <td>
-                {getServiceDeskAttendee(item) ? (
-                  <>
-                    <FontAwesomeIcon icon={faHeadset} />{" "}
-                    {getServiceDeskAttendee(item)}
-                  </>
-                ) : (
-                  <Badge variant="danger">No Check-Ins</Badge>
-                )}
               </td>
             </tr>
           ))}

@@ -35,7 +35,7 @@ Add the AWS configuration for cognito and appsync end point so that frontend web
 `Note`: Login to AWS console to get the AppSync GraphQL API endpoint and Cognito configuration.
 #### Step 2
 
-[![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/UBC-CIC/health-platform-admin/tree/main)
+[![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/UBC-CIC/health-platform/tree/main/webapp)
 
 ## Development Setup
 ### Prerequisites

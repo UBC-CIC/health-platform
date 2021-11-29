@@ -2,10 +2,8 @@ import React, { useState } from 'react'
 import { Alert, Button, Modal } from 'react-bootstrap';
 import { faClipboard, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MeetingDetail, SpecialistProfile } from '../../common/types/API';
-import { getMeetingDetail, getSpecialistProfilesByStatus } from '../../common/graphql/queries';
-import { SpecialistsTable } from '../common/SpecialistsTable';
-import './Specialists.css';
+import { MeetingDetail } from '../../common/types/API';
+import { getMeetingDetail } from '../../common/graphql/queries';
 import { API } from 'aws-amplify';
 import { updateMeetingDetail } from '../../common/graphql/mutations';
 

@@ -117,7 +117,7 @@ export const CallHistory = () => {
       updatePrevToken(token);
       
       setLoading(false);
-    } catch (e) {
+    } catch (e: any) {
       console.log("getMeetingDetailsByStatusAndCreateTime errors:", e.errors);
     }
   };
