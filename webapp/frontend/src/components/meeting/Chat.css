@@ -1,0 +1,36 @@
+.chatContainer {
+    align-self: center;
+    justify-self: center;
+    background-color: #f3f0f0;
+    color: rgb(230, 230, 230);
+    width: 100%;
+    height: 250px;
+}
+
+.outgoing {
+    align-self: flex-end;
+    background-color: #297373;
+    font-family: inherit;
+    font-size: 0.7rem !important;
+    background-color:#152939 !important;
+}
+
+.incoming {
+    align-self: flex-start;
+    font-family: inherit;
+    font-size: 0.7rem !important;
+    background-color:#d9dcdf !important;
+    color: #070707;
+}
+
+.message {
+    color: #E6E6E6;
+}
+
+.messageContainer {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    max-height: 100%;
+    overflow: auto;
+}

@@ -1,0 +1,86 @@
+.brand-logo {
+  /* We first create a flex layout context */
+  display: flex;
+
+  /* Then we define the flow direction 
+       and if we allow the items to wrap 
+     * Remember this is the same as:
+     * flex-direction: row;
+     * flex-wrap: wrap;
+     */
+  flex-flow: row wrap;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+
+  padding: 0;
+  margin: 0;
+  padding: 5px;
+  width: auto;
+  margin-top: 10px;
+  line-height: 10px;
+  color: white;
+  font-family: "Work Sans", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 2em;
+  text-align: center;
+}
+
+.brand-logo-sub {
+  display: flex;
+  flex-flow: row wrap;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+
+  padding: 5px 0 0 10px;
+  margin: 0;
+  color: white;
+  font-size: 0.5em !important;
+  text-align: center;
+}
+
+.navbar, .dropdown-menu {
+  background-color: #152939 !important;
+}
+
+.nav-link,.dropdown-item {
+  color: white !important;
+}
+
+.activeRoute {
+  font-weight: bold;
+}
+.responsive {
+    max-width: 100%;
+    height: auto;
+}
+
+.bg-dark {
+    background-color: #212529 !important;
+}
+
+.navbar-brand a {
+    color: #cccccc !important;
+}
+
+.user-welcome {
+  display: flex;
+  flex-flow: row wrap;
+
+  /* Then we define how is distributed the remaining space */
+  justify-content: space-around;
+
+  padding: 5px 10px 0px 10px;
+  font-family: "Work Sans", Helvetica, Arial, sans-serif;
+  margin: 0;
+  color: white;
+  font-size: 1em !important;
+  text-align: center;
+}
+
+.dropdown-menu {
+  right: 0 !important;
+  left: auto !important;
+  border-color: #55677D;
+}

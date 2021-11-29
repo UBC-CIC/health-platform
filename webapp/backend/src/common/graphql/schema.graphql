@@ -1,0 +1,125 @@
+# Schema for meeting-detail DDB Table
+type MeetingDetail @aws_cognito_user_pools
+@aws_iam {
+	meeting_id: String!
+	create_date_time: String
+	end_date_time: String
+	call_id: String
+	external_meeting_id: String
+	meeting_status: String
+    meeting_title: String
+	meeting_comments: String
+}
+
+type MeetingDetailConnection @aws_cognito_user_pools
+@aws_iam {
+	items: [MeetingDetail]
+	nextToken: String
+}
+
+# [input] MeetingDetailInput
+### CreateMeetingDetail, DeleteMeetingDetail and UpdateMeetingDetail use this input type
+input MeetingDetailInput {
+	meeting_id: String!
+	create_date_time: String
+	end_date_time: String
+	call_id: String
+	external_meeting_id: String
+	meeting_status: String
+    meeting_title: String
+	meeting_comments: String
+}
+
+input ModelMeetingDetailConditionInput {
+	attendees: ModelStringInput
+	create_date_time: ModelStringInput
+	end_date_time: AWSDateTime
+	call_id: ModelStringInput
+	external_meeting_id: ModelStringInput
+	meeting_status: ModelStringInput
+    meeting_title: ModelStringInput
+	meeting_comments: ModelStringInput
+	and: [ModelMeetingDetailConditionInput]
+	or: [ModelMeetingDetailConditionInput]
+	not: ModelMeetingDetailConditionInput
+}
+
+input ModelMeetingDetailFilterInput {
+	meeting_id: ModelStringInput
+	attendees: ModelStringInput
+	create_date_time: ModelStringInput
+	end_date_time: AWSDateTime
+	call_id: ModelStringInput
+	external_meeting_id: ModelStringInput
+	meeting_status: ModelStringInput
+    meeting_title: ModelStringInput
+	meeting_comments: ModelStringInput
+	and: [ModelMeetingDetailFilterInput]
+	or: [ModelMeetingDetailFilterInput]
+	not: ModelMeetingDetailFilterInput
+}
+
+input ModelStringInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+# [input] EndMeetingInput
+input EndMeetingInput {
+    meeting_id: String
+}
+
+type MediaPlacement {
+	AudioFallbackUrl: String
+    AudioHostUrl: String
+    ScreenDataUrl: String
+    ScreenSharingUrl: String
+    ScreenViewingUrl: String
+    SignalingUrl: String
+    TurnControlUrl: String
+}
+
+# [type] Mutation
+type Mutation @aws_cognito_user_pools
+@aws_iam {
+	createMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
+	updateMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
+	deleteMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
+	publishNewMeetingDetail(input: MeetingDetailInput!): MeetingDetail
+	publishMeetingDetailUpdates(input: MeetingDetailInput!): MeetingDetail
+    endMeeting(input: EndMeetingInput): Boolean
+}
+
+# [type] Query
+type Query @aws_cognito_user_pools
+@aws_iam {
+	getMeetingDetail(meetingId: String!): MeetingDetail
+	listMeetingDetails(filter: ModelMeetingDetailFilterInput, limit: Int, nextToken: String): MeetingDetailConnection
+	getMeetingDetailsByStatus(meetingStatus: String!, limit: Int, nextToken: String): MeetingDetailConnection
+	getMeetingDetailsByStatusAndCreateTime(
+		meetingStatus: String!,
+		startTime: String!,
+		endTime: String!,
+		limit: Int,
+		nextToken: String
+	): MeetingDetailConnection
+}
+
+# [type] Subscription
+type Subscription @aws_cognito_user_pools
+@aws_iam {
+	onCreateMeetingDetail: MeetingDetail
+		@aws_subscribe(mutations: ["createMeetingDetail","publishNewMeetingDetail"])
+	onUpdateMeetingDetail: MeetingDetail
+		@aws_subscribe(mutations: ["updateMeetingDetail","publishMeetingDetailUpdates"])
+	onDeleteMeetingDetail: MeetingDetail
+		@aws_subscribe(mutations: ["deleteMeetingDetail"])
+}

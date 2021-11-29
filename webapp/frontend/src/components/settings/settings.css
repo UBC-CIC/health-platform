@@ -1,0 +1,9 @@
+.user-settings .row {
+    padding-top: 40px;
+}
+
+.user-settings .col {
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+}

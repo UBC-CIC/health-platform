@@ -1,0 +1,12 @@
+.meeting-list-root {
+    list-style-type: none;
+    width: 100%;
+}
+
+.list-subtitle {
+    font-size: x-small;
+}
+
+.meeting-list-icon {
+    padding-left: .5rem;
+}

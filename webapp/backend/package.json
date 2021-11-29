@@ -1,0 +1,33 @@
+{
+  "name": "health-platform",
+  "version": "1.0.0",
+  "description": "Backend for the Health Platform Webapp",
+  "private": true,
+  "scripts": {
+    "build": "tsc && mkdir -p build/src && cp src/package.json build/src/package.json && cd build/src && npm install --only=production",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "clean": "rm -rf build"
+  },
+  "author": {
+    "name": "UBC-AWS CIC // FLASH Vancouver"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.17.55",
+    "typescript": "^3.7.7"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.94.1",
+    "@aws-cdk/aws-appsync": "^1.94.1",
+    "@aws-cdk/aws-cognito": "^1.94.1",
+    "@aws-cdk/aws-dynamodb": "^1.94.1",
+    "@aws-cdk/aws-events-targets": "^1.94.1",
+    "@aws-cdk/aws-lambda": "^1.94.1",
+    "@aws-cdk/aws-lambda-event-sources": "^1.94.1",
+    "@aws-cdk/aws-s3": "^1.94.1",
+    "@aws-cdk/aws-s3-deployment": "^1.94.1",
+    "@aws-cdk/core": "^1.94.1",
+    "aws-sdk": "^2.893.0"
+  }
+}

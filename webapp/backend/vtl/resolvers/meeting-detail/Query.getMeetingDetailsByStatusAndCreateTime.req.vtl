@@ -1,0 +1,21 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#meeting_status = :meeting_status and #create_date_time between :start_time and :end_time",
+        "expressionNames" : {
+            "#meeting_status" : "meeting_status",
+            "#create_date_time" : "create_date_time"
+        },
+        "expressionValues" : {
+            ":meeting_status" : $util.dynamodb.toDynamoDBJson($context.arguments.meetingStatus),
+            ":start_time" : $util.dynamodb.toDynamoDBJson($context.arguments.startTime),
+            ":end_time" : $util.dynamodb.toDynamoDBJson($context.arguments.endTime),
+        },
+    },
+    "index" : "meetingStatusGsi",
+    "scanIndexForward" : false,
+    "limit" : $util.defaultIfNull($context.arguments.limit, 100),
+    "nextToken" : $util.toJson($util.defaultIfNullOrBlank($context.arguments.nextToken, null)),
+    "select" : "ALL_ATTRIBUTES",
+}

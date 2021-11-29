@@ -1,0 +1,10 @@
+.modal-90w {
+    width: 90%;
+    max-width: none!important;
+}
+
+.email {
+    max-width: 150px;
+    word-wrap: break-word;
+    font-size: smaller;
+}

@@ -1,0 +1,32 @@
+div > video.ch-video {
+  position: relative !important;
+  max-height: 300px;
+  width: auto;
+  max-width: 100%;
+}
+
+.video-container {
+  object-fit: contain;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.meeting-modal .modal-body {
+  width: 100%;
+  background-color: #152939;
+}
+
+.meeting-modal .modal-header {
+  background-color: #152939;
+  color: white;
+}
+
+.meeting-modal .modal-90w {
+  width: auto;
+}
+
+.meeting-modal .modal-body .row {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}

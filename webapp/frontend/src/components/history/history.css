@@ -1,0 +1,48 @@
+.react-datepicker-popper {
+    z-index: 9999 !important;
+}
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+    display: block;
+    width: 100%;
+}
+
+.history-search-row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.previous-page {
+    float: left;
+}
+
+.next-page {
+    float: right;
+}
+
+.history-container {
+    height:auto;
+    width: 100%;
+    max-height: 100vh;
+}
+
+.form-col {
+    text-align: left;
+    display: flex;
+    flex-flow: column wrap;
+    vertical-align: bottom;
+}
+
+.form-col > select {
+    height: initial;
+}
+
+.form-search-col {
+    display: flex;
+    align-content: flex-start;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}

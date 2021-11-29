@@ -1,0 +1,17 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#meeting_status = :meeting_status",
+        "expressionNames" : {
+            "#meeting_status" : "meeting_status",
+        },
+        "expressionValues" : {
+            ":meeting_status" : $util.dynamodb.toDynamoDBJson($context.arguments.meetingStatus)
+        },
+    },
+    "index" : "meetingStatusGsi",
+    "limit" : $util.defaultIfNull($context.arguments.limit, 100),
+    "nextToken" : $util.toJson($util.defaultIfNullOrBlank($context.arguments.nextToken, null)),
+    "select" : "ALL_ATTRIBUTES",
+}
