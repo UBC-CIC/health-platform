@@ -8,8 +8,6 @@ import {
 } from '@aws-amplify/ui-components';
 import './App.css';
 import { Alert } from 'react-bootstrap';
-import { ThemeProvider } from 'styled-components';
-import { lightTheme, darkTheme, MeetingProvider } from 'amazon-chime-sdk-component-library-react';
 import UserContext from './context/UserContext';
 
 function App() {
@@ -21,7 +19,8 @@ function App() {
     React.useEffect(() => {
         return onAuthUIStateChange((nextAuthState, authData) => {
             setAuthState(nextAuthState);
-            setUser(authData)
+            console.log(authData);
+            setUser(authData);
         });
     }, []);
 
@@ -38,11 +37,7 @@ function App() {
 
     return authState === AuthState.SignedIn && user ? (
         <div className="App">
-            <ThemeProvider theme={lightTheme}>
-                <MeetingProvider>
-                    <Navigation userName={user.username} authState={authState} />
-                </MeetingProvider>
-            </ThemeProvider>
+            <Navigation userName={user.attributes.email} authState={authState} />
         </div>
     ) : (
         <div slot="sign-in" style={{
@@ -59,19 +54,8 @@ function App() {
                 <AmplifySignUp
                     slot="sign-up"
                     headerText="Create New Account"
+                    usernameAlias="email"
                     formFields={[
-                        {
-                            type: "name",
-                            label: "Full Name",
-                            placeholder: "Full Name",
-                            required: true,
-                        },
-                        {
-                            type: "username",
-                            label: "User Name",
-                            placeholder: "User Name",
-                            required: true,
-                        },
                         {
                             type: "email",
                             label: "Email",
@@ -82,12 +66,6 @@ function App() {
                             type: "password",
                             label: "Password",
                             placeholder: "Password (at least eight characters)",
-                            required: true,
-                        },
-                        {
-                            type: "phone_number",
-                            label: "Phone Number",
-                            placeholder: "Phone Number",
                             required: true,
                         },
                     ]}

@@ -65,50 +65,28 @@ export class HealthPlatformCognitoStack extends Stack {
             },
         });
 
-        const createServiceDeskProfileFn = new lambda.Function(this, 'CreateServiceDeskProfile', {
-            functionName: "Service-Desk-Create",
-            code: new lambda.AssetCode('build/src'),
-            handler: 'service-desk-create.handler',
-            runtime: lambda.Runtime.NODEJS_12_X,
-            memorySize: 512,
-            timeout: cdk.Duration.seconds(30),
-            role: lambdaRole,
-        });
-
         // User Pool
         const userPool = new UserPool(this, 'HealthPlatformUserPool', {
             userPoolName: 'health-platform-admin-user-pool',
             selfSignUpEnabled: true,
             userVerification: {
-              emailSubject: 'Verify your email for Health Platform Service Desk!',
-              emailBody: 'Hello {username}, Thanks for signing up to our Health Platform Service Desk! Your verification code is {####}',
+              emailSubject: 'Verify your email for Health Platform!',
+              emailBody: 'Hello! Thanks for signing up to our Health Platform! Your verification code is {####}',
               emailStyle: VerificationEmailStyle.CODE,
             },
             signInAliases: {
-                username: true,
-                email: true
+                email: true,
+                phone: false
             },
             autoVerify: { 
-                email: true, 
-                phone: true 
+                email: true
             },
             standardAttributes: {
-                fullname: {
-                    required: true,
-                    mutable: false,
-                },
-                address: {
-                    required: false,
-                    mutable: true,
-                },
             },
             customAttributes: {
-            'joinedOn': new DateTimeAttribute(),
+                'joinedOn': new DateTimeAttribute(),
             },
             accountRecovery: AccountRecovery.EMAIL_ONLY,
-            lambdaTriggers: {
-                postConfirmation: createServiceDeskProfileFn,
-            }
         });
         this.UserPoolId = userPool.userPoolId;
 

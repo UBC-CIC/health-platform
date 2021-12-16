@@ -1,22 +1,12 @@
 import { useEffect, useState } from "react";
 import {
-  faUser,
-  faHeadset,
-  faMapMarkerAlt,
   faRocket,
-  faPhoneAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  Table,
-  Badge,
-  Button,
-  OverlayTrigger,
-  Popover,
   Container,
   Row,
   Col,
-  Tooltip,
 } from "react-bootstrap";
 import {
   MeetingDetail
@@ -28,7 +18,62 @@ import {
   updateMeetingDetail,
   endMeeting
 } from "../../common/graphql/mutations";
-import reverse from "reverse-geocode";
+
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+const faker = require('faker');
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top' as const,
+    },
+    title: {
+      display: true,
+      text: 'Chart.js Line Chart',
+    },
+  },
+};
+
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+export const data = {
+  labels,
+  datasets: [
+    {
+      label: 'Dataset 1',
+      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    },
+    {
+      label: 'Dataset 2',
+      data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+      borderColor: 'rgb(53, 162, 235)',
+      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    },
+  ],
+};
 
 export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
   const [currTime, setCurrTime] = useState(new Date());
@@ -87,107 +132,10 @@ export const MeetingDetailsTable = (props: { items: Array<MeetingDetail> }) => {
     }
   };
 
-  const getLocation = (location?: GeolocationCoordinates) => {
-    if (!location?.latitude || !location?.longitude) return "Unknown Location";
-    const { latitude, longitude } = location;
-    return reverse.lookup(latitude, longitude, "ca").region;
-  };
-
   return (
     <div className="meeting-table">
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>Meeting ID</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Attendees</th>
-            <th>Action</th>
-            <th>Start Time</th>
-            <th>Source</th>
-            <th>Duration</th>
-            <th>Service Desk Attendee</th>
-          </tr>
-        </thead>
-        <tbody>
-          {props.items.map((item: MeetingDetail) => (
-            <tr key={item.meeting_id}>
-              <td>{item.external_meeting_id}</td>
-              <td>
-                <OverlayTrigger
-                  trigger={["focus", "hover"]}
-                  placement="bottom"
-                  overlay={
-                    <Popover id={`meeting-popover-${item.meeting_id}`}>
-                      <Popover.Content>
-                        Click to edit the meeting title
-                      </Popover.Content>
-                    </Popover>
-                  }
-                >
-                  <span
-                    contentEditable
-                    suppressContentEditableWarning
-                    className={item.meeting_title === "" ? "faint-text" : ""}
-                    onBlur={(e) => onModifyTitle(item, e)}
-                  >
-                    {!item.meeting_title || item.meeting_title === ""
-                      ? "Meeting"
-                      : item.meeting_title}
-                  </span>
-                </OverlayTrigger>
-              </td>
-              <td>
-                {item.meeting_status === "ACTIVE" ? (
-                  <Badge variant="success">{item.meeting_status}</Badge>
-                ) : (
-                  <Badge variant="secondary">{item.meeting_status}</Badge>
-                )}
-              </td>
-              {item.meeting_status === "ACTIVE" ? (
-                <td>
-                  <Button variant="danger" title="End Meeting" onClick={() => onEndMeeting(item.meeting_id)}>
-                      <FontAwesomeIcon icon={faPhoneAlt} />{"  "}
-                   </Button>{" "}
-                  <MeetingNotes meetingDetail={item} />{" "}
-                </td>
-              ) : (
-                <td>
-                  <MeetingNotes meetingDetail={item} />{" "}
-                </td>
-              )}
-              <td>
-                {item.create_date_time !== undefined &&
-                item.create_date_time !== null
-                  ? new Date(item.create_date_time).toLocaleTimeString([], {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
-                  : item.create_date_time}
-              </td>
-              <td style={{ width: "64px" }}>
-                {item.meeting_status === "ACTIVE" &&
-                  item.create_date_time !== undefined &&
-                  item.create_date_time !== null && (
-                    <div style={{ width: "100px" }}>
-                      {timeSince(item.create_date_time, null)}
-                    </div>
-                  )}
-                {item.meeting_status !== "ACTIVE" &&
-                  item.create_date_time !== undefined &&
-                  item.create_date_time !== null &&
-                  item.end_date_time !== undefined &&
-                  item.end_date_time !== null && (
-                    <div style={{ width: "100px" }}>
-                      {timeSince(item.create_date_time, item.end_date_time)}
-                    </div>
-                  )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+
+        <Line options={options} data={data} />
 
       {props.items.length == 0 && (
         <Container className="no-calls-found">
