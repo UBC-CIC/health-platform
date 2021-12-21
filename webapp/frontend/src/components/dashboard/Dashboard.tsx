@@ -1,109 +1,167 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Col, Container, Row } from 'react-bootstrap';
-import { API } from 'aws-amplify';
-import { getMeetingDetailsByStatus } from '../../common/graphql/queries';
-import MeetingDetailsTable from '../common/MeetingDetailsTable';
-import { MeetingDetail } from '../../common/types/API';
-import { onCreateMeetingDetail, onUpdateMeetingDetail } from '../../common/graphql/subscriptions';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CssBaseline from '@mui/material/CssBaseline';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import {
+    CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title,
+    Tooltip
+} from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import React from 'react';
+import { Line } from 'react-chartjs-2';
+import './dashboard.css';
+import { Sidebar } from './Sidebar';
 
-export const Dashboard = () => {
-    const [items, updateItems] = useState<Array<MeetingDetail>>(new Array<MeetingDetail>());
-    const stateRef = useRef<Array<MeetingDetail>>();
-    stateRef.current = items;
 
-    useEffect(() => {
 
-        async function subscribeCreateMeetings() {
-            const subscription:any = API.graphql({
-                query: onCreateMeetingDetail
-            });
 
-            subscription.subscribe({
-                next: (data:any) => {
-                    console.log("data received from create subscription:", data);
-                    const newItems = [];
-                    let found = false;
-                    if (data.value.data) {
-                        for (let item of stateRef.current!) {
-                            if (data.value.data.onCreateMeetingDetail.meeting_id === item.meeting_id) {
-                                // Found existing item so we will update this item
-                                newItems.push(data.value.data.onCreateMeetingDetail);
-                                found = true;
-                            } else {
-                                // Keep existing item
-                                newItems.push(item);
-                            }
-                        }
-                        if (!found) {
-                            newItems.push(data.value.data.onCreateMeetingDetail);
-                        }
-                        updateItems(newItems);
-                    }
-                },
-                error: (error:any) => console.warn(error)
-            });
-        };
+const faker = require('faker');
 
-        async function subscribeUpdateMeetings() {
-            const subscription:any = API.graphql({
-                query: onUpdateMeetingDetail
-            });
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend,
+    annotationPlugin
+);
 
-            subscription.subscribe({
-                next: (data:any) => {
-                    const newItems = [];
-                    if (data.value.data.onUpdateMeetingDetail) {
-                        for (let item of stateRef.current!) {
-                            if (data.value.data.onUpdateMeetingDetail.meeting_id === item.meeting_id) {
-                                // Found existing item so we will update this item
-                                newItems.push(data.value.data.onUpdateMeetingDetail);
-                            } else {
-                                // Keep existing item
-                                newItems.push(item);
-                            }
-                        }
-                        updateItems(newItems);
-                    }
-                },
-                error: (error:any) => console.warn(error)
-            });
-        };
-
-        async function callListAllMeetings() {
-            try {
-                const meetings: any = await API.graphql({
-                    query: getMeetingDetailsByStatus,
-                    variables: {
-                        meetingStatus: "ACTIVE",
-                        limit: 25
-                    }
-                });
-                console.log(meetings);
-                
-                const itemsReturned: Array<MeetingDetail> = meetings['data']['getMeetingDetailsByStatus']['items'];
-                console.log('getMeetingDetailsByStatus meetings:', itemsReturned);
-                updateItems(itemsReturned);
-            } catch (e) {
-                console.log('getMeetingDetailsByStatus errors:', e  );
+export const options = {
+    responsive: true,
+    plugins: {
+        legend: {
+            position: 'top' as const,
+        },
+        title: {
+            display: false,
+        },
+        autocolors: false,
+        annotation: {
+            annotations: {
+                box1: {
+                    // Indicates the type of annotation
+                    type: 'box' as const,
+                    xMin: 1,
+                    xMax: 2,
+                    yMin: -1000,
+                    yMax: 1000,
+                    backgroundColor: 'rgba(255, 99, 132, 0.25)'
+                }
             }
         }
+    },
+};
 
-        callListAllMeetings()
-        subscribeCreateMeetings()
-        subscribeUpdateMeetings()
-    }, []);
+// const config = {
+//     type: 'line',
+//     data: {
+//         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+//         datasets: [{
+//             label: 'My First Dataset',
+//             data: [65, 59, 80, 81, 56, 55, 40],
+//             fill: false,
+//             borderColor: 'rgb(75, 192, 192)',
+//             tension: 0.1
+//         }]
+//     },
+//     options: {
+//         plugins: {
+//             autocolors: false,
+//             annotation: {
+//                 annotations: {
+//                     box1: {
+//                         // Indicates the type of annotation
+//                         type: 'box',
+//                         xMin: 1,
+//                         xMax: 2,
+//                         yMin: 50,
+//                         yMax: 70,
+//                         backgroundColor: 'rgba(255, 99, 132, 0.25)'
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// };
 
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+export const data = {
+    labels,
+    datasets: [
+        {
+            label: 'Dataset 1',
+            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        {
+            label: 'Dataset 2',
+            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+            borderColor: 'rgb(53, 162, 235)',
+            backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        },
+    ],
+};
+
+export const Dashboard = () => {
 
     return (
-        <Container fluid >
-            <Row>
-                <Col>
-                    <div>
-                        <MeetingDetailsTable items={items}/>
-                    </div>
-                </Col>
-            </Row>
-        </Container>
+        <Box sx={{ display: 'flex' }}>
+            <CssBaseline />
+
+            <Sidebar />
+            
+            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Toolbar />
+                <Box sx={{ mb: 3 }}>
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Timeline
+                            </Typography>
+                            <Line
+                                height={"60px"}
+                                options={options}
+                                data={data}
+                            />
+                        </CardContent>
+                    </Card>
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Heart Rate
+                            </Typography>
+                            <Line
+                                height={"60px"}
+                                options={options}
+                                data={data}
+                            />
+                        </CardContent>
+                    </Card>
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                    <Card sx={{ minWidth: 275 }}>
+                        <CardContent>
+                            <Typography variant="h6" gutterBottom component="div">
+                                Respiratory Rate
+                            </Typography>
+                            <Line
+                                height={"60px"}
+                                options={options}
+                                data={data}
+                            />
+                        </CardContent>
+                    </Card>
+                </Box>
+            </Box>
+        </Box>
     )
 }
 

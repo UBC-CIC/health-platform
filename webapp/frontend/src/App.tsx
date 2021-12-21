@@ -1,20 +1,48 @@
-import React from 'react';
-import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react';
-import { AuthState, onAuthUIStateChange } from '@aws-amplify/ui-components';
-import { Navigation } from './components/nav/Navigation';
 import { Hub, HubCallback } from '@aws-amplify/core';
-import {
-    UI_AUTH_CHANNEL, TOAST_AUTH_ERROR_EVENT
-} from '@aws-amplify/ui-components';
+import { AuthState, onAuthUIStateChange, TOAST_AUTH_ERROR_EVENT, UI_AUTH_CHANNEL } from '@aws-amplify/ui-components';
+import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react';
+import { Alert, createTheme, ThemeProvider } from '@mui/material';
+import React from 'react';
 import './App.css';
-import { Alert } from 'react-bootstrap';
+import { Navigation } from './components/nav/Navigation';
 import UserContext from './context/UserContext';
+
+declare module '@mui/material/styles' {
+    interface Theme {
+        status: {
+            danger: string;
+        };
+    }
+    // allow configuration using `createTheme`
+    interface ThemeOptions {
+        status?: {
+            danger?: string;
+        };
+    }
+}
 
 function App() {
 
     const [authState, setAuthState] = React.useState<AuthState>();
-    const {user, setUser} = React.useContext(UserContext);
+    const { user, setUser } = React.useContext(UserContext);
     const [alertMessage, setAlertMessage] = React.useState('');
+
+    const theme = createTheme({
+        palette: {
+          primary: {
+            light: '#4f83cc',
+            main: '#01579b',
+            dark: '#002f6c',
+            contrastText: '#fff',
+          },
+          secondary: {
+            light: '#fa5788',
+            main: '#c2185b',
+            dark: '#8c0032',
+            contrastText: '#fff',
+          },
+        },
+      });
 
     React.useEffect(() => {
         return onAuthUIStateChange((nextAuthState, authData) => {
@@ -36,9 +64,11 @@ function App() {
     });
 
     return authState === AuthState.SignedIn && user ? (
-        <div className="App">
-            <Navigation userName={user.attributes.email} authState={authState} />
-        </div>
+        <ThemeProvider theme={theme}>
+            <div className="App">
+                <Navigation userName={user.attributes.email} authState={authState} />
+            </div>
+        </ThemeProvider>
     ) : (
         <div slot="sign-in" style={{
             display: 'flex',
@@ -48,8 +78,7 @@ function App() {
             height: '100%',
             backgroundColor: 'white'
         }}>
-            <Navigation />
-            {alertMessage && (<Alert className="authenticator-toast" variant="danger" onClose={() => setAlertMessage("")} dismissible>{alertMessage}</Alert>)}
+            {alertMessage && (<Alert className="authenticator-toast" severity="error" onClose={() => setAlertMessage("")}>{alertMessage}</Alert>)}
             <AmplifyAuthenticator hideToast>
                 <AmplifySignUp
                     slot="sign-up"
