@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { AuthState } from "@aws-amplify/ui-components";
 import { Dashboard } from "../dashboard/Dashboard";
+import { Events } from "../events/Events";
 import { AppAuthStateProps } from "../../types/propTypes";
 import ResponsiveAppBar from "./ResponsiveAppBar";
 
@@ -13,6 +14,7 @@ export const Navigation = (props: AppAuthStateProps) => {
         <Switch>
           <Route path="/" exact component={Dashboard} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/events" component={Events} />
         </Switch>
       ) : (
         <div/>
