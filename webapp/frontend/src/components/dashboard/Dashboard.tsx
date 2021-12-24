@@ -5,7 +5,9 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import {
-    CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title,
+    CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, 
+    TimeScale,
+    TimeSeriesScale,
     Tooltip
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -13,7 +15,8 @@ import React from 'react';
 import { Line } from 'react-chartjs-2';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
-
+import moment from 'moment';
+import { PhaseChart } from './EventTimelineChart';
 
 
 
@@ -26,9 +29,23 @@ ChartJS.register(
     LineElement,
     Title,
     Tooltip,
+    TimeScale,
+    TimeSeriesScale,
     Legend,
     annotationPlugin
 );
+
+function newDate(days: any) {
+    return moment().add(days, 'd').toDate();
+}
+
+function newDateString(days: any) {
+    return moment().add(days, 'd').format();
+}
+
+function randomScalingFactor() {
+	return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+};
 
 export const options = {
     responsive: true,
@@ -56,37 +73,31 @@ export const options = {
     },
 };
 
-// const config = {
-//     type: 'line',
-//     data: {
-//         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-//         datasets: [{
-//             label: 'My First Dataset',
-//             data: [65, 59, 80, 81, 56, 55, 40],
-//             fill: false,
-//             borderColor: 'rgb(75, 192, 192)',
-//             tension: 0.1
-//         }]
-//     },
-//     options: {
-//         plugins: {
-//             autocolors: false,
-//             annotation: {
-//                 annotations: {
-//                     box1: {
-//                         // Indicates the type of annotation
-//                         type: 'box',
-//                         xMin: 1,
-//                         xMax: 2,
-//                         yMin: 50,
-//                         yMax: 70,
-//                         backgroundColor: 'rgba(255, 99, 132, 0.25)'
-//                     }
-//                 }
-//             }
-//         }
-//     }
-// };
+
+export const optionsTimeline: any = {
+    responsive: true,
+    title:{
+        display:true,
+        text:"Chart.js Time Point Data"
+    },
+    scales: {
+        x: {
+            type: "time",
+            display: true,
+            scaleLabel: {
+                display: true,
+                labelString: 'Date'
+            }
+        },
+        y: {
+            display: true,
+            scaleLabel: {
+                display: true,
+                labelString: 'value'
+            }
+        }
+    }
+};
 
 const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
@@ -108,6 +119,46 @@ export const data = {
     ],
 };
 
+export const dataTimeline: any = {
+    datasets: [{
+        label: "Dataset with string point data",
+        backgroundColor: 'rgba(53, 162, 235, 0.5)',
+        borderColor: 'rgb(53, 162, 235)',
+        fill: false,
+        data: [{
+            x: newDateString(0),
+            y: randomScalingFactor()
+        }, {
+            x: newDateString(2),
+            y: randomScalingFactor()
+        }, {
+            x: newDateString(4),
+            y: randomScalingFactor()
+        }, {
+            x: newDateString(5),
+            y: randomScalingFactor()
+        }],
+    }, {
+        label: "Dataset with date object point data",
+        borderColor: 'rgb(255, 99, 132)',
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        fill: false,
+        data: [{
+            x: newDate(0),
+            y: randomScalingFactor()
+        }, {
+            x: newDate(2),
+            y: randomScalingFactor()
+        }, {
+            x: newDate(4),
+            y: randomScalingFactor()
+        }, {
+            x: newDate(5),
+            y: randomScalingFactor()
+        }]
+    }]
+};
+
 export const Dashboard = () => {
 
     return (
@@ -115,20 +166,16 @@ export const Dashboard = () => {
             <CssBaseline />
 
             <Sidebar />
-            
+
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
                 <Box sx={{ mb: 3 }}>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
                             <Typography variant="h6" gutterBottom component="div">
-                                Timeline
+                                Event Timeline
                             </Typography>
-                            <Line
-                                height={"60px"}
-                                options={options}
-                                data={data}
-                            />
+                            <PhaseChart />
                         </CardContent>
                     </Card>
                 </Box>

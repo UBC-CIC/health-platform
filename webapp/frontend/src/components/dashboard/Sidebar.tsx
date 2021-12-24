@@ -68,7 +68,7 @@ export const Sidebar = () => {
                     </Box>
                 </LocalizationProvider>
                 <hr />
-                <Box sx={{ mb: 3 }}>
+                <Box sx={{ mt: 3, mb: 3 }}>
                     <FormControl fullWidth>
                         <InputLabel id="period-select-label">Period</InputLabel>
                         <Select
