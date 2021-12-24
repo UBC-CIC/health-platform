@@ -1,7 +1,7 @@
 import { ChartDataset } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { differenceInDays } from "date-fns";
-import { GanttChart } from "./HorizontalBarChart";
+import { HorizontalBarChart } from "./HorizontalBarChart";
 import { ThemeColor } from "./types";
 
 type Phase = {
@@ -56,7 +56,7 @@ export function PhaseChart() {
     const refDate = new Date("2020-12-15");
     console.log(phasesToDatesets(PHASES, refDate));
     return (
-        <GanttChart
+        <HorizontalBarChart
             data={{
                 datasets: phasesToDatesets(PHASES, refDate),
                 labels: phasesToLabels(PHASES)

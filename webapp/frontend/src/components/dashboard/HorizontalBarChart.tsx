@@ -6,9 +6,9 @@ import { BarChart } from "./BarChart";
 import { DrawChartPlugin } from "./DrawChartPlugin";
 import { ThemeColor } from "./types";
 
-type GanttChartProps = { data: ChartData<"bar">; refDate: Date };
+type HorizontalBarChartProps = { data: ChartData<"bar">; refDate: Date };
 
-export function GanttChart({ data, refDate }: GanttChartProps) {
+export function HorizontalBarChart({ data, refDate }: HorizontalBarChartProps) {
     const chartRef = useRef<HTMLCanvasElement>(null)
     console.log(data);
     return (

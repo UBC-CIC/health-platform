@@ -27,6 +27,7 @@
     "byte-size": "^7.0.1",
     "chart.js": "^3.6.0",
     "chartjs-plugin-annotation": "^1.2.0",
+    "chartjs-adapter-date-fns": "^2.0.0",
     "date-fns": "^2.27.0",
     "faker": "5.5.3",
     "formik": "^2.2.6",
