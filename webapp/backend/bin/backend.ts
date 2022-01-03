@@ -7,7 +7,6 @@ import { HealthPlatformCognitoStack } from '../lib/cognito-stack';
 
 const app = new App();
 new HealthPlatformDynamoStack(app, 'HealthPlatformDynamoStack');
-
 const cognito = new HealthPlatformCognitoStack(app, 'HealthPlatformCognitoStack');
-const appSync = new HealthPlatformAppSyncStack(app, 'HealthPlatformAppSyncStack', cognito.UserPoolId);
-new HealthPlatformLambdaStack(app, 'HealthPlatformLambdaStack', appSync.GraphQLUrl);
+const lambdaStack = new HealthPlatformLambdaStack(app, 'HealthPlatformLambdaStack');
+new HealthPlatformAppSyncStack(app, 'HealthPlatformAppSyncStack', cognito.UserPoolId, lambdaStack);

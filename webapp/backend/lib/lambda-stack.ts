@@ -1,18 +1,28 @@
 import cdk = require('@aws-cdk/core');
+import { Runtime, DockerImageCode, DockerImageFunction } from '@aws-cdk/aws-lambda';
+import alp = require('@aws-cdk/aws-lambda-python');
+import exec = require("child_process");
+import * as path from 'path';
+import * as lambda from "@aws-cdk/aws-lambda";
+import { RetentionDays } from '@aws-cdk/aws-logs';
+// import { PythonFunction } from "@aws-cdk/aws-lambda-python";
 import { Role, ServicePrincipal, PolicyDocument, PolicyStatement, Effect } from '@aws-cdk/aws-iam';
 
 // The Lambda stack contains all the Lambda functions that are not directly related to PSTN. 
 // These Lambda functions can be created safely in ca-central-1.
 //
 export class HealthPlatformLambdaStack extends cdk.Stack {
-    constructor(app: cdk.App, id: string, graphqlUrl: string) {
+    public readonly lambdaRole: Role;
+    public readonly queryFunction: DockerImageFunction;
+
+    constructor(app: cdk.App, id: string) {
         super(app, id, {
             env: {
                 region: 'ca-central-1'
             },
         });
 
-        const lambdaRole = new Role(this, 'HealthPlatformBackendLambdaRole', {
+        this.lambdaRole = new Role(this, 'HealthPlatformBackendLambdaRole', {
             roleName: 'HealthPlatformBackendLambdaRole',
             assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
             inlinePolicies: {
@@ -61,5 +71,15 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                 }),
             },
         });
+
+        const queryDockerFile = path.join(__dirname, "..");
+        this.queryFunction = new DockerImageFunction(this, 'QueryDockerFunction', {
+            code: DockerImageCode.fromImageAsset(queryDockerFile),
+            functionName: `QueryFunction`,
+            memorySize: 512,
+            role: this.lambdaRole,
+            timeout: cdk.Duration.seconds(30),
+            logRetention: RetentionDays.THREE_MONTHS,
+        })
     }
 }

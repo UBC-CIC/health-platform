@@ -13,6 +13,7 @@ import { CompositePrincipal, ManagedPolicy, Role, PolicyDocument, ServicePrincip
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
 import lambda = require('@aws-cdk/aws-lambda');
 import cdk = require('@aws-cdk/core');
+import { HealthPlatformLambdaStack } from './lambda-stack';
 
 /**
  * HealthPlatformAppSyncStack defines a GraphQL API for accessing meeting-detail table.
@@ -21,7 +22,7 @@ import cdk = require('@aws-cdk/core');
 export class HealthPlatformAppSyncStack extends Stack {
     public readonly GraphQLUrl: string;
 
-    constructor(scope: Construct, id: string, userPoolId: string) {
+    constructor(scope: Construct, id: string, userPoolId: string, lambdaStack: HealthPlatformLambdaStack) {
         super(scope, id, {
             env: {
                 region: 'ca-central-1'
@@ -207,26 +208,12 @@ export class HealthPlatformAppSyncStack extends Stack {
             },
         });
 
-        const endMeetingFunction = new lambda.Function(this, 'endMeetingFunction', {
-            functionName: "HealthPlatform-Data-ChimeMeeting-End",
-            code: new lambda.AssetCode('build/src'),
-            handler: 'data-cleanup.handler',
-            runtime: lambda.Runtime.NODEJS_14_X,
-            environment: {
-                TABLE_NAME: HealthPlatformDynamoStack.MEETING_DETAIL_TABLE_NAME,
-                PRIMARY_KEY: 'meeting_id',
-            },
-            role: lambdaRole,
-            memorySize: 512,
-            timeout: cdk.Duration.seconds(30)
-        });
-
         // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
         //
         // Resolver for Chime meeting operations
-        api.addLambdaDataSource('EndMeetingDataSource', endMeetingFunction).createResolver({
-            typeName: 'Mutation',
-            fieldName: 'endMeeting'
+        api.addLambdaDataSource('QueryDataSource', lambdaStack.queryFunction).createResolver({
+            typeName: 'Query',
+            fieldName: 'query'
         });
 
         // Cloudformation Output

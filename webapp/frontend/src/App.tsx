@@ -65,9 +65,11 @@ function App() {
 
     return authState === AuthState.SignedIn && user ? (
         <ThemeProvider theme={theme}>
-            <div className="App">
-                <Navigation userName={user.attributes.email} authState={authState} />
-            </div>
+            <UserContext.Provider value={user}>
+                <div className="App">
+                    <Navigation userName={user.attributes.email} authState={authState} />
+                </div>
+            </UserContext.Provider>
         </ThemeProvider>
     ) : (
         <div slot="sign-in" style={{

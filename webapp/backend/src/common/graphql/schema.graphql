@@ -87,6 +87,16 @@ type MediaPlacement {
     TurnControlUrl: String
 }
 
+input QueryRequest {
+    start: String
+    end: String
+}
+
+type QueryResponse {
+	timestamp: [Int]
+    heartrate: [Float]
+}
+
 # [type] Mutation
 type Mutation @aws_cognito_user_pools
 @aws_iam {
@@ -95,12 +105,13 @@ type Mutation @aws_cognito_user_pools
 	deleteMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
 	publishNewMeetingDetail(input: MeetingDetailInput!): MeetingDetail
 	publishMeetingDetailUpdates(input: MeetingDetailInput!): MeetingDetail
-    endMeeting(input: EndMeetingInput): Boolean
 }
 
 # [type] Query
 type Query @aws_cognito_user_pools
 @aws_iam {
+    query(input: QueryRequest): QueryResponse
+
 	getMeetingDetail(meetingId: String!): MeetingDetail
 	listMeetingDetails(filter: ModelMeetingDetailFilterInput, limit: Int, nextToken: String): MeetingDetailConnection
 	getMeetingDetailsByStatus(meetingStatus: String!, limit: Int, nextToken: String): MeetingDetailConnection

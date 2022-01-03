@@ -81,8 +81,3 @@ export const publishMeetingDetailUpdates = /* GraphQL */ `
     }
   }
 `;
-export const endMeeting = /* GraphQL */ `
-  mutation EndMeeting($input: EndMeetingInput) {
-    endMeeting(input: $input)
-  }
-`;

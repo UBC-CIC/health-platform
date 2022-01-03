@@ -52,10 +52,6 @@ export type MeetingDetail = {
   meeting_comments?: string | null,
 };
 
-export type EndMeetingInput = {
-  meeting_id?: string | null,
-};
-
 export type ModelMeetingDetailFilterInput = {
   meeting_id?: ModelStringInput | null,
   attendees?: ModelStringInput | null,
@@ -168,14 +164,6 @@ export type PublishMeetingDetailUpdatesMutation = {
     meeting_title?: string | null,
     meeting_comments?: string | null,
   } | null,
-};
-
-export type EndMeetingMutationVariables = {
-  input?: EndMeetingInput | null,
-};
-
-export type EndMeetingMutation = {
-  endMeeting?: boolean | null,
 };
 
 export type GetMeetingDetailQueryVariables = {

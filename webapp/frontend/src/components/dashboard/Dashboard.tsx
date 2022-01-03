@@ -11,12 +11,15 @@ import {
     Tooltip
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react'
 import { Line } from 'react-chartjs-2';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
 import moment from 'moment';
 import { PhaseChart } from './EventTimelineChart';
+import { query } from '../../common/graphql/queries';
+import { API, Auth } from 'aws-amplify';
+import { UserContext } from '../../context/UserContext';
 
 
 
@@ -35,131 +38,118 @@ ChartJS.register(
     annotationPlugin
 );
 
-function newDate(days: any) {
-    return moment().add(days, 'd').toDate();
-}
+export const Dashboard = () => {
+    const [hrData, setHrData] = useState<any>({
+        labels: [],
+        datasets: [],
+    });
 
-function newDateString(days: any) {
-    return moment().add(days, 'd').format();
-}
+    const user = "placeholder";
 
-function randomScalingFactor() {
-	return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
-};
+    useEffect(() => {
+        async function callQueryRequest() {
+            try {
+                console.log('callQueryRequest request');
+    
+                const response: any = await API.graphql({
+                    query: query,
+                    variables: {limit: 100}
+                });
+                console.log('callQueryRequest response', response);
 
-export const options = {
-    responsive: true,
-    plugins: {
-        legend: {
-            position: 'top' as const,
-        },
-        title: {
-            display: false,
-        },
-        autocolors: false,
-        annotation: {
-            annotations: {
-                box1: {
-                    // Indicates the type of annotation
-                    type: 'box' as const,
-                    xMin: 1,
-                    xMax: 2,
-                    yMin: -1000,
-                    yMax: 1000,
-                    backgroundColor: 'rgba(255, 99, 132, 0.25)'
+                const hrs = response["data"]["query"]["heartrate"];
+                let timestamps = response["data"]["query"]["timestamp"];
+                timestamps = timestamps.map((t: number) => {
+                    return moment.unix(t)
+                });
+
+                const datasets = [{
+                    label: 'Dataset 1',
+                    data: hrs,
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                }];
+
+                setHrData({
+                    labels: timestamps,
+                    datasets: datasets,
+                });
+            } catch (e) {
+                console.log('callQueryRequest errors:', e);
+            }
+        }
+    
+        callQueryRequest()
+    }, [user]);
+
+    function newDate(days: any) {
+        return moment().add(days, 'd').toDate();
+    }
+
+    function newDateString(days: any) {
+        return moment().add(days, 'd').format();
+    }
+
+    function randomScalingFactor() {
+        return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+    };
+
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+            title: {
+                display: false,
+            },
+            autocolors: false,
+            annotation: {
+                annotations: {
+                    box1: {
+                        // Indicates the type of annotation
+                        type: 'box' as const,
+                        xMin: 1,
+                        xMax: 2,
+                        yMin: -1000,
+                        yMax: 1000,
+                        backgroundColor: 'rgba(255, 99, 132, 0.25)'
+                    }
                 }
             }
-        }
-    },
-};
-
-
-export const optionsTimeline: any = {
-    responsive: true,
-    title:{
-        display:true,
-        text:"Chart.js Time Point Data"
-    },
-    scales: {
-        x: {
-            type: "time",
-            display: true,
-            scaleLabel: {
-                display: true,
-                labelString: 'Date'
-            }
         },
-        y: {
-            display: true,
-            scaleLabel: {
-                display: true,
-                labelString: 'value'
-            }
-        }
-    }
-};
+    };
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-    labels,
-    datasets: [
-        {
-            label: 'Dataset 1',
-            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    const optionsHr = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+            title: {
+                display: false,
+            },
+            autocolors: false,
         },
-        {
-            label: 'Dataset 2',
-            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        },
-    ],
-};
+    };
 
-export const dataTimeline: any = {
-    datasets: [{
-        label: "Dataset with string point data",
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-        borderColor: 'rgb(53, 162, 235)',
-        fill: false,
-        data: [{
-            x: newDateString(0),
-            y: randomScalingFactor()
-        }, {
-            x: newDateString(2),
-            y: randomScalingFactor()
-        }, {
-            x: newDateString(4),
-            y: randomScalingFactor()
-        }, {
-            x: newDateString(5),
-            y: randomScalingFactor()
-        }],
-    }, {
-        label: "Dataset with date object point data",
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        fill: false,
-        data: [{
-            x: newDate(0),
-            y: randomScalingFactor()
-        }, {
-            x: newDate(2),
-            y: randomScalingFactor()
-        }, {
-            x: newDate(4),
-            y: randomScalingFactor()
-        }, {
-            x: newDate(5),
-            y: randomScalingFactor()
-        }]
-    }]
-};
-
-export const Dashboard = () => {
+    const data = {
+        labels: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)],
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)].map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+            {
+                label: 'Dataset 2',
+                data: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)].map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+                borderColor: 'rgb(53, 162, 235)',
+                backgroundColor: 'rgba(53, 162, 235, 0.5)',
+            },
+        ],
+    };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -187,8 +177,8 @@ export const Dashboard = () => {
                             </Typography>
                             <Line
                                 height={"60px"}
-                                options={options}
-                                data={data}
+                                options={optionsHr}
+                                data={hrData}
                             />
                         </CardContent>
                     </Card>

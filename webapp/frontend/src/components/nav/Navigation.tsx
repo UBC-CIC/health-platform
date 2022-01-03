@@ -6,19 +6,19 @@ import { AppAuthStateProps } from "../../types/propTypes";
 import ResponsiveAppBar from "./ResponsiveAppBar";
 
 export const Navigation = (props: AppAuthStateProps) => {
-  return (
-    <BrowserRouter>
-      {/* <Header userName={props.userName} authState={props.authState} /> */}
-      <ResponsiveAppBar />
-      {props.authState === AuthState.SignedIn ? (
-        <Switch>
-          <Route path="/" exact component={Dashboard} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/events" component={Events} />
-        </Switch>
-      ) : (
-        <div/>
-      )}
-    </BrowserRouter>
-  );
+    return (
+        <BrowserRouter>
+            {/* <Header userName={props.userName} authState={props.authState} /> */}
+            <ResponsiveAppBar {...props} />
+            {props.authState === AuthState.SignedIn ? (
+                <Switch>
+                    <Route path="/" exact component={Dashboard} />
+                    <Route path="/dashboard" component={Dashboard} />
+                    <Route path="/events" component={Events} />
+                </Switch>
+            ) : (
+                <div />
+            )}
+        </BrowserRouter>
+    );
 };
