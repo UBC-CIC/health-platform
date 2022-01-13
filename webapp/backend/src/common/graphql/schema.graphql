@@ -1,62 +1,57 @@
-# Schema for meeting-detail DDB Table
-type MeetingDetail @aws_cognito_user_pools
+# Schema for event-detail DDB Table
+type EventDetail @aws_cognito_user_pools
 @aws_iam {
-	meeting_id: String!
-	create_date_time: String
+	user_id: String!
+	start_date_time: String
 	end_date_time: String
-	call_id: String
-	external_meeting_id: String
-	meeting_status: String
-    meeting_title: String
-	meeting_comments: String
+	medication: String
+	mood: String
+	food: String
+    notes: String
 }
 
-type MeetingDetailConnection @aws_cognito_user_pools
+type EventDetailConnection @aws_cognito_user_pools
 @aws_iam {
-	items: [MeetingDetail]
+	items: [EventDetail]
 	nextToken: String
 }
 
-# [input] MeetingDetailInput
-### CreateMeetingDetail, DeleteMeetingDetail and UpdateMeetingDetail use this input type
-input MeetingDetailInput {
-	meeting_id: String!
-	create_date_time: String
+# [input] EventDetailInput
+### CreateEventDetail, DeleteEventDetail and UpdateEventDetail use this input type
+input EventDetailInput {
+	user_id: String!
+	start_date_time: String
 	end_date_time: String
-	call_id: String
-	external_meeting_id: String
-	meeting_status: String
-    meeting_title: String
-	meeting_comments: String
+	medication: String
+	mood: String
+	food: String
+    notes: String
 }
 
-input ModelMeetingDetailConditionInput {
-	attendees: ModelStringInput
-	create_date_time: ModelStringInput
-	end_date_time: AWSDateTime
-	call_id: ModelStringInput
-	external_meeting_id: ModelStringInput
-	meeting_status: ModelStringInput
-    meeting_title: ModelStringInput
-	meeting_comments: ModelStringInput
-	and: [ModelMeetingDetailConditionInput]
-	or: [ModelMeetingDetailConditionInput]
-	not: ModelMeetingDetailConditionInput
+input ModelEventDetailConditionInput {
+	user_id: ModelStringInput
+	start_date_time: String
+	end_date_time: String
+	medication: String
+	mood: String
+	food: String
+    notes: String
+	and: [ModelEventDetailConditionInput]
+	or: [ModelEventDetailConditionInput]
+	not: ModelEventDetailConditionInput
 }
 
-input ModelMeetingDetailFilterInput {
-	meeting_id: ModelStringInput
-	attendees: ModelStringInput
-	create_date_time: ModelStringInput
-	end_date_time: AWSDateTime
-	call_id: ModelStringInput
-	external_meeting_id: ModelStringInput
-	meeting_status: ModelStringInput
-    meeting_title: ModelStringInput
-	meeting_comments: ModelStringInput
-	and: [ModelMeetingDetailFilterInput]
-	or: [ModelMeetingDetailFilterInput]
-	not: ModelMeetingDetailFilterInput
+input ModelEventDetailFilterInput {
+	event_id: ModelStringInput
+	start_date_time: String
+	end_date_time: String
+	medication: String
+	mood: String
+	food: String
+    notes: String
+	and: [ModelEventDetailFilterInput]
+	or: [ModelEventDetailFilterInput]
+	not: ModelEventDetailFilterInput
 }
 
 input ModelStringInput {
@@ -72,20 +67,20 @@ input ModelStringInput {
 	beginsWith: String
 }
 
-# [input] EndMeetingInput
-input EndMeetingInput {
-    meeting_id: String
+# [input] DeleteEventInput
+input DeleteEventInput {
+    event_id: String
 }
 
-type MediaPlacement {
-	AudioFallbackUrl: String
-    AudioHostUrl: String
-    ScreenDataUrl: String
-    ScreenSharingUrl: String
-    ScreenViewingUrl: String
-    SignalingUrl: String
-    TurnControlUrl: String
-}
+# type MediaPlacement {
+# 	AudioFallbackUrl: String
+#     AudioHostUrl: String
+#     ScreenDataUrl: String
+#     ScreenSharingUrl: String
+#     ScreenViewingUrl: String
+#     SignalingUrl: String
+#     TurnControlUrl: String
+# }
 
 input QueryRequest {
     start: String
@@ -100,11 +95,11 @@ type QueryResponse {
 # [type] Mutation
 type Mutation @aws_cognito_user_pools
 @aws_iam {
-	createMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
-	updateMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
-	deleteMeetingDetail(input: MeetingDetailInput, condition: ModelMeetingDetailConditionInput): MeetingDetail
-	publishNewMeetingDetail(input: MeetingDetailInput!): MeetingDetail
-	publishMeetingDetailUpdates(input: MeetingDetailInput!): MeetingDetail
+	createEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	updateEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	deleteEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	publishNewEventDetail(input: EventDetailInput!): EventDetail
+	publishEventDetailUpdates(input: EventDetailInput!): EventDetail
 }
 
 # [type] Query
@@ -112,25 +107,25 @@ type Query @aws_cognito_user_pools
 @aws_iam {
     query(input: QueryRequest): QueryResponse
 
-	getMeetingDetail(meetingId: String!): MeetingDetail
-	listMeetingDetails(filter: ModelMeetingDetailFilterInput, limit: Int, nextToken: String): MeetingDetailConnection
-	getMeetingDetailsByStatus(meetingStatus: String!, limit: Int, nextToken: String): MeetingDetailConnection
-	getMeetingDetailsByStatusAndCreateTime(
-		meetingStatus: String!,
+	getEventDetail(eventId: String!): EventDetail
+	listEventDetails(filter: ModelEventDetailFilterInput, limit: Int, nextToken: String): EventDetailConnection
+	getEventDetailsByStatus(userId: String!, limit: Int, nextToken: String): EventDetailConnection
+	getEventDetailsByStatusAndCreateTime(
+		userId: String!,
 		startTime: String!,
 		endTime: String!,
 		limit: Int,
 		nextToken: String
-	): MeetingDetailConnection
+	): EventDetailConnection
 }
 
 # [type] Subscription
 type Subscription @aws_cognito_user_pools
 @aws_iam {
-	onCreateMeetingDetail: MeetingDetail
-		@aws_subscribe(mutations: ["createMeetingDetail","publishNewMeetingDetail"])
-	onUpdateMeetingDetail: MeetingDetail
-		@aws_subscribe(mutations: ["updateMeetingDetail","publishMeetingDetailUpdates"])
-	onDeleteMeetingDetail: MeetingDetail
-		@aws_subscribe(mutations: ["deleteMeetingDetail"])
+	onCreateEventDetail: EventDetail
+		@aws_subscribe(mutations: ["createEventDetail","publishNewEventDetail"])
+	onUpdateEventDetail: EventDetail
+		@aws_subscribe(mutations: ["updateEventDetail","publishEventDetailUpdates"])
+	onDeleteEventDetail: EventDetail
+		@aws_subscribe(mutations: ["deleteEventDetail"])
 }

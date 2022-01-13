@@ -80,8 +80,8 @@ export class HealthPlatformAppSyncStack extends Stack {
         // Import meeting-detail DDB table and grant AppSync to access the DDB table
         const meetingDetailTable = Table.fromTableAttributes(this,
             'meetingDetailTable', {
-            tableName: HealthPlatformDynamoStack.MEETING_DETAIL_TABLE_NAME,
-            globalIndexes: [HealthPlatformDynamoStack.MEETING_STATUS_GLOBAL_INDEX_NAME]
+            tableName: HealthPlatformDynamoStack.EVENT_DETAIL_TABLE_NAME,
+            globalIndexes: [HealthPlatformDynamoStack.EVENT_STATUS_GLOBAL_INDEX_NAME]
         });
         meetingDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
 
