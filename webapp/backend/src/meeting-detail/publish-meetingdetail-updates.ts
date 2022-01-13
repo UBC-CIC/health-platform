@@ -1,5 +1,5 @@
-import { publishMeetingDetailUpdates, publishNewMeetingDetail } from '../common/graphql/mutations';
-import { MeetingDetailInput } from '../common/types/API';
+import { publishEventDetailUpdates, publishNewEventDetail } from '../common/graphql/mutations';
+import { EventDetailInput } from '../common/types/API';
 import { initAppSyncClient } from './utils/appsync-client';
 import { ServerError, Success } from './utils/response';
 
@@ -8,7 +8,7 @@ const gql = require('graphql-tag');
 require('cross-fetch/polyfill');
 
 /*
- * Publishes new ddb entries by calling publishNewMeetingDetailUpdates mutation in AppSync
+ * Publishes new ddb entries by calling publishNewEventDetailUpdates mutation in AppSync
  * This event does not update any DDB data, but only send notification to AppSync.
  * This is called only when a new meeting is created.
  *
@@ -19,14 +19,14 @@ export const publishCreateMeeting = async (ddbNewImage: any) => {
     console.log('New event arrived - ddbNewImage:', JSON.stringify(ddbNewImage, null, ' '));
 
     try {
-        const meetingDetailInput: MeetingDetailInput = aws.DynamoDB.Converter.unmarshall(ddbNewImage)
+        const meetingDetailInput: EventDetailInput = aws.DynamoDB.Converter.unmarshall(ddbNewImage)
         console.log('meeting detail input to publish', meetingDetailInput);
 
         // Initialize AppSync GraphQL client
         const graphqlClient = initAppSyncClient()
 
         console.log('publishMeetingetailUpdates request', meetingDetailInput)
-        const mutation = gql`${publishNewMeetingDetail}`;
+        const mutation = gql`${publishNewEventDetail}`;
         const appSyncResponse = await graphqlClient.mutate({
             mutation,
             variables: {
@@ -36,12 +36,12 @@ export const publishCreateMeeting = async (ddbNewImage: any) => {
 
         return Success(200, appSyncResponse)
     } catch (err) {
-        return ServerError(500, 'publishMeetingDetail failed.', err)
+        return ServerError(500, 'publishEventDetail failed.', err)
     }
 }
 
 /*
- * Publishes new ddb changes by calling publishMeetingDetailUpdates mutation in AppSync
+ * Publishes new ddb changes by calling publishEventDetailUpdates mutation in AppSync
  * This event does not update any DDB data, but only send notification to AppSync.
  * This is called only when an existing meeting is updated.
  *
@@ -52,14 +52,14 @@ export const publishUpdateMeeting = async (ddbNewImage: any) => {
     console.log('New event arrived - ddbNewImage:', JSON.stringify(ddbNewImage, null, ' '));
 
     try {
-        const meetingDetailInput: MeetingDetailInput = aws.DynamoDB.Converter.unmarshall(ddbNewImage)
+        const meetingDetailInput: EventDetailInput = aws.DynamoDB.Converter.unmarshall(ddbNewImage)
         console.log('meeting detail input to publish', meetingDetailInput);
 
         // Initialize AppSync GraphQL client
         const graphqlClient = initAppSyncClient()
 
         console.log('publishMeetingetailUpdates request', meetingDetailInput)
-        const mutation = gql`${publishMeetingDetailUpdates}`;
+        const mutation = gql`${publishEventDetailUpdates}`;
         const appSyncResponse = await graphqlClient.mutate({
             mutation,
             variables: {
@@ -69,6 +69,6 @@ export const publishUpdateMeeting = async (ddbNewImage: any) => {
 
         return Success(200, appSyncResponse)
     } catch (err) {
-        return ServerError(500, 'publishMeetingDetail failed.', err)
+        return ServerError(500, 'publishEventDetail failed.', err)
     }
 }

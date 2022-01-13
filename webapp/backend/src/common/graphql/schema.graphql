@@ -72,16 +72,6 @@ input DeleteEventInput {
     event_id: String
 }
 
-# type MediaPlacement {
-# 	AudioFallbackUrl: String
-#     AudioHostUrl: String
-#     ScreenDataUrl: String
-#     ScreenSharingUrl: String
-#     ScreenViewingUrl: String
-#     SignalingUrl: String
-#     TurnControlUrl: String
-# }
-
 input QueryRequest {
     start: String
     end: String
@@ -109,8 +99,8 @@ type Query @aws_cognito_user_pools
 
 	getEventDetail(eventId: String!): EventDetail
 	listEventDetails(filter: ModelEventDetailFilterInput, limit: Int, nextToken: String): EventDetailConnection
-	getEventDetailsByStatus(userId: String!, limit: Int, nextToken: String): EventDetailConnection
-	getEventDetailsByStatusAndCreateTime(
+	getEventDetailsByUser(userId: String!, limit: Int, nextToken: String): EventDetailConnection
+	getEventDetailsByUserAndCreateTime(
 		userId: String!,
 		startTime: String!,
 		endTime: String!,

@@ -16,7 +16,7 @@ import cdk = require('@aws-cdk/core');
 import { HealthPlatformLambdaStack } from './lambda-stack';
 
 /**
- * HealthPlatformAppSyncStack defines a GraphQL API for accessing meeting-detail table.
+ * HealthPlatformAppSyncStack defines a GraphQL API for accessing event-detail table.
  *
  */
 export class HealthPlatformAppSyncStack extends Stack {
@@ -29,7 +29,7 @@ export class HealthPlatformAppSyncStack extends Stack {
             },
         });
 
-        const meetingDetailResolverPath = './vtl/resolvers/meeting-detail'
+        const eventDetailResolverPath = './vtl/resolvers/event-detail'
 
         const authorizationType = AuthorizationType.USER_POOL;
         const userPool = UserPool.fromUserPoolId(this, 'UserPool', userPoolId);
@@ -76,83 +76,83 @@ export class HealthPlatformAppSyncStack extends Stack {
 
         // DynamoDB DataSource
 
-        // DataSource to connect to meeting-detail DDB table
-        // Import meeting-detail DDB table and grant AppSync to access the DDB table
-        const meetingDetailTable = Table.fromTableAttributes(this,
-            'meetingDetailTable', {
+        // DataSource to connect to event-detail DDB table
+        // Import event-detail DDB table and grant AppSync to access the DDB table
+        const eventDetailTable = Table.fromTableAttributes(this,
+            'eventDetailTable', {
             tableName: HealthPlatformDynamoStack.EVENT_DETAIL_TABLE_NAME,
             globalIndexes: [HealthPlatformDynamoStack.EVENT_STATUS_GLOBAL_INDEX_NAME]
         });
-        meetingDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
+        eventDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
 
         // Define Request DDB DataSource
-        const meetingDetailTableDataSource = api.addDynamoDbDataSource('meetingDetailTableDataSource', meetingDetailTable);
+        const eventDetailTableDataSource = api.addDynamoDbDataSource('eventDetailTableDataSource', eventDetailTable);
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Query',
-            fieldName: 'getMeetingDetail',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetail.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetail.res.vtl`),
+            fieldName: 'getEventDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetail.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Query',
-            fieldName: 'listMeetingDetails',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.listMeetingDetails.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.listMeetingDetails.res.vtl`),
+            fieldName: 'listEventDetails',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.listEventDetails.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.listEventDetails.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Query',
-            fieldName: 'getMeetingDetailsByStatus',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetailsByStatus.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetailsByStatus.res.vtl`),
+            fieldName: 'getEventDetailsByUser',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetailsByUser.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetailsByUser.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Query',
-            fieldName: 'getMeetingDetailsByStatusAndCreateTime',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetailsByStatusAndCreateTime.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Query.getMeetingDetailsByStatusAndCreateTime.res.vtl`),
+            fieldName: 'getEventDetailsByUserAndCreateTime',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetailsByUserAndCreateTime.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventDetailsByUserAndCreateTime.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Mutation',
-            fieldName: 'createMeetingDetail',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.createMeetingDetail.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.createMeetingDetail.res.vtl`),
+            fieldName: 'createEventDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.createEventDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.createEventDetail.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Mutation',
-            fieldName: 'deleteMeetingDetail',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.deleteMeetingDetail.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.deleteMeetingDetail.res.vtl`),
+            fieldName: 'deleteEventDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.deleteEventDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.deleteEventDetail.res.vtl`),
         });
 
-        meetingDetailTableDataSource.createResolver({
+        eventDetailTableDataSource.createResolver({
             typeName: 'Mutation',
-            fieldName: 'updateMeetingDetail',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.updateMeetingDetail.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/Mutation.updateMeetingDetail.res.vtl`),
+            fieldName: 'updateEventDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.updateEventDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.updateEventDetail.res.vtl`),
         });
 
         // None DataSource
         //
-        // Add None DataSource for Local Resolver - to publish notification triggered by meeting-detail DDB
-        const newMeetingDetailNoneDataSource = api.addNoneDataSource('NewMeetingDetailNoneDataSource');
-        newMeetingDetailNoneDataSource.createResolver({
+        // Add None DataSource for Local Resolver - to publish notification triggered by event-detail DDB
+        const newEventDetailNoneDataSource = api.addNoneDataSource('NewEventDetailNoneDataSource');
+        newEventDetailNoneDataSource.createResolver({
             typeName: 'Mutation',
-            fieldName: 'publishNewMeetingDetail',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/None.publishNewMeetingDetail.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/None.publishNewMeetingDetail.res.vtl`)
+            fieldName: 'publishNewEventDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/None.publishNewEventDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/None.publishNewEventDetail.res.vtl`)
         });
-        const meetingDetailNoneDataSource = api.addNoneDataSource('MeetingDetailNoneDataSource');
+        const meetingDetailNoneDataSource = api.addNoneDataSource('EventDetailNoneDataSource');
         meetingDetailNoneDataSource.createResolver({
             typeName: 'Mutation',
-            fieldName: 'publishMeetingDetailUpdates',
-            requestMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/None.publishMeetingDetailUpdates.req.vtl`),
-            responseMappingTemplate: MappingTemplate.fromFile(`${meetingDetailResolverPath}/None.publishMeetingDetailUpdates.res.vtl`)
+            fieldName: 'publishEventDetailUpdates',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/None.publishEventDetailUpdates.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/None.publishEventDetailUpdates.res.vtl`)
         });
 
         // Define Lambda Role and Data Source

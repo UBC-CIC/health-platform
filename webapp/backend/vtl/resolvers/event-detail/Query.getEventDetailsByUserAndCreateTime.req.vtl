@@ -1,0 +1,20 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#user_id = :user_id and #start_date_time between :start_time and :end_time",
+        "expressionNames" : {
+            "#user_id" : "user_id",
+            "#start_date_time" : "start_date_time"
+        },
+        "expressionValues" : {
+            ":user_id" : $util.dynamodb.toDynamoDBJson($context.arguments.userId),
+            ":end_date_time" : $util.dynamodb.toDynamoDBJson($context.arguments.endDateTime),
+        },
+    },
+    "index" : "eventUserGsi",
+    "scanIndexForward" : false,
+    "limit" : $util.defaultIfNull($context.arguments.limit, 100),
+    "nextToken" : $util.toJson($util.defaultIfNullOrBlank($context.arguments.nextToken, null)),
+    "select" : "ALL_ATTRIBUTES",
+}

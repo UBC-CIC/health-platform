@@ -2,6 +2,6 @@
   "version": "2018-05-29",
   "operation": "GetItem",
   "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
-  "meeting_id": $util.dynamodb.toDynamoDBJson($ctx.args.meetingId)
+  "event_id": $util.dynamodb.toDynamoDBJson($ctx.args.eventId)
 } #end
 }

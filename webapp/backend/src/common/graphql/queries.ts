@@ -43,13 +43,13 @@ export const listEventDetails = /* GraphQL */ `
     }
   }
 `;
-export const getEventDetailsByStatus = /* GraphQL */ `
-  query GetEventDetailsByStatus(
+export const getEventDetailsByUser = /* GraphQL */ `
+  query GetEventDetailsByUser(
     $userId: String!
     $limit: Int
     $nextToken: String
   ) {
-    getEventDetailsByStatus(
+    getEventDetailsByUser(
       userId: $userId
       limit: $limit
       nextToken: $nextToken
@@ -67,15 +67,15 @@ export const getEventDetailsByStatus = /* GraphQL */ `
     }
   }
 `;
-export const getEventDetailsByStatusAndCreateTime = /* GraphQL */ `
-  query GetEventDetailsByStatusAndCreateTime(
+export const getEventDetailsByUserAndCreateTime = /* GraphQL */ `
+  query GetEventDetailsByUserAndCreateTime(
     $userId: String!
     $startTime: String!
     $endTime: String!
     $limit: Int
     $nextToken: String
   ) {
-    getEventDetailsByStatusAndCreateTime(
+    getEventDetailsByUserAndCreateTime(
       userId: $userId
       startTime: $startTime
       endTime: $endTime

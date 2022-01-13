@@ -6,8 +6,8 @@
       $util.qr($condition.expressionNames.put("#keyCondition$velocityCount", "$entry.key"))
     #end
   #else
-    $util.qr($condition.put("expression", "$condition.expression AND attribute_exists(#meeting_id)"))
-    $util.qr($condition.expressionNames.put("#meeting_id", "meeting_id"))
+    $util.qr($condition.put("expression", "$condition.expression AND attribute_exists(#event_id)"))
+    $util.qr($condition.expressionNames.put("#event_id", "event_id"))
   #end
 #else
   #if( $modelObjectKey )
@@ -26,9 +26,9 @@
     #end
   #else
     #set( $condition = {
-  "expression": "attribute_exists(#meeting_id)",
+  "expression": "attribute_exists(#event_id)",
   "expressionNames": {
-      "#meeting_id": "meeting_id"
+      "#event_id": "event_id"
   },
   "expressionValues": {}
 } )
@@ -36,7 +36,7 @@
 #end
 ## Automatically set the updatedAt timestamp. **
 $util.qr($context.args.input.put("updatedAt", $util.defaultIfNull($ctx.args.input.updatedAt, $util.time.nowISO8601())))
-$util.qr($context.args.input.put("__typename", "MeetingDetail"))
+$util.qr($context.args.input.put("__typename", "EventDetail"))
 ## Update condition if type is @versioned **
 #if( $versionedCondition )
   $util.qr($condition.put("expression", "($condition.expression) AND $versionedCondition.expression"))
@@ -66,7 +66,7 @@ $util.qr($context.args.input.put("__typename", "MeetingDetail"))
     $util.qr($keyFields.add("$entry.key"))
   #end
 #else
-  #set( $keyFields = ["meeting_id"] )
+  #set( $keyFields = ["event_id"] )
 #end
 #foreach( $entry in $util.map.copyAndRemoveAllKeys($context.args.input, $keyFields).entrySet() )
   #if( !$util.isNull($dynamodbNameOverrideMap) && $dynamodbNameOverrideMap.containsKey("$entry.key") )
@@ -123,8 +123,8 @@ $util.qr($update.put("expression", "$expression"))
   "version": "2018-05-29",
   "operation": "UpdateItem",
   "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
-  "meeting_id": {
-      "S": $util.toJson($context.args.input.meeting_id)
+  "event_id": {
+      "S": $util.toJson($context.args.input.event_id)
   }
 } #end,
   "update": $util.toJson($update),
