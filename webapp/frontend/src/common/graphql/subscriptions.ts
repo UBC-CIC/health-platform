@@ -5,6 +5,7 @@
 export const onCreateEventDetail = /* GraphQL */ `
   subscription OnCreateEventDetail {
     onCreateEventDetail {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -18,6 +19,7 @@ export const onCreateEventDetail = /* GraphQL */ `
 export const onUpdateEventDetail = /* GraphQL */ `
   subscription OnUpdateEventDetail {
     onUpdateEventDetail {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -31,6 +33,7 @@ export const onUpdateEventDetail = /* GraphQL */ `
 export const onDeleteEventDetail = /* GraphQL */ `
   subscription OnDeleteEventDetail {
     onDeleteEventDetail {
+      event_id
       user_id
       start_date_time
       end_date_time

@@ -16,6 +16,7 @@ import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import React from "react";
+import EventCreate from "./EventCreate";
 import "./sidebar.css";
 
 const DRAWER_WIDTH = 300;
@@ -84,6 +85,14 @@ export const Sidebar = () => {
             <TextField fullWidth label="Event Search" id="eventSearch" />
           </FormControl>
         </Box>
+              <Box sx={{ mb: 3 }}>
+                    <FormControl fullWidth>
+                        <div>
+                            <EventCreate user_id="abc" disabled="true"
+                        />
+                        </div>
+                    </FormControl>
+                </Box>
         <hr />
         <FormGroup>
           <FormControlLabel

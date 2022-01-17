@@ -13,6 +13,7 @@ export const query = /* GraphQL */ `
 export const getEventDetail = /* GraphQL */ `
   query GetEventDetail($eventId: String!) {
     getEventDetail(eventId: $eventId) {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -31,6 +32,7 @@ export const listEventDetails = /* GraphQL */ `
   ) {
     listEventDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
+        event_id
         user_id
         start_date_time
         end_date_time
@@ -55,6 +57,7 @@ export const getEventDetailsByUser = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
+        event_id
         user_id
         start_date_time
         end_date_time
@@ -83,6 +86,7 @@ export const getEventDetailsByUserAndCreateTime = /* GraphQL */ `
       nextToken: $nextToken
     ) {
       items {
+        event_id
         user_id
         start_date_time
         end_date_time

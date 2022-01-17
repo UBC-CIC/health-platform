@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
+import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
 
 
@@ -302,6 +303,14 @@ export const Sidebar = ({
                             <MenuItem value="max">Max</MenuItem>
                             <MenuItem value="min">Min</MenuItem>
                         </Select>
+                    </FormControl>
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                    <FormControl fullWidth>
+                        <div>
+                            <EventCreate user_id="abc" disabled="true"
+                        />
+                        </div>
                     </FormControl>
                 </Box>
                 <hr />

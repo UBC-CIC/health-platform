@@ -1,0 +1,25 @@
+# This is to generate GraphQL files for Frontend/Lambdas based on 'schema.graphql'.
+# Amplify codegen is used to generate GraphQL files out of schema.graphql.
+# We don't use other amplify cli at all.
+#
+# Usage :
+# cd health-platform/backend/src/common
+# amplify codegen types
+# amplify codegen statements (This generates graphql file.)
+# To generate statements in typescript run command
+# amplify-graphql-docs-generator --schema graphql/schema.graphql --output ./graphql --language typescript --separateFiles --maxDepth 10
+projects:
+  AmplifyHealthPlatformAdmin:
+    schemaPath: /graphql/schema.graphql
+    includes:
+      - ../common/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: types/API.ts
+        docsFilePath: ./graphql
+extensions:
+  amplify:
+    version: 3

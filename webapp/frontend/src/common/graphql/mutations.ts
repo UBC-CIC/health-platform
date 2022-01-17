@@ -8,6 +8,7 @@ export const createEventDetail = /* GraphQL */ `
     $condition: ModelEventDetailConditionInput
   ) {
     createEventDetail(input: $input, condition: $condition) {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -24,6 +25,7 @@ export const updateEventDetail = /* GraphQL */ `
     $condition: ModelEventDetailConditionInput
   ) {
     updateEventDetail(input: $input, condition: $condition) {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -40,6 +42,7 @@ export const deleteEventDetail = /* GraphQL */ `
     $condition: ModelEventDetailConditionInput
   ) {
     deleteEventDetail(input: $input, condition: $condition) {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -53,6 +56,7 @@ export const deleteEventDetail = /* GraphQL */ `
 export const publishNewEventDetail = /* GraphQL */ `
   mutation PublishNewEventDetail($input: EventDetailInput!) {
     publishNewEventDetail(input: $input) {
+      event_id
       user_id
       start_date_time
       end_date_time
@@ -66,6 +70,7 @@ export const publishNewEventDetail = /* GraphQL */ `
 export const publishEventDetailUpdates = /* GraphQL */ `
   mutation PublishEventDetailUpdates($input: EventDetailInput!) {
     publishEventDetailUpdates(input: $input) {
+      event_id
       user_id
       start_date_time
       end_date_time

@@ -3,6 +3,7 @@
 //  This file was automatically generated and should not be edited.
 
 export type EventDetailInput = {
+  event_id: string,
   user_id: string,
   start_date_time?: string | null,
   end_date_time?: string | null,
@@ -13,6 +14,7 @@ export type EventDetailInput = {
 };
 
 export type ModelEventDetailConditionInput = {
+  event_id: string,
   user_id?: ModelStringInput | null,
   start_date_time?: string | null,
   end_date_time?: string | null,
@@ -40,6 +42,7 @@ export type ModelStringInput = {
 
 export type EventDetail = {
   __typename: "EventDetail",
+  event_id: string,
   user_id: string,
   start_date_time?: string | null,
   end_date_time?: string | null,
@@ -87,6 +90,7 @@ export type CreateEventDetailMutationVariables = {
 export type CreateEventDetailMutation = {
   createEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -105,6 +109,7 @@ export type UpdateEventDetailMutationVariables = {
 export type UpdateEventDetailMutation = {
   updateEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -123,6 +128,7 @@ export type DeleteEventDetailMutationVariables = {
 export type DeleteEventDetailMutation = {
   deleteEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -140,6 +146,7 @@ export type PublishNewEventDetailMutationVariables = {
 export type PublishNewEventDetailMutation = {
   publishNewEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -157,6 +164,7 @@ export type PublishEventDetailUpdatesMutationVariables = {
 export type PublishEventDetailUpdatesMutation = {
   publishEventDetailUpdates?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -186,6 +194,7 @@ export type GetEventDetailQueryVariables = {
 export type GetEventDetailQuery = {
   getEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -207,6 +216,7 @@ export type ListEventDetailsQuery = {
     __typename: "EventDetailConnection",
     items?:  Array< {
       __typename: "EventDetail",
+      event_id: string,
       user_id: string,
       start_date_time?: string | null,
       end_date_time?: string | null,
@@ -230,6 +240,7 @@ export type GetEventDetailsByUserQuery = {
     __typename: "EventDetailConnection",
     items?:  Array< {
       __typename: "EventDetail",
+      event_id: string,
       user_id: string,
       start_date_time?: string | null,
       end_date_time?: string | null,
@@ -255,6 +266,7 @@ export type GetEventDetailsByUserAndCreateTimeQuery = {
     __typename: "EventDetailConnection",
     items?:  Array< {
       __typename: "EventDetail",
+      event_id: string,
       user_id: string,
       start_date_time?: string | null,
       end_date_time?: string | null,
@@ -270,6 +282,7 @@ export type GetEventDetailsByUserAndCreateTimeQuery = {
 export type OnCreateEventDetailSubscription = {
   onCreateEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -283,6 +296,7 @@ export type OnCreateEventDetailSubscription = {
 export type OnUpdateEventDetailSubscription = {
   onUpdateEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
@@ -296,6 +310,7 @@ export type OnUpdateEventDetailSubscription = {
 export type OnDeleteEventDetailSubscription = {
   onDeleteEventDetail?:  {
     __typename: "EventDetail",
+    event_id: string,
     user_id: string,
     start_date_time?: string | null,
     end_date_time?: string | null,
