@@ -2,82 +2,77 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const createMeetingDetail = /* GraphQL */ `
-  mutation CreateMeetingDetail(
-    $input: MeetingDetailInput
-    $condition: ModelMeetingDetailConditionInput
+export const createEventDetail = /* GraphQL */ `
+  mutation CreateEventDetail(
+    $input: EventDetailInput
+    $condition: ModelEventDetailConditionInput
   ) {
-    createMeetingDetail(input: $input, condition: $condition) {
-      meeting_id
-      create_date_time
+    createEventDetail(input: $input, condition: $condition) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;
-export const updateMeetingDetail = /* GraphQL */ `
-  mutation UpdateMeetingDetail(
-    $input: MeetingDetailInput
-    $condition: ModelMeetingDetailConditionInput
+export const updateEventDetail = /* GraphQL */ `
+  mutation UpdateEventDetail(
+    $input: EventDetailInput
+    $condition: ModelEventDetailConditionInput
   ) {
-    updateMeetingDetail(input: $input, condition: $condition) {
-      meeting_id
-      create_date_time
+    updateEventDetail(input: $input, condition: $condition) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;
-export const deleteMeetingDetail = /* GraphQL */ `
-  mutation DeleteMeetingDetail(
-    $input: MeetingDetailInput
-    $condition: ModelMeetingDetailConditionInput
+export const deleteEventDetail = /* GraphQL */ `
+  mutation DeleteEventDetail(
+    $input: EventDetailInput
+    $condition: ModelEventDetailConditionInput
   ) {
-    deleteMeetingDetail(input: $input, condition: $condition) {
-      meeting_id
-      create_date_time
+    deleteEventDetail(input: $input, condition: $condition) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;
-export const publishNewMeetingDetail = /* GraphQL */ `
-  mutation PublishNewMeetingDetail($input: MeetingDetailInput!) {
-    publishNewMeetingDetail(input: $input) {
-      meeting_id
-      create_date_time
+export const publishNewEventDetail = /* GraphQL */ `
+  mutation PublishNewEventDetail($input: EventDetailInput!) {
+    publishNewEventDetail(input: $input) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;
-export const publishMeetingDetailUpdates = /* GraphQL */ `
-  mutation PublishMeetingDetailUpdates($input: MeetingDetailInput!) {
-    publishMeetingDetailUpdates(input: $input) {
-      meeting_id
-      create_date_time
+export const publishEventDetailUpdates = /* GraphQL */ `
+  mutation PublishEventDetailUpdates($input: EventDetailInput!) {
+    publishEventDetailUpdates(input: $input) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;

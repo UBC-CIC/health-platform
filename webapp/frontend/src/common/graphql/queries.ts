@@ -10,90 +10,86 @@ export const query = /* GraphQL */ `
     }
   }
 `;
-export const getMeetingDetail = /* GraphQL */ `
-  query GetMeetingDetail($meetingId: String!) {
-    getMeetingDetail(meetingId: $meetingId) {
-      meeting_id
-      create_date_time
+export const getEventDetail = /* GraphQL */ `
+  query GetEventDetail($eventId: String!) {
+    getEventDetail(eventId: $eventId) {
+      user_id
+      start_date_time
       end_date_time
-      call_id
-      external_meeting_id
-      meeting_status
-      meeting_title
-      meeting_comments
+      medication
+      mood
+      food
+      notes
     }
   }
 `;
-export const listMeetingDetails = /* GraphQL */ `
-  query ListMeetingDetails(
-    $filter: ModelMeetingDetailFilterInput
+export const listEventDetails = /* GraphQL */ `
+  query ListEventDetails(
+    $filter: ModelEventDetailFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listMeetingDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listEventDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
-        meeting_id
-        create_date_time
+        user_id
+        start_date_time
         end_date_time
-        call_id
-        external_meeting_id
-        meeting_status
-        meeting_title
-        meeting_comments
+        medication
+        mood
+        food
+        notes
       }
       nextToken
     }
   }
 `;
-export const getMeetingDetailsByStatus = /* GraphQL */ `
-  query GetMeetingDetailsByStatus(
-    $meetingStatus: String!
+export const getEventDetailsByUser = /* GraphQL */ `
+  query GetEventDetailsByUser(
+    $userId: String!
     $limit: Int
     $nextToken: String
   ) {
-    getMeetingDetailsByStatus(
-      meetingStatus: $meetingStatus
+    getEventDetailsByUser(
+      userId: $userId
       limit: $limit
       nextToken: $nextToken
     ) {
       items {
-        meeting_id
-        create_date_time
+        user_id
+        start_date_time
         end_date_time
-        call_id
-        external_meeting_id
-        meeting_status
-        meeting_title
-        meeting_comments
+        medication
+        mood
+        food
+        notes
       }
       nextToken
     }
   }
 `;
-export const getMeetingDetailsByStatusAndCreateTime = /* GraphQL */ `
-  query GetMeetingDetailsByStatusAndCreateTime(
-    $meetingStatus: String!
+export const getEventDetailsByUserAndCreateTime = /* GraphQL */ `
+  query GetEventDetailsByUserAndCreateTime(
+    $userId: String!
     $startTime: String!
     $endTime: String!
     $limit: Int
     $nextToken: String
   ) {
-    getMeetingDetailsByStatusAndCreateTime(
-      meetingStatus: $meetingStatus
+    getEventDetailsByUserAndCreateTime(
+      userId: $userId
       startTime: $startTime
       endTime: $endTime
       limit: $limit
       nextToken: $nextToken
     ) {
       items {
-        meeting_id
-        create_date_time
+        user_id
+        start_date_time
         end_date_time
-        call_id
-        external_meeting_id
-        meeting_status
-        meeting_title
-        meeting_comments
+        medication
+        mood
+        food
+        notes
       }
       nextToken
     }

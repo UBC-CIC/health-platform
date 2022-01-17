@@ -2,3 +2,7 @@
 .sidebar .date-time-picker-wrapper > div {
     width: 267px;
 }
+
+.sidebar .outlined-input-relative > div {
+    padding-right: 0px;
+}

@@ -43,6 +43,7 @@ cdk deploy HealthPlatformDynamoStack  --profile health-platform
 cdk deploy HealthPlatformLambdaStack  --profile health-platform
 cdk deploy HealthPlatformCognitoStack --profile health-platform
 cdk deploy HealthPlatformAppSyncStack --profile health-platform
+cdk deploy HealthPlatformIotStack --profile health-platform
 ```
 
 ### Set Up Amazon Simple Email Service

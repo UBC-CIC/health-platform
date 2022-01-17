@@ -18,17 +18,21 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "@aws-cdk/aws-apigateway": "^1.137.0",
-    "@aws-cdk/aws-appsync": "^1.137.0",
-    "@aws-cdk/aws-cognito": "^1.137.0",
-    "@aws-cdk/aws-dynamodb": "^1.137.0",
-    "@aws-cdk/aws-events-targets": "^1.137.0",
-    "@aws-cdk/aws-lambda": "^1.137.0",
-    "@aws-cdk/aws-lambda-event-sources": "^1.137.0",
-    "@aws-cdk/aws-lambda-python": "^1.94.1",
-    "@aws-cdk/aws-s3": "^1.137.0",
-    "@aws-cdk/aws-s3-deployment": "^1.137.0",
-    "@aws-cdk/core": "^1.137.0",
-    "aws-sdk": "^2.1048.0"
+    "@aws-cdk/aws-apigateway": "1.137.0",
+    "@aws-cdk/aws-appsync": "1.137.0",
+    "@aws-cdk/aws-cognito": "1.137.0",
+    "@aws-cdk/aws-dynamodb": "1.137.0",
+    "@aws-cdk/aws-events-targets": "1.137.0",
+    "@aws-cdk/aws-kinesisfirehose": "1.137.0",
+    "@aws-cdk/aws-glue": "1.137.0",
+    "@aws-cdk/aws-iot": "1.137.0",
+    "@aws-cdk/aws-iot-actions": "1.137.0",
+    "@aws-cdk/aws-lambda": "1.137.0",
+    "@aws-cdk/aws-lambda-event-sources": "1.137.0",
+    "@aws-cdk/aws-lambda-python": "1.94.1",
+    "@aws-cdk/aws-s3": "1.137.0",
+    "@aws-cdk/aws-s3-deployment": "1.137.0",
+    "@aws-cdk/core": "1.137.0",
+    "aws-sdk": "2.1048.0"
   }
 }

@@ -2,29 +2,27 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type MeetingDetailInput = {
-  meeting_id: string,
-  create_date_time?: string | null,
+export type EventDetailInput = {
+  user_id: string,
+  start_date_time?: string | null,
   end_date_time?: string | null,
-  call_id?: string | null,
-  external_meeting_id?: string | null,
-  meeting_status?: string | null,
-  meeting_title?: string | null,
-  meeting_comments?: string | null,
+  medication?: string | null,
+  mood?: string | null,
+  food?: string | null,
+  notes?: string | null,
 };
 
-export type ModelMeetingDetailConditionInput = {
-  attendees?: ModelStringInput | null,
-  create_date_time?: ModelStringInput | null,
+export type ModelEventDetailConditionInput = {
+  user_id?: ModelStringInput | null,
+  start_date_time?: string | null,
   end_date_time?: string | null,
-  call_id?: ModelStringInput | null,
-  external_meeting_id?: ModelStringInput | null,
-  meeting_status?: ModelStringInput | null,
-  meeting_title?: ModelStringInput | null,
-  meeting_comments?: ModelStringInput | null,
-  and?: Array< ModelMeetingDetailConditionInput | null > | null,
-  or?: Array< ModelMeetingDetailConditionInput | null > | null,
-  not?: ModelMeetingDetailConditionInput | null,
+  medication?: string | null,
+  mood?: string | null,
+  food?: string | null,
+  notes?: string | null,
+  and?: Array< ModelEventDetailConditionInput | null > | null,
+  or?: Array< ModelEventDetailConditionInput | null > | null,
+  not?: ModelEventDetailConditionInput | null,
 };
 
 export type ModelStringInput = {
@@ -40,262 +38,270 @@ export type ModelStringInput = {
   beginsWith?: string | null,
 };
 
-export type MeetingDetail = {
-  __typename: "MeetingDetail",
-  meeting_id?: string,
-  create_date_time?: string | null,
+export type EventDetail = {
+  __typename: "EventDetail",
+  user_id: string,
+  start_date_time?: string | null,
   end_date_time?: string | null,
-  call_id?: string | null,
-  external_meeting_id?: string | null,
-  meeting_status?: string | null,
-  meeting_title?: string | null,
-  meeting_comments?: string | null,
+  medication?: string | null,
+  mood?: string | null,
+  food?: string | null,
+  notes?: string | null,
 };
 
-export type ModelMeetingDetailFilterInput = {
-  meeting_id?: ModelStringInput | null,
-  attendees?: ModelStringInput | null,
-  create_date_time?: ModelStringInput | null,
+export type QueryRequest = {
+  start?: string | null,
+  end?: string | null,
+};
+
+export type QueryResponse = {
+  __typename: "QueryResponse",
+  timestamp?: Array< number | null > | null,
+  heartrate?: Array< number | null > | null,
+};
+
+export type ModelEventDetailFilterInput = {
+  event_id?: ModelStringInput | null,
+  start_date_time?: string | null,
   end_date_time?: string | null,
-  call_id?: ModelStringInput | null,
-  external_meeting_id?: ModelStringInput | null,
-  meeting_status?: ModelStringInput | null,
-  meeting_title?: ModelStringInput | null,
-  meeting_comments?: ModelStringInput | null,
-  and?: Array< ModelMeetingDetailFilterInput | null > | null,
-  or?: Array< ModelMeetingDetailFilterInput | null > | null,
-  not?: ModelMeetingDetailFilterInput | null,
+  medication?: string | null,
+  mood?: string | null,
+  food?: string | null,
+  notes?: string | null,
+  and?: Array< ModelEventDetailFilterInput | null > | null,
+  or?: Array< ModelEventDetailFilterInput | null > | null,
+  not?: ModelEventDetailFilterInput | null,
 };
 
-export type MeetingDetailConnection = {
-  __typename: "MeetingDetailConnection",
-  items?:  Array<MeetingDetail | null > | null,
+export type EventDetailConnection = {
+  __typename: "EventDetailConnection",
+  items?:  Array<EventDetail | null > | null,
   nextToken?: string | null,
 };
 
-export type CreateMeetingDetailMutationVariables = {
-  input?: MeetingDetailInput | null,
-  condition?: ModelMeetingDetailConditionInput | null,
+export type CreateEventDetailMutationVariables = {
+  input?: EventDetailInput | null,
+  condition?: ModelEventDetailConditionInput | null,
 };
 
-export type CreateMeetingDetailMutation = {
-  createMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type CreateEventDetailMutation = {
+  createEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type UpdateMeetingDetailMutationVariables = {
-  input?: MeetingDetailInput | null,
-  condition?: ModelMeetingDetailConditionInput | null,
+export type UpdateEventDetailMutationVariables = {
+  input?: EventDetailInput | null,
+  condition?: ModelEventDetailConditionInput | null,
 };
 
-export type UpdateMeetingDetailMutation = {
-  updateMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type UpdateEventDetailMutation = {
+  updateEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type DeleteMeetingDetailMutationVariables = {
-  input?: MeetingDetailInput | null,
-  condition?: ModelMeetingDetailConditionInput | null,
+export type DeleteEventDetailMutationVariables = {
+  input?: EventDetailInput | null,
+  condition?: ModelEventDetailConditionInput | null,
 };
 
-export type DeleteMeetingDetailMutation = {
-  deleteMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type DeleteEventDetailMutation = {
+  deleteEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type PublishNewMeetingDetailMutationVariables = {
-  input?: MeetingDetailInput,
+export type PublishNewEventDetailMutationVariables = {
+  input: EventDetailInput,
 };
 
-export type PublishNewMeetingDetailMutation = {
-  publishNewMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type PublishNewEventDetailMutation = {
+  publishNewEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type PublishMeetingDetailUpdatesMutationVariables = {
-  input?: MeetingDetailInput,
+export type PublishEventDetailUpdatesMutationVariables = {
+  input: EventDetailInput,
 };
 
-export type PublishMeetingDetailUpdatesMutation = {
-  publishMeetingDetailUpdates?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type PublishEventDetailUpdatesMutation = {
+  publishEventDetailUpdates?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type GetMeetingDetailQueryVariables = {
-  meetingId?: string,
+export type QueryQueryVariables = {
+  input?: QueryRequest | null,
 };
 
-export type GetMeetingDetailQuery = {
-  getMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
-    end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+export type QueryQuery = {
+  query?:  {
+    __typename: "QueryResponse",
+    timestamp?: Array< number | null > | null,
+    heartrate?: Array< number | null > | null,
   } | null,
 };
 
-export type ListMeetingDetailsQueryVariables = {
-  filter?: ModelMeetingDetailFilterInput | null,
+export type GetEventDetailQueryVariables = {
+  eventId: string,
+};
+
+export type GetEventDetailQuery = {
+  getEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
+    end_date_time?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
+  } | null,
+};
+
+export type ListEventDetailsQueryVariables = {
+  filter?: ModelEventDetailFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListMeetingDetailsQuery = {
-  listMeetingDetails?:  {
-    __typename: "MeetingDetailConnection",
+export type ListEventDetailsQuery = {
+  listEventDetails?:  {
+    __typename: "EventDetailConnection",
     items?:  Array< {
-      __typename: "MeetingDetail",
-      meeting_id: string,
-      create_date_time?: string | null,
+      __typename: "EventDetail",
+      user_id: string,
+      start_date_time?: string | null,
       end_date_time?: string | null,
-      call_id?: string | null,
-      external_meeting_id?: string | null,
-      meeting_status?: string | null,
-      meeting_title?: string | null,
-      meeting_comments?: string | null,
+      medication?: string | null,
+      mood?: string | null,
+      food?: string | null,
+      notes?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
 };
 
-export type GetMeetingDetailsByStatusQueryVariables = {
-  meetingStatus?: string,
+export type GetEventDetailsByUserQueryVariables = {
+  userId: string,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type GetMeetingDetailsByStatusQuery = {
-  getMeetingDetailsByStatus?:  {
-    __typename: "MeetingDetailConnection",
+export type GetEventDetailsByUserQuery = {
+  getEventDetailsByUser?:  {
+    __typename: "EventDetailConnection",
     items?:  Array< {
-      __typename: "MeetingDetail",
-      meeting_id: string,
-      create_date_time?: string | null,
+      __typename: "EventDetail",
+      user_id: string,
+      start_date_time?: string | null,
       end_date_time?: string | null,
-      call_id?: string | null,
-      external_meeting_id?: string | null,
-      meeting_status?: string | null,
-      meeting_title?: string | null,
-      meeting_comments?: string | null,
+      medication?: string | null,
+      mood?: string | null,
+      food?: string | null,
+      notes?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
 };
 
-export type GetMeetingDetailsByStatusAndCreateTimeQueryVariables = {
-  meetingStatus?: string,
-  startTime?: string,
-  endTime?: string,
+export type GetEventDetailsByUserAndCreateTimeQueryVariables = {
+  userId: string,
+  startTime: string,
+  endTime: string,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type GetMeetingDetailsByStatusAndCreateTimeQuery = {
-  getMeetingDetailsByStatusAndCreateTime?:  {
-    __typename: "MeetingDetailConnection",
+export type GetEventDetailsByUserAndCreateTimeQuery = {
+  getEventDetailsByUserAndCreateTime?:  {
+    __typename: "EventDetailConnection",
     items?:  Array< {
-      __typename: "MeetingDetail",
-      meeting_id: string,
-      create_date_time?: string | null,
+      __typename: "EventDetail",
+      user_id: string,
+      start_date_time?: string | null,
       end_date_time?: string | null,
-      call_id?: string | null,
-      external_meeting_id?: string | null,
-      meeting_status?: string | null,
-      meeting_title?: string | null,
-      meeting_comments?: string | null,
+      medication?: string | null,
+      mood?: string | null,
+      food?: string | null,
+      notes?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
 };
 
-export type OnCreateMeetingDetailSubscription = {
-  onCreateMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type OnCreateEventDetailSubscription = {
+  onCreateEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type OnUpdateMeetingDetailSubscription = {
-  onUpdateMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type OnUpdateEventDetailSubscription = {
+  onUpdateEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
 
-export type OnDeleteMeetingDetailSubscription = {
-  onDeleteMeetingDetail?:  {
-    __typename: "MeetingDetail",
-    meeting_id: string,
-    create_date_time?: string | null,
+export type OnDeleteEventDetailSubscription = {
+  onDeleteEventDetail?:  {
+    __typename: "EventDetail",
+    user_id: string,
+    start_date_time?: string | null,
     end_date_time?: string | null,
-    call_id?: string | null,
-    external_meeting_id?: string | null,
-    meeting_status?: string | null,
-    meeting_title?: string | null,
-    meeting_comments?: string | null,
+    medication?: string | null,
+    mood?: string | null,
+    food?: string | null,
+    notes?: string | null,
   } | null,
 };
