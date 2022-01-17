@@ -27,11 +27,14 @@ const config = {
 Amplify.configure(config)
 
 ReactDOM.render(
-  <React.StrictMode>
+//   <React.StrictMode>
+//     <UserProvider>
+//       <App />
+//     </UserProvider>
+//   </React.StrictMode>,
     <UserProvider>
       <App />
-    </UserProvider>
-  </React.StrictMode>,
+    </UserProvider>,
   document.getElementById('root')
 );
 

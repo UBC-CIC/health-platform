@@ -16,7 +16,7 @@ import { Line } from 'react-chartjs-2';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
 import moment from 'moment';
-import { PhaseChart } from './EventTimelineChart';
+import { EventTimelineChart } from './EventTimelineChart';
 import { query } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { UserContext } from '../../context/UserContext';
@@ -39,6 +39,12 @@ ChartJS.register(
 );
 
 export const Dashboard = () => {
+    
+    const [timeBoundaries, setTimeBoundaries] = React.useState<any>({
+        start: "2021-08-18T21:11:54Z",
+        end: "2021-10-18T21:11:54Z",
+    });
+
     const [hrData, setHrData] = useState<any>({
         labels: [],
         datasets: [],
@@ -70,10 +76,10 @@ export const Dashboard = () => {
                     backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 }];
 
-                setHrData({
-                    labels: timestamps,
-                    datasets: datasets,
-                });
+                // setHrData({
+                //     labels: timestamps,
+                //     datasets: datasets,
+                // });
             } catch (e) {
                 console.log('callQueryRequest errors:', e);
             }
@@ -155,7 +161,10 @@ export const Dashboard = () => {
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
-            <Sidebar />
+            <Sidebar 
+                timeBoundaries={timeBoundaries}
+                setTimeBoundaries={setTimeBoundaries}
+            />
 
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
@@ -165,7 +174,12 @@ export const Dashboard = () => {
                             <Typography variant="h6" gutterBottom component="div">
                                 Event Timeline
                             </Typography>
-                            <PhaseChart />
+                            {timeBoundaries.start &&
+                                <EventTimelineChart
+                                    startDate={timeBoundaries.start}
+                                    endDate={timeBoundaries.end}
+                                />
+                            }
                         </CardContent>
                     </Card>
                 </Box>

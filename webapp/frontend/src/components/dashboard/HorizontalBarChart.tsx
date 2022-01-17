@@ -1,14 +1,14 @@
 import { Chart, ChartConfiguration, ChartData, TimeScale } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { format, addDays } from "date-fns";
+import { format, addDays, addSeconds, differenceInSeconds } from "date-fns";
 import { useRef } from "react";
 import { BarChart } from "./BarChart";
 import { DrawChartPlugin } from "./DrawChartPlugin";
 import { ThemeColor } from "./types";
 
-type HorizontalBarChartProps = { data: ChartData<"bar">; refDate: Date };
+type HorizontalBarChartProps = { data: ChartData<"bar">; startDate: string; endDate: string; };
 
-export function HorizontalBarChart({ data, refDate }: HorizontalBarChartProps) {
+export function HorizontalBarChart({ data, startDate, endDate }: HorizontalBarChartProps) {
     const chartRef = useRef<HTMLCanvasElement>(null)
     console.log(data);
     return (
@@ -17,6 +17,7 @@ export function HorizontalBarChart({ data, refDate }: HorizontalBarChartProps) {
             height={25}
             // @ts-ignore
             config={
+                // @ts-ignore
                 {
                     data,
                     options: {
@@ -50,11 +51,19 @@ export function HorizontalBarChart({ data, refDate }: HorizontalBarChartProps) {
                                     drawTicks: false
                                 },
                                 ticks: {
-                                    callback: (val: number) => format(addDays(refDate, val), "P"),
+                                    callback: (val: number) => {
+                                        return format(addSeconds(new Date(startDate), val), "P")
+                                    },
                                     color: ThemeColor.Brand,
                                     font: { weight: "bold" },
-                                    padding: 5
-                                }
+                                    padding: 5,
+                                    maxRotation: 0,
+                                },
+                                // type: "time",
+                                // min: '2021-01-08T00:00:00Z',
+                                // max: '2021-08-08T23:59:59Z',
+                                min: 0,
+                                max: differenceInSeconds(new Date(endDate), new Date(startDate)),
                             },
                             y: {
                                 stacked: true,

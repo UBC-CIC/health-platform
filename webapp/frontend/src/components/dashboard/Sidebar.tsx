@@ -10,7 +10,14 @@ import "./sidebar.css";
 
 const DRAWER_WIDTH = 300;
 
-export const Sidebar = () => {
+type SidebarProps = {
+    timeBoundaries: any;
+    setTimeBoundaries: any;
+};
+
+export const Sidebar = ({
+    timeBoundaries, setTimeBoundaries,
+}: SidebarProps) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [timeType, setTimeType] = React.useState('absolute');
     const [period, setPeriod] = React.useState('1h');
@@ -24,8 +31,8 @@ export const Sidebar = () => {
         "scale": "h",
         "value": "0",
     });
-    const [start, setStart] = React.useState("2021-08-18T21:11:54");
-    const [end, setEnd] = React.useState("2021-10-18T21:11:54");
+    const [start, setStart] = React.useState(timeBoundaries.start);
+    const [end, setEnd] = React.useState(timeBoundaries.end);
     const [showOverlay, setShowOverlay] = React.useState(false);
 
     const handleTimeChange = (event: any) => {
