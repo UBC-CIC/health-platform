@@ -20,6 +20,7 @@ import { EventTimelineChart } from './EventTimelineChart';
 import { query } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { UserContext } from '../../context/UserContext';
+import { AppAuthStateProps } from '../../types/propTypes';
 
 
 
@@ -38,7 +39,7 @@ ChartJS.register(
     annotationPlugin
 );
 
-export const Dashboard = () => {
+export const Dashboard = (props: { userName: any}) => {
     
     const [timeBoundaries, setTimeBoundaries] = React.useState<any>({
         start: "2021-08-18T21:11:54Z",
@@ -164,6 +165,7 @@ export const Dashboard = () => {
             <Sidebar 
                 timeBoundaries={timeBoundaries}
                 setTimeBoundaries={setTimeBoundaries}
+                userName={props.userName}
             />
 
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

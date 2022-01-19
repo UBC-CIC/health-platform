@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { styled, Box } from "@mui/system";
+import { Box } from "@mui/system";
 import {
   Dialog,
   DialogActions,
@@ -9,14 +9,13 @@ import {
   TextField,
   Button,
 } from "@mui/material";
-import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { API, graphqlOperation } from "aws-amplify";
-import { getEventDetail } from "../../common/graphql/queries";
+import { API } from "aws-amplify";
 import { createEventDetail } from "../../common/graphql/mutations";
+import { EventDetailInput } from "../../common/types/API";
+const { v4: uuidv4 } = require('uuid');
 
 
-export const EventCreate = (props: { user_id: String; disabled: any }) => {
+export const EventCreate = (props: { userName: string; disabled: any }) => {
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const handleOpen = () => setOpen(true);
@@ -31,31 +30,26 @@ export const EventCreate = (props: { user_id: String; disabled: any }) => {
   const handleCreateRequest = async () => {
     setOpen(true);
 
-    console.log("hahahahaha");
     console.log(start, end, medication, mood, food, notes);
-    
+
+    const eventDetail: EventDetailInput = {
+      event_id: uuidv4(),
+      user_id: props.userName,
+      start_date_time: start,
+      end_date_time: end,
+      medication: medication,
+      mood: mood,
+      food: food,
+      notes: notes
+    };
+    console.log("createEventDetail request:", eventDetail);
 
     try {
       const response: any = await API.graphql({
         query: createEventDetail,
-        variables: {
-          event_id: "yuanbian",
-          user_id: "yuanbian",
-          start_date_time: "2022-01-01 12:30",
-          end_date_time: "2022-01-01 12:40",
-          medication: medication,
-          mood: mood,
-          food: food,
-          notes: notes
-
-        },
+        variables: { input: eventDetail },
       });
       console.log("createEventDetail response:", response);
-
-      // const itemsReturned: Array<EventDetail> =
-      //   specialists["data"]["getSpecialistProfilesByStatus"]["items"];
-      // console.log("getMeetingDetailsByStatus meetings:", itemsReturned);
-      // updateItems(itemsReturned);
 
       setOpen(false);
     } catch (e) {
@@ -84,26 +78,24 @@ export const EventCreate = (props: { user_id: String; disabled: any }) => {
           >
             <div>
               <TextField
-                disabled
-                id="filled-disabled"
-                label="Start"
-                defaultValue="2022-01-03 12:30"
+                required
+                id="filled-required"
+                label="Start (yyyy-mm-dd hh:mm)"
                 variant="filled"
-                // value={start}
-                // onChange={(e) => {
-                //   setStart(e.target.value);
-                // }}
+                value={start}
+                onChange={(e) => {
+                  setStart(e.target.value);
+                }}
               />
               <TextField
-                disabled
-                id="filled-disabled"
-                label="End"
-                defaultValue="2022-01-03 12:40"
+                required
+                id="filled-required"
+                label="End (yyyy-mm-dd hh:mm)"
                 variant="filled"
-                // value={end}
-                // onChange={(e) => {
-                //   setEnd(e.target.value);
-                // }}
+                value={end}
+                onChange={(e) => {
+                  setEnd(e.target.value);
+                }}
               />
               <TextField
                 required

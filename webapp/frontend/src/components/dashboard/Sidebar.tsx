@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
+import { propTypes } from 'react-notification-system';
 import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
 
@@ -14,10 +15,11 @@ const DRAWER_WIDTH = 300;
 type SidebarProps = {
     timeBoundaries: any;
     setTimeBoundaries: any;
+    userName: string;
 };
 
 export const Sidebar = ({
-    timeBoundaries, setTimeBoundaries,
+    timeBoundaries, setTimeBoundaries, userName,
 }: SidebarProps) => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [timeType, setTimeType] = React.useState('absolute');
@@ -308,7 +310,7 @@ export const Sidebar = ({
                 <Box sx={{ mb: 3 }}>
                     <FormControl fullWidth>
                         <div>
-                            <EventCreate user_id="abc" disabled="true"
+                            <EventCreate userName={userName} disabled="true"
                         />
                         </div>
                     </FormControl>

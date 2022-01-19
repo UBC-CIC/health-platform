@@ -88,7 +88,7 @@ export const Sidebar = () => {
               <Box sx={{ mb: 3 }}>
                     <FormControl fullWidth>
                         <div>
-                            <EventCreate user_id="abc" disabled="true"
+                            <EventCreate userName="abc" disabled="true"
                         />
                         </div>
                     </FormControl>
