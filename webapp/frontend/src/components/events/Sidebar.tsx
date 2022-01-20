@@ -21,7 +21,7 @@ import "./sidebar.css";
 
 const DRAWER_WIDTH = 300;
 
-export const Sidebar = () => {
+export const Sidebar = (props: { userName: any}) => {
   const [value, setValue] = React.useState(new Date("2014-08-18T21:11:54"));
   const [alignment, setAlignment] = React.useState("absolute");
 
@@ -88,7 +88,7 @@ export const Sidebar = () => {
               <Box sx={{ mb: 3 }}>
                     <FormControl fullWidth>
                         <div>
-                            <EventCreate userName="abc" disabled="true"
+                            <EventCreate userName={props.userName} disabled="true"
                         />
                         </div>
                     </FormControl>
