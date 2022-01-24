@@ -221,6 +221,21 @@ export class HealthPlatformIotStack extends cdk.Stack {
             memorySize: 512,
             timeout: cdk.Duration.seconds(300), 
         });
+
+        new lambda.Function(this, 'GenerateDataFunction', {
+            functionName: "Generate-Data-Function",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'generate-data.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            environment: {
+                "DATA_TABLE_NAME": HealthPlatformDynamoStack.DATA_TABLE,
+                "SENSOR_MAPPING_TABLE_NAME": HealthPlatformDynamoStack.SENSOR_TABLE,
+                "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
+            },
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300), 
+        });
         
         let iotTopicRule = new TopicRule(this, 'IoTTopicRule', {
             topicRuleName: "TopicRulePayload",

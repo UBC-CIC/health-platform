@@ -192,7 +192,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="Start Time"
                                 value={start}
-                                onChange={(event: any) => setStart(event.target.value)}
+                                onChange={(value: any) => setStart(value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -200,7 +200,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="End Time"
                                 value={end}
-                                onChange={(event: any) => setEnd(event.target.value)}
+                                onChange={(value: any) => setEnd(value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -305,14 +305,6 @@ export const Sidebar = ({
                             <MenuItem value="max">Max</MenuItem>
                             <MenuItem value="min">Min</MenuItem>
                         </Select>
-                    </FormControl>
-                </Box>
-                <Box sx={{ mb: 3 }}>
-                    <FormControl fullWidth>
-                        <div>
-                            <EventCreate userName={userName} disabled="true"
-                        />
-                        </div>
                     </FormControl>
                 </Box>
                 <hr />

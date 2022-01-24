@@ -21,6 +21,9 @@ import { query } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { UserContext } from '../../context/UserContext';
 import { AppAuthStateProps } from '../../types/propTypes';
+import { CircularProgress, Grid, LinearProgress } from '@mui/material';
+import { ThemeColor } from './types';
+import EventCreate from '../events/EventCreate';
 
 
 
@@ -173,9 +176,18 @@ export const Dashboard = (props: { userName: any}) => {
                 <Box sx={{ mb: 3 }}>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
-                            <Typography variant="h6" gutterBottom component="div">
-                                Event Timeline
-                            </Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <Typography variant="h6" gutterBottom component="div">
+                                    Event Timeline
+                                </Typography>
+                                <EventCreate userName={props.userName} disabled="true" />
+                            </Box>
+
                             {timeBoundaries.start &&
                                 <EventTimelineChart
                                     startDate={timeBoundaries.start}
@@ -191,11 +203,18 @@ export const Dashboard = (props: { userName: any}) => {
                             <Typography variant="h6" gutterBottom component="div">
                                 Heart Rate
                             </Typography>
-                            <Line
-                                height={"60px"}
-                                options={optionsHr}
-                                data={hrData}
-                            />
+                            <Box
+                                style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
+                            >
+                                <CircularProgress size={12} color='inherit' />{' '}Loading...
+                            </Box> 
+                            {false &&
+                                <Line
+                                    height={"60px"}
+                                    options={optionsHr}
+                                    data={hrData}
+                                />
+                            }
                         </CardContent>
                     </Card>
                 </Box>
