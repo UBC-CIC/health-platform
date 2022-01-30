@@ -1,8 +1,12 @@
-import AWS = require('aws-sdk');
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { FirehoseClient, PutRecordCommand } from '@aws-sdk/client-firehose';
+import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
 import { MetricsData, MetricsDataDao } from './ddb/metrics-dao';
 import { SensorDao } from './ddb/sensor-dao';
-var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
-var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
+
+const client = new DynamoDBClient({});
+const ddb = DynamoDBDocument.from(client);
+var firehose = new FirehoseClient({});
 
 /**
  * {
@@ -61,14 +65,13 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
 
     // Write to Firehose -> S3 data lake
     const firehoseData = { ...event, patientId };
-    const firehoseRes = await firehose
-        .putRecord({
-            DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
-            Record: {
-                Data: JSON.stringify(firehoseData),
-            },
-        })
-        .promise();
+    const command = new PutRecordCommand({
+        DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
+        Record: {
+            Data: Buffer.from(JSON.stringify(firehoseData)),
+        },
+    });
+    const firehoseRes = await firehose.send(command);
 
     console.log('firehoseRes: ', firehoseRes);
 };

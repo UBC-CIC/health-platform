@@ -1,5 +1,5 @@
 import cdk = require('@aws-cdk/core');
-import { Runtime, DockerImageCode, DockerImageFunction } from '@aws-cdk/aws-lambda';
+import { Runtime, DockerImageCode, DockerImageFunction, Function } from '@aws-cdk/aws-lambda';
 import alp = require('@aws-cdk/aws-lambda-python');
 import exec = require("child_process");
 import * as path from 'path';
@@ -13,7 +13,8 @@ import { Role, ServicePrincipal, PolicyDocument, PolicyStatement, Effect } from 
 //
 export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly lambdaRole: Role;
-    public readonly queryFunction: DockerImageFunction;
+    // public readonly queryFunction: DockerImageFunction;
+    public readonly queryFunction: Function;
 
     constructor(app: cdk.App, id: string) {
         super(app, id, {
@@ -63,7 +64,14 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                                 "appsync:GraphQL",
                                 "appsync:GetGraphqlApi",
                                 "appsync:ListGraphqlApis",
-                                "appsync:ListApiKeys"
+                                "appsync:ListApiKeys",
+                                // Timestream
+                                'timestream:DescribeTable',
+                                'timestream:ListDatabases',
+                                'timestream:ListMeasures',
+                                'timestream:ListTables',
+                                'timestream:Select',
+                                'timestream:SelectValues',
                             ],
                             resources: ['*']
                         })
@@ -72,14 +80,26 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             },
         });
 
-        const queryDockerFile = path.join(__dirname, "..");
-        this.queryFunction = new DockerImageFunction(this, 'QueryDockerFunction', {
-            code: DockerImageCode.fromImageAsset(queryDockerFile),
-            functionName: `QueryFunction`,
-            memorySize: 512,
+        // Unnecessary if using Timestream
+        //
+        // const queryDockerFile = path.join(__dirname, "..");
+        // this.queryFunction = new DockerImageFunction(this, 'QueryDockerFunction', {
+        //     code: DockerImageCode.fromImageAsset(queryDockerFile),
+        //     functionName: `QueryFunction`,
+        //     memorySize: 512,
+        //     role: this.lambdaRole,
+        //     timeout: cdk.Duration.seconds(30),
+        //     logRetention: RetentionDays.THREE_MONTHS,
+        // })
+
+        this.queryFunction = new lambda.Function(this, 'TimestreamQueryFunction', {
+            functionName: "Timestream-Query",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'timestream-query.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
-            timeout: cdk.Duration.seconds(30),
-            logRetention: RetentionDays.THREE_MONTHS,
-        })
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300), 
+        });
     }
 }

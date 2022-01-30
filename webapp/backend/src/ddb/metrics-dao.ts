@@ -1,4 +1,4 @@
-import { DocumentClient } from "aws-sdk/clients/dynamodb";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 
 export type MetricsData = {
     "patient_id": string;
@@ -10,9 +10,9 @@ export type MetricsData = {
 };
 
 export class MetricsDataDao {
-    db: DocumentClient
+    db: DynamoDBDocument
 
-    constructor(db: DocumentClient) {
+    constructor(db: DynamoDBDocument) {
         this.db = db;
     }
 
@@ -36,7 +36,6 @@ export class MetricsDataDao {
                 RequestItems: {
                     [process.env.DATA_TABLE_NAME!]: writeObjects,
                 },
-            })
-            .promise();
+            });
     }
 }

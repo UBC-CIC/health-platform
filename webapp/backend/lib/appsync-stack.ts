@@ -211,10 +211,10 @@ export class HealthPlatformAppSyncStack extends Stack {
         // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
         //
         // Resolver for Chime meeting operations
-        api.addLambdaDataSource('QueryDataSource', lambdaStack.queryFunction).createResolver({
-            typeName: 'Query',
-            fieldName: 'query'
-        });
+        // api.addLambdaDataSource('QueryDataSource', lambdaStack.queryFunction).createResolver({
+        //     typeName: 'Query',
+        //     fieldName: 'query'
+        // });
 
         // Cloudformation Output
         new CfnOutput(this, "GraphQLEndpoint", {
