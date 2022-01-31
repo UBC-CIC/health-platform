@@ -66,6 +66,8 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                                 "appsync:ListGraphqlApis",
                                 "appsync:ListApiKeys",
                                 // Timestream
+                                'timestream:WriteRecords',
+                                'timestream:DescribeEndpoints',
                                 'timestream:DescribeTable',
                                 'timestream:ListDatabases',
                                 'timestream:ListMeasures',
@@ -96,6 +98,16 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             functionName: "Timestream-Query",
             code: new lambda.AssetCode('build/src'),
             handler: 'timestream-query.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300), 
+        });
+
+        new lambda.Function(this, 'TimestreamInsertFunction', {
+            functionName: "Timestream-Insert",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'timestream-insert.handler',
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             memorySize: 512,

@@ -5,8 +5,8 @@
 export const query = /* GraphQL */ `
   query Query($input: QueryRequest) {
     query(input: $input) {
-      timestamp
-      heartrate
+      columns
+      rows
     }
   }
 `;

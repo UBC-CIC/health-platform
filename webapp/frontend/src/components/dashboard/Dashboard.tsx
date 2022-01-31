@@ -19,11 +19,10 @@ import moment from 'moment';
 import { EventTimelineChart } from './EventTimelineChart';
 import { query } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
-import { UserContext } from '../../context/UserContext';
-import { AppAuthStateProps } from '../../types/propTypes';
 import { CircularProgress, Grid, LinearProgress } from '@mui/material';
 import { ThemeColor } from './types';
 import EventCreate from '../events/EventCreate';
+import { getAbsoluteTimeFromRelativeTime, subtractHours } from '../../utils/time';
 
 
 
@@ -44,10 +43,18 @@ ChartJS.register(
 
 export const Dashboard = (props: { userName: any}) => {
     
-    const [timeBoundaries, setTimeBoundaries] = React.useState<any>({
-        start: "2021-08-18T21:11:54Z",
-        end: "2021-10-18T21:11:54Z",
+    const [searchProperties, setSearchProperties] = React.useState<any>({
+        start: new Date(),
+        end: subtractHours(new Date(), 2),
+        startRelative: "0h",
+        endRelative: "3h",
+        type: "relative",
+        period: "5m",
+        statistic: "avg",
+        showOverlay: true,
     });
+
+    const [isLoading, setIsLoading] = useState<any>(false);
 
     const [hrData, setHrData] = useState<any>({
         labels: [],
@@ -59,31 +66,7 @@ export const Dashboard = (props: { userName: any}) => {
     useEffect(() => {
         async function callQueryRequest() {
             try {
-                console.log('callQueryRequest request');
-    
-                const response: any = await API.graphql({
-                    query: query,
-                    variables: {limit: 100}
-                });
-                console.log('callQueryRequest response', response);
-
-                const hrs = response["data"]["query"]["heartrate"];
-                let timestamps = response["data"]["query"]["timestamp"];
-                timestamps = timestamps.map((t: number) => {
-                    return moment.unix(t)
-                });
-
-                const datasets = [{
-                    label: 'Dataset 1',
-                    data: hrs,
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                }];
-
-                // setHrData({
-                //     labels: timestamps,
-                //     datasets: datasets,
-                // });
+                update();
             } catch (e) {
                 console.log('callQueryRequest errors:', e);
             }
@@ -92,17 +75,93 @@ export const Dashboard = (props: { userName: any}) => {
         callQueryRequest()
     }, [user]);
 
-    function newDate(days: any) {
-        return moment().add(days, 'd').toDate();
-    }
+    // TODO: MAKE CHART A PURE CHILD COMPONENT TO AVOID RERENDERING
+    // https://stackoverflow.com/questions/62036973/avoid-component-update-while-changing-state-vaiable
+    async function update() {
+        // Update the time (in case we are using relative times) before handling the update
+        //
+        let start = searchProperties.start;
+        let end = searchProperties.end;
+        setIsLoading(true);
+        if (searchProperties.type === "relative") {
+            start = getAbsoluteTimeFromRelativeTime(searchProperties.startRelative);
+            end = getAbsoluteTimeFromRelativeTime(searchProperties.endRelative);
+            setSearchProperties({
+                ...searchProperties,
+                start: start,
+                end: end,
+            });
+        }
 
-    function newDateString(days: any) {
-        return moment().add(days, 'd').format();
-    }
+        // Run the update logic
+        //
+        const input = {
+            "patient_id": "", // TODO
+            "period": searchProperties.period,
+            "statistic": searchProperties.statistic,
+            "start": start,
+            "end": end,
+        };
+        console.log(`callQueryRequest request with ${JSON.stringify(input)}`);
+    
+        const response: any = await API.graphql({
+            query: query,
+            variables: {
+                input: input
+            }
+        });
+        console.log('callQueryRequest response', response);
 
-    function randomScalingFactor() {
-        return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
-    };
+        const columns = response["data"]["query"]["columns"];
+        let rows = response["data"]["query"]["rows"];
+        setIsLoading(false);
+
+        const columnToIndex = new Map<string, number>();
+        const measureNameToVals = new Map<string, number[]>();
+        const measureNameToTimestamps = new Map<string, moment.Moment[]>();
+        
+        columns.forEach((item: string, index: number) => {
+            columnToIndex.set(item, index);
+        });
+
+        rows.forEach((row: string[], index: number) => {
+            // Timestream does not have timezone support
+            const t = row[columnToIndex.get("binned_timestamp")!]
+            const timestamp = moment(`${t}Z`);
+            const measureName = row[columnToIndex.get("measure_name")!]
+            const val = row[columnToIndex.get("measure_val")!]
+            if (!measureNameToVals.has(measureName)) {
+                measureNameToVals.set(measureName, []);
+                measureNameToTimestamps.set(measureName, []);
+            }
+            if (val !== "" && Number(val)) {
+                measureNameToVals.get(measureName)!.push(+val);
+                measureNameToTimestamps.get(measureName)!.push(timestamp);
+            }
+        });
+
+        let datasets = [];
+        if (rows.length > 0) {
+            const randomMeasure = measureNameToVals.keys().next().value;
+            datasets.push({
+                label: randomMeasure,
+                data: measureNameToVals.get(randomMeasure),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            });
+
+            setHrData({
+                labels: measureNameToTimestamps.get(randomMeasure),
+                datasets: datasets,
+            });
+        } else {
+            setHrData({
+                labels: [],
+                datasets: [],
+            });
+        }
+        return false;
+    }
 
     const options = {
         responsive: true,
@@ -166,8 +225,10 @@ export const Dashboard = (props: { userName: any}) => {
             <CssBaseline />
 
             <Sidebar 
-                timeBoundaries={timeBoundaries}
-                setTimeBoundaries={setTimeBoundaries}
+                searchProperties={searchProperties}
+                setSearchProperties={setSearchProperties}
+                isLoading={isLoading}
+                update={update}
                 userName={props.userName}
             />
 
@@ -188,10 +249,10 @@ export const Dashboard = (props: { userName: any}) => {
                                 <EventCreate userName={props.userName} disabled="true" />
                             </Box>
 
-                            {timeBoundaries.start &&
+                            {searchProperties.start &&
                                 <EventTimelineChart
-                                    startDate={timeBoundaries.start}
-                                    endDate={timeBoundaries.end}
+                                    startDate={searchProperties.start}
+                                    endDate={searchProperties.end}
                                 />
                             }
                         </CardContent>
@@ -203,17 +264,26 @@ export const Dashboard = (props: { userName: any}) => {
                             <Typography variant="h6" gutterBottom component="div">
                                 Heart Rate
                             </Typography>
-                            <Box
-                                style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
-                            >
-                                <CircularProgress size={12} color='inherit' />{' '}Loading...
-                            </Box> 
-                            {false &&
+                            {isLoading &&
+                                <Box
+                                    style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
+                                >
+                                    <CircularProgress size={12} color='inherit' />{' '}Loading...
+                                </Box>
+                            }
+                            {!isLoading && hrData.datasets.length > 0 &&
                                 <Line
                                     height={"60px"}
                                     options={optionsHr}
                                     data={hrData}
                                 />
+                            }
+                            {!isLoading && hrData.datasets.length == 0 &&
+                                <Box
+                                    style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
+                                >
+                                    No Data Found
+                                </Box>
                             }
                         </CardContent>
                     </Card>

@@ -42,8 +42,8 @@ export type ModelStringInput = {
 
 export type EventDetail = {
   __typename: "EventDetail",
-  event_id: string,
-  user_id: string,
+  event_id?: string,
+  user_id?: string,
   start_date_time?: string | null,
   end_date_time?: string | null,
   medication?: string | null,
@@ -53,14 +53,17 @@ export type EventDetail = {
 };
 
 export type QueryRequest = {
+  patient_id?: string | null,
+  period?: string | null,
+  statistic?: string | null,
   start?: string | null,
   end?: string | null,
 };
 
 export type QueryResponse = {
   __typename: "QueryResponse",
-  timestamp?: Array< number | null > | null,
-  heartrate?: Array< number | null > | null,
+  columns?: Array< string | null > | null,
+  rows?: Array< Array< string | null > | null > | null,
 };
 
 export type ModelEventDetailFilterInput = {
@@ -140,7 +143,7 @@ export type DeleteEventDetailMutation = {
 };
 
 export type PublishNewEventDetailMutationVariables = {
-  input: EventDetailInput,
+  input?: EventDetailInput,
 };
 
 export type PublishNewEventDetailMutation = {
@@ -158,7 +161,7 @@ export type PublishNewEventDetailMutation = {
 };
 
 export type PublishEventDetailUpdatesMutationVariables = {
-  input: EventDetailInput,
+  input?: EventDetailInput,
 };
 
 export type PublishEventDetailUpdatesMutation = {
@@ -182,13 +185,13 @@ export type QueryQueryVariables = {
 export type QueryQuery = {
   query?:  {
     __typename: "QueryResponse",
-    timestamp?: Array< number | null > | null,
-    heartrate?: Array< number | null > | null,
+    columns?: Array< string | null > | null,
+    rows?: Array< Array< string | null > | null > | null,
   } | null,
 };
 
 export type GetEventDetailQueryVariables = {
-  eventId: string,
+  eventId?: string,
 };
 
 export type GetEventDetailQuery = {
@@ -230,7 +233,7 @@ export type ListEventDetailsQuery = {
 };
 
 export type GetEventDetailsByUserQueryVariables = {
-  userId: string,
+  userId?: string,
   limit?: number | null,
   nextToken?: string | null,
 };
@@ -254,9 +257,9 @@ export type GetEventDetailsByUserQuery = {
 };
 
 export type GetEventDetailsByUserAndCreateTimeQueryVariables = {
-  userId: string,
-  startTime: string,
-  endTime: string,
+  userId?: string,
+  startTime?: string,
+  endTime?: string,
   limit?: number | null,
   nextToken?: string | null,
 };

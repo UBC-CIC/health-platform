@@ -1,4 +1,4 @@
-import { DynamoDBDocument, QueryCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DocumentClient } from "aws-sdk/clients/dynamodb";
 
 export type Sensor = {
     "patient_id": string;
@@ -7,9 +7,9 @@ export type Sensor = {
 };
 
 export class SensorDao {
-    db: DynamoDBDocument
+    db: DocumentClient
 
-    constructor(db: DynamoDBDocument) {
+    constructor(db: DocumentClient) {
         this.db = db;
     }
 
@@ -20,7 +20,7 @@ export class SensorDao {
      * @returns The sensor if it exists.
      */
     async getSensor(sensorId: string): Promise<Sensor | null> {
-        const params: QueryCommandInput = {
+        const params: DocumentClient.QueryInput = {
             TableName: process.env.SENSOR_MAPPING_TABLE_NAME!,
             ExpressionAttributeValues: {
                 ':pkVal': sensorId,
@@ -33,7 +33,8 @@ export class SensorDao {
 
         // Query sensor information
         const sensorRes = await this.db
-            .query(params);
+            .query(params)
+            .promise();
         console.log('sensorRes: ', sensorRes);
         if (!sensorRes.ScannedCount) {
             console.error('Sensor not found');

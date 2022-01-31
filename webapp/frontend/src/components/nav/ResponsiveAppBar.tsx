@@ -80,7 +80,7 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu} component={Link} to={`/${page.toLowerCase()}`}>
+                                <MenuItem key={`collapse-${page}`} onClick={handleCloseNavMenu} component={Link} to={`/${page.toLowerCase()}`}>
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
@@ -97,7 +97,7 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                     {pages.map((page) => (
-                        <Link to={`/${page.toLowerCase()}`}>
+                        <Link key={page} to={`/${page.toLowerCase()}`}>
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}

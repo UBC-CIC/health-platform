@@ -1,8 +1,6 @@
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import AWS = require('aws-sdk');
 import { MetricsData, MetricsDataDao } from './ddb/metrics-dao';
-const client = new DynamoDBClient({});
-const ddb = DynamoDBDocument.from(client);
+var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 /**
  * Input event:

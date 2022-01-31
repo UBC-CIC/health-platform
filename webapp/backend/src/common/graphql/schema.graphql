@@ -76,13 +76,16 @@ input DeleteEventInput {
 }
 
 input QueryRequest {
+    patient_id: String
+    period: String
+    statistic: String
     start: String
     end: String
 }
 
 type QueryResponse {
-	timestamp: [Int]
-    heartrate: [Float]
+	columns: [String]
+    rows: [[String]]
 }
 
 # [type] Mutation
