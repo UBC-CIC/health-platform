@@ -1,6 +1,6 @@
 import cdk = require('@aws-cdk/core');
 import { CfnTable, Database } from '@aws-cdk/aws-glue';
-import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal, ManagedPolicy, FederatedPrincipal } from '@aws-cdk/aws-iam';
 import { IotSql, TopicRule } from '@aws-cdk/aws-iot';
 import { LambdaFunctionAction } from '@aws-cdk/aws-iot-actions';
 import { CfnDeliveryStream } from '@aws-cdk/aws-kinesisfirehose';
@@ -8,9 +8,10 @@ import * as lambda from "@aws-cdk/aws-lambda";
 import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, BucketEncryption } from '@aws-cdk/aws-s3';
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
+import { CfnIdentityPool, CfnIdentityPoolRoleAttachment } from '@aws-cdk/aws-cognito';
 
 // This stack contains resources used by the IoT data flow.
-//
+
 export class HealthPlatformIotStack extends cdk.Stack {
 
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
@@ -34,6 +35,12 @@ export class HealthPlatformIotStack extends cdk.Stack {
                         new PolicyStatement({
                             effect: Effect.ALLOW,
                             actions: [
+                                // TimeStream
+                                "timestream:WriteRecords",
+                                "timestream:DescribeEndpoints",
+                                "timestream:DescribeTable",
+                                "timestream:ListDatabases",
+                                "timestream:ListMeasures",
                                 // DynamoDB
                                 "dynamodb:GetItem",
                                 "dynamodb:DeleteItem",
@@ -64,6 +71,48 @@ export class HealthPlatformIotStack extends cdk.Stack {
                     ]
                 }),
             },
+        });
+
+        const cognitoIdentityPool = new CfnIdentityPool(this, 'HealthPlatformIdentityPool', {
+            identityPoolName: 'HealthPlatformIdentityPool',
+            allowUnauthenticatedIdentities: true,
+        });
+
+        const cognitoUnauthourizedRole = new Role(this, 'CognitoUnauthourizedRole', {
+            roleName: "CognitoUnauthourizedRole",
+            assumedBy: new FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    StringEquals: {
+                        "cognito-identity.amazonaws.com:aud": cognitoIdentityPool.ref
+                    },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "unauthenticated"
+                    }
+                },
+                "sts:AssumeRoleWithWebIdentity"
+            ),
+            description: 'Role for sensor devices',
+            maxSessionDuration: cdk.Duration.seconds(3600),
+            managedPolicies: [
+                ManagedPolicy.fromAwsManagedPolicyName("AWSIoTFullAccess")
+            ]
+        }); 
+        
+        cognitoUnauthourizedRole.addToPolicy(new PolicyStatement( {
+            effect: Effect.ALLOW,
+            resources: ["*"],
+            actions: [
+                "mobileanalytics:PutEvents",
+                "cognito-sync:*"
+            ]
+        }));
+
+        const identityPoolRoleAttachment = new CfnIdentityPoolRoleAttachment(this, 'IdentityPoolRoleMapping', {
+            identityPoolId: cognitoIdentityPool.ref,
+            roles: {
+                unauthenticated: cognitoUnauthourizedRole.roleArn
+            }
         });
 
         let kinesisLogGroup = new LogGroup(this, "HealthPlatformKinesisLogGroup", {

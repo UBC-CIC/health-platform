@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "tsc && mkdir -p build/src && cp src/package.json build/src/package.json && cd build/src && npm install --only=production",
+    "build-windows": "tsc && copy src\\package.json build\\src\\package.json && cd build\\src && npm install --only=production",
     "watch": "tsc -w",
     "cdk": "cdk",
     "clean": "rm -rf build"
@@ -21,12 +22,13 @@
     "@aws-cdk/aws-apigateway": "1.137.0",
     "@aws-cdk/aws-appsync": "1.137.0",
     "@aws-cdk/aws-cognito": "1.137.0",
+    "@aws-cdk/aws-cognito-identitypool": "^1.143.0",
     "@aws-cdk/aws-dynamodb": "1.137.0",
     "@aws-cdk/aws-events-targets": "1.137.0",
-    "@aws-cdk/aws-kinesisfirehose": "1.137.0",
     "@aws-cdk/aws-glue": "1.137.0",
     "@aws-cdk/aws-iot": "1.137.0",
     "@aws-cdk/aws-iot-actions": "1.137.0",
+    "@aws-cdk/aws-kinesisfirehose": "1.137.0",
     "@aws-cdk/aws-lambda": "1.137.0",
     "@aws-cdk/aws-lambda-event-sources": "1.137.0",
     "@aws-cdk/aws-lambda-python": "1.94.1",
