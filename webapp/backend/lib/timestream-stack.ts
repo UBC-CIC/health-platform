@@ -6,7 +6,7 @@ export class HealthPlatformTimestreamStack extends cdk.Stack {
     constructor(app: cdk.App, id: string) {
         super(app, id, {
             env: {
-                region: 'us-east-1'
+                region: 'us-west-2'
             },
         });
         const healthDatabase = new timestream.CfnDatabase(this, 'HealthDatabase',  {

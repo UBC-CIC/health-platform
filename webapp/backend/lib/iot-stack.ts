@@ -15,14 +15,14 @@ import { CfnIdentityPool, CfnIdentityPoolRoleAttachment } from '@aws-cdk/aws-cog
 export class HealthPlatformIotStack extends cdk.Stack {
 
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
-    private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
+    private static PARQUET_METRICS_PREFIX = "health-platform-parquet-metrics"
 
     public readonly lambdaRole: Role;
 
     constructor(app: cdk.App, id: string) {
         super(app, id, {
             env: {
-                region: 'ca-central-1'
+                region: 'us-west-2'
             },
         });
         

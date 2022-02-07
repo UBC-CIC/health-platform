@@ -30,32 +30,42 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     const patientId = sensor.patient_id;
 
     // TTL in 1 day, assumes input timestamp is in epoch seconds
-    let timestamp = new Date(0);
-    timestamp.setUTCSeconds(event.timestamp);
+    let timestamp = new Date(event.timestamp);
     let ttl = new Date(timestamp);
     ttl.setDate(timestamp.getUTCDate() + 1);
 
-    const modalities = ["ecg", "heartrate", "temp"];
-    const datapoints: MetricsData[] = [];
-    modalities.forEach(modality => {
-        if (modality in event) {
-            const modifiedData = {
-                patient_id: patientId,
-                sensor_id: event.sensorId,
-                timestamp: timestamp.toISOString(),
-                ttl: (ttl.getTime() / 1000) | 0,
-                measure_type: modality,
-                measure_value: event[modality],
-            };
-            datapoints.push(modifiedData);
+    // const modalities = ["HeartRate", "Accelerometer", "Steps", "Temperature", "HeartBeat"];
+    // const datapoints: MetricsData[] = [];
+    // modalities.forEach(modality => {
+    //     if (modality in event.measurementType) {
+    //         const modifiedData = {
+    //             patient_id: patientId,
+    //             sensor_id: event.sensorId,
+    //             timestamp: timestamp.toISOString(),
+    //             ttl: (ttl.getTime() / 1000) | 0,
+    //             measure_type: modality,
+    //             measure_value: event[modality],
+    //         };
+    //         console.log("Data Pushed: ", modifiedData);
+    //         datapoints.push(modifiedData);
 
-            // // Rename IoT-provided timestamp (event.ts)
-            // modifiedData['iot_timestamp'] = modifiedData['ts'];
-            // delete modifiedData['ts'];
-            // console.log('Data for DDB:\n', modifiedData);        
-        }
-    });
-    
+    //         // // Rename IoT-provided timestamp (event.ts)
+    //         // modifiedData['iot_timestamp'] = modifiedData['ts'];
+    //         // delete modifiedData['ts'];
+    //         // console.log('Data for DDB:\n', modifiedData);        
+    //     }
+    // });
+    const datapoints: MetricsData[] = [];
+    const modifiedData = {
+        patient_id: patientId,
+        sensor_id: event.sensorId,
+        timestamp: timestamp.toISOString(),
+        ttl: (ttl.getTime() / 1000) | 0,
+        measure_type: event.measurementType,
+        measure_value: event.measurement,
+    };
+    datapoints.push(modifiedData);
+
     const metricsDataDao = new MetricsDataDao(ddb);
     await metricsDataDao.saveMetrics(datapoints);
 

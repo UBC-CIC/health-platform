@@ -25,7 +25,7 @@ export class HealthPlatformAppSyncStack extends Stack {
     constructor(scope: Construct, id: string, userPoolId: string, lambdaStack: HealthPlatformLambdaStack) {
         super(scope, id, {
             env: {
-                region: 'ca-central-1'
+                region: 'us-west-2'
             },
         });
 

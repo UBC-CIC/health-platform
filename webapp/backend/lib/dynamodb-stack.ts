@@ -21,7 +21,7 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
     constructor(app: cdk.App, id: string) {
         super(app, id, {
             env: {
-                region: 'ca-central-1'
+                region: 'us-west-2'
             },
         });
 

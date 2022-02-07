@@ -30,7 +30,7 @@ export class HealthPlatformCognitoStack extends Stack {
     constructor(scope: Construct, id: string) {
         super(scope, id, {
             env: {
-                region: 'ca-central-1'
+                region: 'us-west-2'
             },
         });
 
