@@ -10,7 +10,7 @@ const Cognito = stack['HealthPlatformCognito']
 const AppSync = stack['HealthPlatformAppSync']
 
 const config = {
-    aws_project_region: "ca-central-1",
+    aws_project_region: "us-west-2",
     oauth: {},
     // Cognito
     aws_cognito_identity_pool_id: Cognito.IdentityPoolId,
