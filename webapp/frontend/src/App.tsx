@@ -45,10 +45,29 @@ function App() {
       });
 
     React.useEffect(() => {
-        return onAuthUIStateChange((nextAuthState, authData) => {
+        return onAuthUIStateChange((nextAuthState: any, authData: any) => {
+            // Called when user logs in
+            //
             setAuthState(nextAuthState);
-            console.log(authData);
-            setUser(authData);
+            
+            // Don't log this as it contains sensitive data
+            // console.log(authData);
+
+            if (authData) {
+                // Note that the `attributes` object only exists during a normal login flow
+                if (authData.attributes && authData.attributes.email) {
+                    setUser({
+                        username: authData.attributes.email,
+                        userId: authData.username,
+                    });
+                } else {
+                    // When user first signs up, the `attributes` object does not exist
+                    setUser({
+                        username: authData.username,
+                        userId: authData.username,
+                    });
+                }
+            }
         });
     }, []);
 
@@ -67,7 +86,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <UserContext.Provider value={user}>
                 <div className="App">
-                    <Navigation userName={user.attributes.email} authState={authState} />
+                    <Navigation userName={user.username} authState={authState} />
                 </div>
             </UserContext.Provider>
         </ThemeProvider>

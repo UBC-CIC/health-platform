@@ -60,8 +60,11 @@ export const Sidebar = ({
     const handleRelativeShortCut = (event: any) => {
         const shortCut = event.target.value;
         setRelativeShortCut(shortCut);
-        handleSearchPropertyChange("startRelative", shortCut);
-        handleSearchPropertyChange("endRelative", `0${getRelativeScale(shortCut)}`);
+        setSearchProperties({
+            ...searchProperties,
+            "startRelative": shortCut,
+            "endRelative": `0${getRelativeScale(shortCut)}`,
+        });
     };
 
     const handleSearchPropertyChange = (field: string, newVal: string) => {

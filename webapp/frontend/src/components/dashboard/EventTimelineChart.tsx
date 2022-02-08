@@ -4,7 +4,19 @@ import { differenceInDays, differenceInSeconds } from "date-fns";
 import { HorizontalBarChart } from "./HorizontalBarChart";
 import { ThemeColor } from "./types";
 
-type Phase = {
+// export type Phase = {
+//     name: string;
+//     startDate: string;
+//     endDate: string;
+//     medication: string,
+//     mood: string,
+//     food: string,
+//     notes: string,
+// };
+
+// const PHASES: Phase[] = [];
+
+export type Phase = {
     name: string;
     startDate: string;
     endDate: string;
@@ -22,17 +34,12 @@ const phasesToDatesets = (phases: Phase[], refDate: Date) =>
     [
         {
             backgroundColor: ThemeColor.Transparent,
-            data: phases.map((phase) => {
-                console.log("PHASE " + refDate);
-                return differenceInSeconds(new Date(phase.startDate), refDate);
-            })
+            data: [0, 3600]
         },
         {
             backgroundColor: ThemeColor.Primary,
             hoverBackgroundColor: ThemeColor.Secondary,
-            data: phases.map((phase) =>
-                differenceInSeconds(new Date(phase.endDate), new Date(phase.startDate))
-            )
+            data: [3600, 10000]
         },
         {
             backgroundColor: ThemeColor.Transparent,
@@ -54,18 +61,24 @@ const phasesToDatesets = (phases: Phase[], refDate: Date) =>
 const phasesToLabels = (phases: Phase[]) => phases.map((phase) => phase.name);
 
 
+
+
 type EventTimelineChartProps = {
+    data: any;
     startDate: any;
     endDate: any;
 };
 
 export function EventTimelineChart({
+    data,
     startDate,
     endDate,
 }: EventTimelineChartProps) {
     const refDate = new Date(startDate);
     return (
         <HorizontalBarChart
+            // data={data}
+
             data={{
                 datasets: phasesToDatesets(PHASES, refDate),
                 labels: phasesToLabels(PHASES)

@@ -8,7 +8,8 @@ import {
     CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Title, 
     TimeScale,
     TimeSeriesScale,
-    Tooltip
+    Tooltip,
+    ChartDataset
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import React, { useContext, useEffect, useState } from 'react'
@@ -16,13 +17,16 @@ import { Line } from 'react-chartjs-2';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
 import moment from 'moment';
-import { EventTimelineChart } from './EventTimelineChart';
-import { query } from '../../common/graphql/queries';
+import { EventTimelineChart, Phase } from './EventTimelineChart';
+import { getEventDetailsByUser, query } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { CircularProgress, Grid, LinearProgress } from '@mui/material';
 import { ThemeColor } from './types';
 import EventCreate from '../events/EventCreate';
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from '../../utils/time';
+import { EventDetail } from '../../common/types/API';
+import { differenceInSeconds } from 'date-fns';
+import TimelineChart from './TimelineChart';
 
 
 
@@ -41,13 +45,15 @@ ChartJS.register(
     annotationPlugin
 );
 
+const DEFAULT_HOURS_AGO = 6;
+
 export const Dashboard = (props: { userName: any}) => {
     
     const [searchProperties, setSearchProperties] = React.useState<any>({
         start: new Date(),
-        end: subtractHours(new Date(), 2),
-        startRelative: "0h",
-        endRelative: "3h",
+        end: subtractHours(new Date(), DEFAULT_HOURS_AGO),
+        startRelative: `${DEFAULT_HOURS_AGO}h`,
+        endRelative: "0h",
         type: "relative",
         period: "5m",
         statistic: "avg",
@@ -56,12 +62,29 @@ export const Dashboard = (props: { userName: any}) => {
 
     const [isLoading, setIsLoading] = useState<any>(false);
 
+    const [eventsStart, setEventsStart] = useState<any>(subtractHours(new Date(), DEFAULT_HOURS_AGO));
+    const [eventsEnd, setEventsEnd] = useState<any>(new Date());
+    const [eventsData, setEventsData] = useState<any>({
+        labels: [],
+        datasets: [],
+    });
+
     const [hrData, setHrData] = useState<any>({
         labels: [],
         datasets: [],
     });
 
-    const user = "placeholder";
+    const [rrData, setRrData] = useState<any>({
+        labels: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)],
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)].map(() => faker.datatype.number({ min: -1000, max: 1000 })),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+        ],
+    });
 
     useEffect(() => {
         async function callQueryRequest() {
@@ -73,15 +96,122 @@ export const Dashboard = (props: { userName: any}) => {
         }
     
         callQueryRequest()
-    }, [user]);
+        callListAllEvents()
+    }, []);
 
-    // TODO: MAKE CHART A PURE CHILD COMPONENT TO AVOID RERENDERING
-    // https://stackoverflow.com/questions/62036973/avoid-component-update-while-changing-state-vaiable
+
+    async function callListAllEvents() {
+        try {
+            const events: any = await API.graphql({
+                query: getEventDetailsByUser,
+                variables: {
+                    userId: props.userName,
+                    limit: 100,
+                }
+            });
+            console.log("callListAllEvents");
+            console.log(events);
+
+            // const PHASES: Phase[] = [
+            //     {
+            //         name: "",
+            //         startDate: "2021-02-15",
+            //         endDate: "2021-03-16"
+            //     }
+            // ];
+
+            // {{
+            //     datasets: phasesToDatesets(PHASES, refDate),
+            //     labels: phasesToLabels(PHASES)
+            // }}
+
+            const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUser']['items'];
+
+            const labels: any[] = [];
+            const phases: any[] = [];
+            let previousDate = searchProperties.start;
+            for (var event of itemsReturned) {
+                labels.push(event.medication!);
+                phases.push(
+                    {
+                        backgroundColor: ThemeColor.Transparent,
+                        data: [differenceInSeconds(previousDate, new Date(event.start_date_time!))]
+                    }
+                );
+                phases.push(
+                    {
+                        backgroundColor: ThemeColor.Primary,
+                        hoverBackgroundColor: ThemeColor.Secondary,
+                        data: [differenceInSeconds(new Date(event.start_date_time!), new Date(event.end_date_time!))]
+                    }
+                );
+                previousDate = event.end_date_time;
+            }
+            // const phases = itemsReturned.map(event => {
+            //     // return {
+            //     //     name: "Test",
+            //     //     startDate: event.start_date_time!,
+            //     //     endDate: event.end_date_time!,
+            //     //     medication: event.medication!,
+            //     //     mood: event.mood!,
+            //     //     food: event.food!,
+            //     //     notes: event.notes!,
+            //     // }
+            // });
+
+            console.log('PHASES:', phases);
+            setEventsData({
+                // labels: phases.map((phase) => phase.name),
+                labels: labels,
+                // datasets: phasesToDatasets(phases, searchProperties.start)
+                datasets: phases
+            });
+        } catch (e) {
+            console.log('getEventDetailsByUser errors:', e );
+        }
+    }
+
+    const phasesToDatasets = (phases: Phase[], refDate: Date) =>
+    [
+        {
+            backgroundColor: ThemeColor.Transparent,
+            data: phases.map((phase) => {
+                console.log("PHASE " + refDate);
+                return differenceInSeconds(refDate, new Date(phase.startDate));
+            })
+        },
+        {
+            backgroundColor: ThemeColor.Primary,
+            hoverBackgroundColor: ThemeColor.Secondary,
+            minBarLength: 5,
+            data: phases.map((phase) =>
+                differenceInSeconds(new Date(phase.startDate), new Date(phase.endDate))
+            )
+        },
+        // {
+        //     backgroundColor: ThemeColor.Transparent,
+        //     hoverBackgroundColor: ThemeColor.Transparent,
+        //     data: phases.map((phase) =>
+        //         240000
+        //     )
+        // },
+        // {
+        //     backgroundColor: ThemeColor.Primary,
+        //     hoverBackgroundColor: ThemeColor.Secondary,
+        //     minBarLength: 5,
+        //     data: phases.map((phase) =>
+        //         3600*3
+        //     )
+        // },
+    ] as ChartDataset<"bar">[];
+
     async function update() {
         // Update the time (in case we are using relative times) before handling the update
         //
         let start = searchProperties.start;
         let end = searchProperties.end;
+        setEventsStart(start);
+        setEventsEnd(end);
         setIsLoading(true);
         if (searchProperties.type === "relative") {
             start = getAbsoluteTimeFromRelativeTime(searchProperties.startRelative);
@@ -92,6 +222,8 @@ export const Dashboard = (props: { userName: any}) => {
                 end: end,
             });
         }
+
+        callListAllEvents();
 
         // Run the update logic
         //
@@ -202,24 +334,6 @@ export const Dashboard = (props: { userName: any}) => {
         },
     };
 
-    const data = {
-        labels: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)],
-        datasets: [
-            {
-                label: 'Dataset 1',
-                data: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)].map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            },
-            {
-                label: 'Dataset 2',
-                data: [moment.unix(1578030195), moment.unix(1580708595), moment.unix(1583214195), moment.unix(1585892595), moment.unix(1588484595)].map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-                borderColor: 'rgb(53, 162, 235)',
-                backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-        ],
-    };
-
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
@@ -249,12 +363,11 @@ export const Dashboard = (props: { userName: any}) => {
                                 <EventCreate userName={props.userName} disabled="true" />
                             </Box>
 
-                            {searchProperties.start &&
-                                <EventTimelineChart
-                                    startDate={searchProperties.start}
-                                    endDate={searchProperties.end}
-                                />
-                            }
+                            <EventTimelineChart
+                                startDate={eventsStart}
+                                endDate={eventsEnd}
+                                data={eventsData}
+                            />
                         </CardContent>
                     </Card>
                 </Box>
@@ -297,7 +410,7 @@ export const Dashboard = (props: { userName: any}) => {
                             <Line
                                 height={"60px"}
                                 options={options}
-                                data={data}
+                                data={rrData}
                             />
                         </CardContent>
                     </Card>

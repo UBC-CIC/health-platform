@@ -1,0 +1,338 @@
+{
+    "chart": [
+      {
+        "label": "2019-06-10",
+        "data": ["2019-06-10", "2019-06-10", "2019-06-10"],
+        "backgroundColor": [
+          "hsl(121, 37%, 49%)",
+          "hsl(111, 51%, 74%)",
+          "hsl(117, 61%, 94%)"
+        ],
+        "hoverBackgroundColor": [
+          "hsl(121, 37%, 39%)",
+          "hsl(111, 51%, 64%)",
+          "hsl(117, 61%, 84%)"
+        ]
+      },
+      {
+        "label": "2019-06-11",
+        "data": ["2019-06-11", "2019-06-11", "2019-06-11"],
+        "backgroundColor": ["hsl(121, 37%, 49%)", "white", "hsl(117, 61%, 94%)"],
+        "hoverBackgroundColor": [
+          "hsl(121, 37%, 39%)",
+          "white",
+          "hsl(117, 61%, 84%)"
+        ]
+      },
+      {
+        "label": "2019-06-12",
+        "data": ["2019-06-12", "2019-06-12", "2019-06-12"],
+        "backgroundColor": [
+          "hsl(121, 37%, 49%)",
+          "hsl(111, 51%, 74%)",
+          "hsl(117, 61%, 94%)"
+        ],
+        "hoverBackgroundColor": [
+          "hsl(121, 37%, 39%)",
+          "hsl(111, 51%, 64%)",
+          "hsl(117, 61%, 84%)"
+        ]
+      },
+      {
+        "label": "2019-06-13",
+        "data": ["2019-06-13", null, "2019-06-13"],
+        "backgroundColor": [
+          "hsl(121, 37%, 49%)",
+          "hsl(111, 51%, 74%)",
+          "hsl(117, 61%, 94%)"
+        ],
+        "hoverBackgroundColor": [
+          "hsl(121, 37%, 39%)",
+          "hsl(111, 51%, 64%)",
+          "hsl(117, 61%, 84%)"
+        ]
+      },
+      {
+        "label": "2019-06-14",
+        "data": ["2019-06-14", null, null],
+        "backgroundColor": [
+          "hsl(121, 37%, 49%)",
+          "hsl(111, 51%, 74%)",
+          "hsl(117, 61%, 94%)"
+        ],
+        "hoverBackgroundColor": [
+          "hsl(121, 37%, 39%)",
+          "hsl(111, 51%, 64%)",
+          "hsl(117, 61%, 84%)"
+        ]
+      }
+    ],
+    "tooltip": {
+      "2019-06-10": {
+        "Basic": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 12.39
+            },
+            {
+              "account": 567895423,
+              "value": 15.72
+            },
+            {
+              "account": 335689473,
+              "value": 20.11
+            }
+          ]
+        },
+        "Intermediate": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 21.11
+            },
+            {
+              "account": 567895423,
+              "value": 25.54
+            },
+            {
+              "account": 335689473,
+              "value": 33.23
+            }
+          ]
+        },
+        "Advanced": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 18.12
+            },
+            {
+              "account": 567895423,
+              "value": 25.45
+            },
+            {
+              "account": 335689473,
+              "value": 99.99
+            }
+          ]
+        }
+      },
+      "2019-06-11": {
+        "Basic": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 12.39
+            },
+            {
+              "account": 567895423,
+              "value": 15.72
+            },
+            {
+              "account": 335689473,
+              "value": 20.11
+            }
+          ]
+        },
+        "Intermediate": {
+          "isVisible": false,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 21.11
+            },
+            {
+              "account": 567895423,
+              "value": 25.54
+            },
+            {
+              "account": 335689473,
+              "value": 33.23
+            }
+          ]
+        },
+        "Advanced": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 18.12
+            },
+            {
+              "account": 567895423,
+              "value": 25.45
+            },
+            {
+              "account": 335689473,
+              "value": 99.99
+            }
+          ]
+        }
+      },
+      "2019-06-12": {
+        "Basic": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 12.39
+            },
+            {
+              "account": 567895423,
+              "value": 15.72
+            },
+            {
+              "account": 335689473,
+              "value": 20.11
+            }
+          ]
+        },
+        "Intermediate": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 21.11
+            },
+            {
+              "account": 567895423,
+              "value": 25.54
+            },
+            {
+              "account": 335689473,
+              "value": 33.23
+            }
+          ]
+        },
+        "Advanced": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 18.12
+            },
+            {
+              "account": 567895423,
+              "value": 25.45
+            },
+            {
+              "account": 335689473,
+              "value": 99.99
+            }
+          ]
+        }
+      },
+      "2019-06-13": {
+        "Basic": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 12.39
+            },
+            {
+              "account": 567895423,
+              "value": 15.72
+            },
+            {
+              "account": 335689473,
+              "value": 20.11
+            }
+          ]
+        },
+        "Intermediate": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 21.11
+            },
+            {
+              "account": 567895423,
+              "value": 25.54
+            },
+            {
+              "account": 335689473,
+              "value": 33.23
+            }
+          ]
+        },
+        "Advanced": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 18.12
+            },
+            {
+              "account": 567895423,
+              "value": 25.45
+            },
+            {
+              "account": 335689473,
+              "value": 99.99
+            }
+          ]
+        }
+      },
+      "2019-06-14": {
+        "Basic": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 12.39
+            },
+            {
+              "account": 567895423,
+              "value": 15.72
+            },
+            {
+              "account": 335689473,
+              "value": 20.11
+            }
+          ]
+        },
+        "Intermediate": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 21.11
+            },
+            {
+              "account": 567895423,
+              "value": 25.54
+            },
+            {
+              "account": 335689473,
+              "value": 33.23
+            }
+          ]
+        },
+        "Advanced": {
+          "isVisible": true,
+          "data": [
+            {
+              "account": 123456789,
+              "value": 18.12
+            },
+            {
+              "account": 567895423,
+              "value": 25.45
+            },
+            {
+              "account": 335689473,
+              "value": 99.99
+            }
+          ]
+        }
+      }
+    }
+  }
+  

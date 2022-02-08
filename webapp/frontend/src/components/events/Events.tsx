@@ -109,8 +109,8 @@ export const Events = (props: { userName: any}) => {
                 }
             });
             console.log(events);
-            
             const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUser']['items'];
+            
             console.log('getEventDetailsByUser meetings:', itemsReturned);
             updateItems(itemsReturned);
         } catch (e) {
@@ -135,7 +135,9 @@ export const Events = (props: { userName: any}) => {
         <Toolbar />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="caption table">
-            <caption>A basic table example with a caption</caption>
+            {
+                items.length == 0 && <caption>No events found</caption>
+            }
             <TableHead>
               <TableRow>
                 <TableCell>Start</TableCell>

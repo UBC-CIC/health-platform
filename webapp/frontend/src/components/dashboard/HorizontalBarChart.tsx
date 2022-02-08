@@ -9,7 +9,8 @@ import { ThemeColor } from "./types";
 type HorizontalBarChartProps = { data: ChartData<"bar">; startDate: string; endDate: string; };
 
 export function HorizontalBarChart({ data, startDate, endDate }: HorizontalBarChartProps) {
-    const chartRef = useRef<HTMLCanvasElement>(null)
+    // const chartRef = useRef<HTMLCanvasElement>(null);
+    console.log("START DATE HBC: " + startDate);
     console.log(data);
     return (
         <BarChart

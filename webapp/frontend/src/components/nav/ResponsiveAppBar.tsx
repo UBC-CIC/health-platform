@@ -13,9 +13,9 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import { AppAuthStateProps } from '../../types/propTypes';
 import { Link } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
 
 const pages = ['Dashboard', 'Events', 'Devices'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar = (props: AppAuthStateProps) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -97,7 +97,7 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                     {pages.map((page) => (
-                        <Link key={page} to={`/${page.toLowerCase()}`}>
+                        <Link key={page} to={`/${page.toLowerCase()}`} style={{textDecoration: "none"}}>
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
@@ -131,11 +131,9 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                         open={Boolean(anchorElUser)}
                         onClose={handleCloseUserMenu}
                     >
-                        {settings.map((setting) => (
-                            <MenuItem key={setting} onClick={handleCloseNavMenu}>
-                                <Typography textAlign="center">{setting}</Typography>
-                            </MenuItem>
-                        ))}
+                        <MenuItem onClick={() => Auth.signOut()}>
+                            <Typography textAlign="center">Logout</Typography>
+                        </MenuItem>
                     </Menu>
                 </Box>
             </Toolbar>
