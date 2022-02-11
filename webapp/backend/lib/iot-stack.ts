@@ -9,13 +9,16 @@ import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, BucketEncryption } from '@aws-cdk/aws-s3';
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
 import { CfnIdentityPool, CfnIdentityPoolRoleAttachment } from '@aws-cdk/aws-cognito';
+import * as timestream from '@aws-cdk/aws-timestream';
+import * as iot from '@aws-cdk/aws-iot';
 
 // This stack contains resources used by the IoT data flow.
 
 export class HealthPlatformIotStack extends cdk.Stack {
 
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
-    private static PARQUET_METRICS_PREFIX = "health-platform-parquet-metrics"
+    private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
+    private static LAYER_CODE_PREFIX = "health-platform-layer-code-"
 
     public readonly lambdaRole: Role;
 
@@ -73,6 +76,29 @@ export class HealthPlatformIotStack extends cdk.Stack {
             },
         });
 
+        const cfnPolicy = new iot.CfnPolicy(this, 'HealthPlatformIotPolicy', {
+            policyDocument: {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": "iot:Connect",
+                    "Resource": "*"
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "iot:Publish",
+                      "iot:Subscribe",
+                      "iot:Receive"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              },
+            policyName: 'HealthPlatformIotPolicy',
+          });
+
         const cognitoIdentityPool = new CfnIdentityPool(this, 'HealthPlatformIdentityPool', {
             identityPoolName: 'HealthPlatformIdentityPool',
             allowUnauthenticatedIdentities: true,
@@ -113,6 +139,19 @@ export class HealthPlatformIotStack extends cdk.Stack {
             roles: {
                 unauthenticated: cognitoUnauthourizedRole.roleArn
             }
+        });
+
+        const healthDatabase = new timestream.CfnDatabase(this, 'HealthDatabase',  {
+            databaseName: 'HealthDatabase',
+        });
+        
+        const dataTable = new timestream.CfnTable(this, 'MetricsDataTable', {
+            databaseName: healthDatabase.ref,
+            retentionProperties: {
+                MemoryStoreRetentionPeriodInHours : "24",
+                MagneticStoreRetentionPeriodInDays : "7"
+            },
+            tableName: 'MetricsDataTable',
         });
 
         let kinesisLogGroup = new LogGroup(this, "HealthPlatformKinesisLogGroup", {
@@ -256,6 +295,11 @@ export class HealthPlatformIotStack extends cdk.Stack {
             }
         });
 
+        const layer = new lambda.LayerVersion(this, 'health-platform-layer', {
+            code: lambda.Code.fromAsset(`layer/nodejs.zip`),
+            compatibleRuntimes: [lambda.Runtime.NODEJS_14_X],
+         });
+
         const eventHandlerFunction = new lambda.Function(this, 'EventHandlerFunction', {
             functionName: "Event-Handler-Function",
             code: new lambda.AssetCode('build/src'),
@@ -263,12 +307,13 @@ export class HealthPlatformIotStack extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             environment: {
-                "DATA_TABLE_NAME": HealthPlatformDynamoStack.DATA_TABLE,
+                // "DATA_TABLE_NAME": HealthPlatformDynamoStack.DATA_TABLE,
                 "SENSOR_MAPPING_TABLE_NAME": HealthPlatformDynamoStack.SENSOR_TABLE,
                 "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
             },
             memorySize: 512,
-            timeout: cdk.Duration.seconds(300), 
+            timeout: cdk.Duration.seconds(300),
+            layers: [layer] 
         });
 
         new lambda.Function(this, 'GenerateDataFunction', {
@@ -278,7 +323,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             environment: {
-                "DATA_TABLE_NAME": HealthPlatformDynamoStack.DATA_TABLE,
+                // "DATA_TABLE_NAME": HealthPlatformDynamoStack.DATA_TABLE,
                 "SENSOR_MAPPING_TABLE_NAME": HealthPlatformDynamoStack.SENSOR_TABLE,
                 "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
             },
@@ -292,7 +337,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
             enabled: true,
             sql: IotSql.fromStringAsVer20160323('SELECT * FROM "iot_device_analytics"'),
             actions: [
-                new LambdaFunctionAction(eventHandlerFunction)
+                new LambdaFunctionAction(eventHandlerFunction),
             ],
         });
 

@@ -8,51 +8,56 @@ export class HealthPlatformTimestreamInsertClient {
         this.client = client;
     }
 
-    buildQuery(): string {
-        return `
-            SELECT
-                time,
-                fleet,
-                truck_id,
-                make,
-                model,
-                measure_name,
-                load
-            FROM "sampleDB".IoTMulti
-            WHERE truck_id = '1234546252'`;
-    }
-
-    async writeRecords(): Promise<boolean> {
+    async writeRecords(event: any = {}): Promise<boolean> {
         console.log("Writing records");
         const currentTime = Date.now().toString(); // Unix time in milliseconds
     
         const dimensions = [
-            {'Name': 'region', 'Value': 'us-east-1'},
-            {'Name': 'az', 'Value': 'az1'},
-            {'Name': 'hostname', 'Value': 'host1'}
+            {'Name': 'region', 'Value': 'us-west-2'}
         ];
-    
-        const cpuUtilization = {
-            'Dimensions': dimensions,
-            'MeasureName': 'cpu_utilization',
-            'MeasureValue': '13.5',
-            'MeasureValueType': 'DOUBLE',
-            'Time': currentTime.toString()
-        };
-    
-        const memoryUtilization = {
-            'Dimensions': dimensions,
-            'MeasureName': 'memory_utilization',
-            'MeasureValue': '40',
-            'MeasureValueType': 'DOUBLE',
-            'Time': currentTime.toString()
-        };
-    
-        const records = [cpuUtilization, memoryUtilization];
+        if (event.measure_type != "Accelerometer") {
+            var measurement = new Number(event.measure_value)
+            var measurement_string = measurement.toString()
+        } else {
+            measurement_string = event.measure_value
+        }
+        const measureValues = [
+            {
+                'Name': 'patient_id',
+                'Value': event.patient_id,
+                'Type': 'BIGINT'
+            },
+            {
+                'Name': 'sensor_id',
+                'Value': event.sensor_id,
+                'Type': 'VARCHAR'
+            },
+            {
+                'Name': 'measurement_type',
+                'Value': event.measure_type,
+                'Type': 'VARCHAR'
+            },
+            {
+                'Name': 'measurement',
+                'Value': measurement_string,
+                'Type': 'VARCHAR'
+            }
+        ];
+
+
+        const patientMetrics = { 
+            "Dimensions": dimensions,  
+            "MeasureName": "patient_metrics",
+            "MeasureValueType": "MULTI",
+            "Time": currentTime.toString(),
+            "MeasureValues": measureValues
+        }
+       
+        const records = [patientMetrics];
     
         const params = {
-            DatabaseName: "devops-multi",
-            TableName: "DevOpsMulti",
+            DatabaseName: "HealthDatabase",
+            TableName: "MetricsDataTable",
             Records: records
         };
     
@@ -64,6 +69,9 @@ export class HealthPlatformTimestreamInsertClient {
             },
             (err) => {
                 console.log("Error writing records:", err);
+                if (err.code === 'RejectedRecordsException') {
+                    console.log("RejectedRecords: ", patientMetrics);
+                }
             }
         );
 

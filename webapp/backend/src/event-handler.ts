@@ -1,5 +1,6 @@
 import AWS = require('aws-sdk');
 import { MetricsData, MetricsDataDao } from './ddb/metrics-dao';
+import { HealthPlatformTimestreamInsertClient } from './timestream/client-insert';
 import { SensorDao } from './ddb/sensor-dao';
 var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
@@ -34,27 +35,7 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     let ttl = new Date(timestamp);
     ttl.setDate(timestamp.getUTCDate() + 1);
 
-    // const modalities = ["HeartRate", "Accelerometer", "Steps", "Temperature", "HeartBeat"];
-    // const datapoints: MetricsData[] = [];
-    // modalities.forEach(modality => {
-    //     if (modality in event.measurementType) {
-    //         const modifiedData = {
-    //             patient_id: patientId,
-    //             sensor_id: event.sensorId,
-    //             timestamp: timestamp.toISOString(),
-    //             ttl: (ttl.getTime() / 1000) | 0,
-    //             measure_type: modality,
-    //             measure_value: event[modality],
-    //         };
-    //         console.log("Data Pushed: ", modifiedData);
-    //         datapoints.push(modifiedData);
-
-    //         // // Rename IoT-provided timestamp (event.ts)
-    //         // modifiedData['iot_timestamp'] = modifiedData['ts'];
-    //         // delete modifiedData['ts'];
-    //         // console.log('Data for DDB:\n', modifiedData);        
-    //     }
-    // });
+    //Write to DynamoDB
     const datapoints: MetricsData[] = [];
     const modifiedData = {
         patient_id: patientId,
@@ -66,8 +47,29 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     };
     datapoints.push(modifiedData);
 
-    const metricsDataDao = new MetricsDataDao(ddb);
-    await metricsDataDao.saveMetrics(datapoints);
+    // This is now unused, data table has been moves to Timestream
+    // const metricsDataDao = new MetricsDataDao(ddb);
+    // await metricsDataDao.saveMetrics(datapoints);
+
+    //Write to Timestream Database
+    const region = "us-west-2";
+    const endpointsWriteClient = new AWS.TimestreamWrite({ region });
+
+    const qClientResponse = await endpointsWriteClient.describeEndpoints({}).promise();
+    console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
+    const client = new AWS.TimestreamWrite({
+        region,
+        endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+    });
+
+    console.log("Created timestream query client");
+    const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
+    await timestreamClient.writeRecords(modifiedData)
+
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify('Done')
+    };
 
     // Write to Firehose -> S3 data lake
     const firehoseData = { ...event, patientId };
@@ -81,4 +83,6 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
         .promise();
 
     console.log('firehoseRes: ', firehoseRes);
+
+    return response
 };
