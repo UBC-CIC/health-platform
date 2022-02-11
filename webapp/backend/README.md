@@ -28,7 +28,7 @@ cd ..
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `us-west-2`, except for the PSTN stack which must be created in `us-east-1` due to region restrictions in the AWS Chime SDK:
 ```
 cdk synth --profile health-platform
-cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/ca-central-1 --profile health-platform
+cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-west-2 --profile health-platform
 ```
 
 Deploy the CDK stacks (this will take ~10 min):
