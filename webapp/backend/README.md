@@ -25,7 +25,7 @@ cd ..
 ```
 
 ### CDK Deployment
-Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `ca-central-1`, except for the PSTN and Timestream stacks which must be created in `us-east-1` due to region restrictions in the AWS Chime SDK:
+Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `us-west-2`, except for the PSTN stack which must be created in `us-east-1` due to region restrictions in the AWS Chime SDK:
 ```
 cdk synth --profile health-platform
 cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/ca-central-1 --profile health-platform
@@ -52,7 +52,6 @@ cdk deploy HealthPlatformLambdaStack  --profile health-platform
 cdk deploy HealthPlatformCognitoStack --profile health-platform
 cdk deploy HealthPlatformAppSyncStack --profile health-platform
 cdk deploy HealthPlatformIotStack --profile health-platform
-cdk deploy HealthPlatformTimestreamStack --profile health-platform
 ```
 
 ### Set Up Amazon Simple Email Service
