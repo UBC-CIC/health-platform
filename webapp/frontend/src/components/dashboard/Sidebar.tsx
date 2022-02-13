@@ -244,10 +244,10 @@ export const Sidebar = ({
                         </Select>
                     </FormControl>
                 </Box>
-                <hr />
+                {/* <hr />
                 <FormGroup>
                     <FormControlLabel control={<Switch checked={searchProperties.showOverlay} onChange={(event: any) => toggleSetShowOverlay()} />} label="Overlay Events" />
-                </FormGroup>
+                </FormGroup> */}
             </Box>
         </Drawer>
     )

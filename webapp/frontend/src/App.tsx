@@ -1,7 +1,7 @@
 import { Hub, HubCallback } from '@aws-amplify/core';
 import { AuthState, onAuthUIStateChange, TOAST_AUTH_ERROR_EVENT, UI_AUTH_CHANNEL } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react';
-import { Alert, createTheme, ThemeProvider } from '@mui/material';
+import { Alert, createTheme, Grid, ThemeProvider } from '@mui/material';
 import React from 'react';
 import './App.css';
 import { Navigation } from './components/nav/Navigation';
@@ -26,32 +26,37 @@ function App() {
     const [authState, setAuthState] = React.useState<AuthState>();
     const { user, setUser } = React.useContext(UserContext);
     const [alertMessage, setAlertMessage] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState<any>(true);
 
     const theme = createTheme({
         palette: {
-          primary: {
-            light: '#4f83cc',
-            main: '#01579b',
-            dark: '#002f6c',
-            contrastText: '#fff',
-          },
-          secondary: {
-            light: '#fa5788',
-            main: '#c2185b',
-            dark: '#8c0032',
-            contrastText: '#fff',
-          },
+            primary: {
+                light: '#4f83cc',
+                main: '#01579b',
+                dark: '#002f6c',
+                contrastText: '#fff',
+            },
+            secondary: {
+                light: '#fa5788',
+                main: '#c2185b',
+                dark: '#8c0032',
+                contrastText: '#fff',
+            },
         },
-      });
+    });
 
     React.useEffect(() => {
         return onAuthUIStateChange((nextAuthState: any, authData: any) => {
+            // Initial splash screen
+            setIsLoading(false);
+            console.log("onAuthUIStateChange");
+
             // Called when user logs in
             //
             setAuthState(nextAuthState);
-            
+
             // Don't log this as it contains sensitive data
-            // console.log(authData);
+            console.log(authData);
 
             if (authData) {
                 // Note that the `attributes` object only exists during a normal login flow
@@ -86,7 +91,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <UserContext.Provider value={user}>
                 <div className="App">
-                    <Navigation userName={user.username} authState={authState} />
+                    <Navigation userName={user.username} userId={user.userId} authState={authState} />
                 </div>
             </UserContext.Provider>
         </ThemeProvider>

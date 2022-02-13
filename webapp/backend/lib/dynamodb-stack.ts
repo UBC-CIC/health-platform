@@ -3,8 +3,6 @@ import { BillingMode, StreamViewType } from "@aws-cdk/aws-dynamodb";
 import { CfnOutput } from "@aws-cdk/core";
 import cdk = require('@aws-cdk/core');
 
-// The DynamoDB stack should be created in ca-central-1 for data and privacy reasons. 
-//
 export class HealthPlatformDynamoStack extends cdk.Stack {
     public static EVENT_DETAIL_TABLE_ID = "EventDetailDynamoTable"
     public static EVENT_DETAIL_TABLE_NAME = "event-detail"
@@ -58,38 +56,6 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
                 value: eventDetailsTable.tableStreamArn
             })
         }
-
-        // This is now unused, data table has been moves to Timestream
-        // Data Table
-        // 
-        // this.dataTable = new dynamodb.Table(this, HealthPlatformDynamoStack.DATA_TABLE, {
-        //     tableName: HealthPlatformDynamoStack.DATA_TABLE,
-        //     partitionKey: {
-        //         name: 'measure_type',
-        //         type: dynamodb.AttributeType.STRING,
-        //     },
-        //     sortKey: {
-        //         name: 'timestamp',
-        //         type: dynamodb.AttributeType.STRING,
-        //     },
-        //     billingMode: BillingMode.PAY_PER_REQUEST,
-        //     pointInTimeRecovery: true,
-        //     timeToLiveAttribute: "ttl",
-        // });
-
-        // const dataTableGsi: dynamodb.GlobalSecondaryIndexProps = {
-        //     indexName: HealthPlatformDynamoStack.EVENT_STATUS_GLOBAL_INDEX_NAME,
-        //     partitionKey: {
-        //         name: 'patient_id',
-        //         type: dynamodb.AttributeType.STRING
-        //     },
-        //     sortKey: {
-        //         name: 'timestamp',
-        //         type: dynamodb.AttributeType.STRING
-        //     },
-        //     projectionType: dynamodb.ProjectionType.ALL
-        // };
-        // this.dataTable.addGlobalSecondaryIndex(dataTableGsi);
 
         // Patient Table
         //

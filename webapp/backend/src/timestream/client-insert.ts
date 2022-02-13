@@ -1,6 +1,15 @@
 import AWS = require('aws-sdk');
 import { ColumnInfo, QueryRequest, QueryResponse, QueryString, Row } from 'aws-sdk/clients/timestreamquery';
 
+export type MetricsData = {
+    "patient_id": string;
+    "sensor_id": string;
+    "timestamp": string;
+    "ttl"?: number;
+    "measure_type": string;
+    "measure_value": string;
+};
+
 export class HealthPlatformTimestreamInsertClient {
     client: AWS.TimestreamWrite
 

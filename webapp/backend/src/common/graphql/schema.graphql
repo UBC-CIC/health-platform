@@ -1,4 +1,9 @@
+#
+# MODELS
+#
+
 # Schema for event-detail DDB Table
+#
 type EventDetail @aws_cognito_user_pools
 @aws_iam {
 	event_id: String!
@@ -75,6 +80,104 @@ input DeleteEventInput {
     event_id: String
 }
 
+
+# Schema for patients DDB Table
+#
+type PatientsDetail @aws_cognito_user_pools
+@aws_iam {
+	patient_id: String!
+	name: String
+	sensor_types: [String]
+}
+
+type PatientsDetailConnection @aws_cognito_user_pools
+@aws_iam {
+	items: [PatientsDetail]
+	nextToken: String
+}
+
+# [input] PatientsDetail
+### CreatePatientsDetail, DeletePatientsDetail and UpdatePatientsDetail use this input type
+input PatientsDetailInput {
+	patient_id: String!
+	name: String
+	sensor_types: [String]
+}
+
+input ModelPatientsDetailConditionInput {
+	patient_id: String!
+	name: String
+	sensor_types: [String]
+	and: [ModelPatientsDetailConditionInput]
+	or: [ModelPatientsDetailConditionInput]
+	not: ModelPatientsDetailConditionInput
+}
+
+input ModelPatientsDetailFilterInput {
+	patient_id: String!
+	name: String
+	sensor_types: [String]
+	and: [ModelPatientsDetailFilterInput]
+	or: [ModelPatientsDetailFilterInput]
+	not: ModelPatientsDetailFilterInput
+}
+
+# [input] DeletePatientsDetailInput
+input DeletePatientsDetailInput {
+    patient_id: String
+}
+
+
+# Schema for sensors DDB Table
+#
+type SensorsDetail @aws_cognito_user_pools
+@aws_iam {
+	sensor_id: String!
+	patient_id: String
+	sensor_types: [String]
+}
+
+type SensorsDetailConnection @aws_cognito_user_pools
+@aws_iam {
+	items: [SensorsDetail]
+	nextToken: String
+}
+
+# [input] SensorsDetail
+### CreateSensorsDetail, DeleteSensorsDetail and UpdateSensorsDetail use this input type
+input SensorsDetailInput {
+	sensor_id: String!
+	patient_id: String
+	sensor_types: [String]
+}
+
+input ModelSensorsDetailConditionInput {
+	sensor_id: String!
+	patient_id: String
+	sensor_types: [String]
+	and: [ModelSensorsDetailConditionInput]
+	or: [ModelSensorsDetailConditionInput]
+	not: ModelSensorsDetailConditionInput
+}
+
+input ModelSensorsDetailFilterInput {
+	sensor_id: String!
+	patient_id: String
+	sensor_types: [String]
+	and: [ModelSensorsDetailFilterInput]
+	or: [ModelSensorsDetailFilterInput]
+	not: ModelSensorsDetailFilterInput
+}
+
+# [input] DeleteSensorsDetailInput
+input DeleteSensorsDetailInput {
+    sensor_id: String
+}
+
+
+# 
+# Query Lambda function
+# 
 input QueryRequest {
     patient_id: String
     period: String
@@ -88,17 +191,9 @@ type QueryResponse {
     rows: [[String]]
 }
 
-# [type] Mutation
-type Mutation @aws_cognito_user_pools
-@aws_iam {
-	createEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
-	updateEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
-	deleteEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
-	publishNewEventDetail(input: EventDetailInput!): EventDetail
-	publishEventDetailUpdates(input: EventDetailInput!): EventDetail
-}
-
-# [type] Query
+#
+# QUERIES
+#
 type Query @aws_cognito_user_pools
 @aws_iam {
     query(input: QueryRequest): QueryResponse
@@ -113,9 +208,41 @@ type Query @aws_cognito_user_pools
 		limit: Int,
 		nextToken: String
 	): EventDetailConnection
+
+	getPatientsDetail(patientId: String!): PatientsDetail
+	listPatientsDetails(filter: ModelPatientsDetailFilterInput, limit: Int, nextToken: String): PatientsDetailConnection
+
+	getSensorsDetail(patientId: String!): SensorsDetail
+	listSensorsDetails(filter: ModelSensorsDetailFilterInput, limit: Int, nextToken: String): SensorsDetailConnection
 }
 
-# [type] Subscription
+#
+# MUTATIONS
+#
+type Mutation @aws_cognito_user_pools
+@aws_iam {
+	createEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	updateEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	deleteEventDetail(input: EventDetailInput, condition: ModelEventDetailConditionInput): EventDetail
+	publishNewEventDetail(input: EventDetailInput!): EventDetail
+	publishEventDetailUpdates(input: EventDetailInput!): EventDetail
+
+	createPatientsDetail(input: PatientsDetailInput, condition: ModelPatientsDetailConditionInput): PatientsDetail
+	updatePatientsDetail(input: PatientsDetailInput, condition: ModelPatientsDetailConditionInput): PatientsDetail
+	deletePatientsDetail(input: PatientsDetailInput, condition: ModelPatientsDetailConditionInput): PatientsDetail
+	publishNewPatientsDetail(input: PatientsDetailInput!): PatientsDetail
+	publishPatientsDetailUpdates(input: PatientsDetailInput!): PatientsDetail
+
+	createSensorsDetail(input: SensorsDetailInput, condition: ModelSensorsDetailConditionInput): SensorsDetail
+	updateSensorsDetail(input: SensorsDetailInput, condition: ModelSensorsDetailConditionInput): SensorsDetail
+	deleteSensorsDetail(input: SensorsDetailInput, condition: ModelSensorsDetailConditionInput): SensorsDetail
+	publishNewSensorsDetail(input: SensorsDetailInput!): SensorsDetail
+	publishSensorsDetailUpdates(input: SensorsDetailInput!): SensorsDetail
+}
+
+#
+# SUBSCRIPTIONS
+#
 type Subscription @aws_cognito_user_pools
 @aws_iam {
 	onCreateEventDetail: EventDetail
@@ -124,4 +251,18 @@ type Subscription @aws_cognito_user_pools
 		@aws_subscribe(mutations: ["updateEventDetail","publishEventDetailUpdates"])
 	onDeleteEventDetail: EventDetail
 		@aws_subscribe(mutations: ["deleteEventDetail"])
+
+	onCreatePatientsDetail: PatientsDetail
+		@aws_subscribe(mutations: ["createPatientsDetail","publishNewPatientsDetail"])
+	onUpdatePatientsDetail: PatientsDetail
+		@aws_subscribe(mutations: ["updatePatientsDetail","publishPatientsDetailUpdates"])
+	onDeletePatientsDetail: PatientsDetail
+		@aws_subscribe(mutations: ["deletePatientsDetail"])
+
+	onCreateSensorsDetail: SensorsDetail
+		@aws_subscribe(mutations: ["createSensorsDetail","publishNewSensorsDetail"])
+	onUpdateSensorsDetail: SensorsDetail
+		@aws_subscribe(mutations: ["updateSensorsDetail","publishSensorsDetailUpdates"])
+	onDeleteSensorsDetail: SensorsDetail
+		@aws_subscribe(mutations: ["deleteSensorsDetail"])
 }

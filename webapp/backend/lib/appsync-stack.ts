@@ -9,14 +9,12 @@ import {
 } from '@aws-cdk/aws-appsync';
 import { UserPool } from '@aws-cdk/aws-cognito';
 import { Table } from '@aws-cdk/aws-dynamodb';
-import { CompositePrincipal, ManagedPolicy, Role, PolicyDocument, ServicePrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam'
+import { CompositePrincipal, ManagedPolicy, Role, ServicePrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam'
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
-import lambda = require('@aws-cdk/aws-lambda');
-import cdk = require('@aws-cdk/core');
 import { HealthPlatformLambdaStack } from './lambda-stack';
 
 /**
- * HealthPlatformAppSyncStack defines a GraphQL API for accessing event-detail table.
+ * HealthPlatformAppSyncStack defines a GraphQL API for accessing DynamoDB table.
  *
  */
 export class HealthPlatformAppSyncStack extends Stack {
@@ -30,6 +28,8 @@ export class HealthPlatformAppSyncStack extends Stack {
         });
 
         const eventDetailResolverPath = './vtl/resolvers/event-detail'
+        const patientsDetailResolverPath = './vtl/resolvers/patients-detail'
+        const sensorsDetailResolverPath = './vtl/resolvers/sensors-detail'
 
         const authorizationType = AuthorizationType.USER_POOL;
         const userPool = UserPool.fromUserPoolId(this, 'UserPool', userPoolId);
@@ -74,7 +74,9 @@ export class HealthPlatformAppSyncStack extends Stack {
             resources: ['*']
         }))
 
-        // DynamoDB DataSource
+        //
+        // CDK for the `event-detail` Table
+        //
 
         // DataSource to connect to event-detail DDB table
         // Import event-detail DDB table and grant AppSync to access the DDB table
@@ -155,58 +157,145 @@ export class HealthPlatformAppSyncStack extends Stack {
             responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/None.publishEventDetailUpdates.res.vtl`)
         });
 
-        // Define Lambda Role and Data Source
-        const lambdaRole = new Role(this, 'HealthPlatformAppSyncLambdaRole', {
-            roleName: 'HealthPlatformAppSyncLambdaRole',
-            assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
-            inlinePolicies: {
-                additional: new PolicyDocument({
-                    statements: [
-                        new PolicyStatement({
-                            effect: Effect.ALLOW,
-                            actions: [
-                                // DynamoDB
-                                'dynamodb:Scan',
-                                'dynamodb:GetItem',
-                                'dynamodb:PutItem',
-                                'dynamodb:Query',
-                                'dynamodb:UpdateItem',
-                                'dynamodb:DeleteItem',
-                                'dynamodb:BatchWriteItem',
-                                'dynamodb:BatchGetItem',
-                                // IAM
-                                'iam:GetRole',
-                                'iam:PassRole',
-                                // Lambda
-                                'lambda:InvokeFunction',
-                                // S3
-                                's3:GetObject',
-                                's3:PutObject',
-                                's3:ListBucket',
-                                'kms:Decrypt',
-                                'kms:Encrypt',
-                                'kms:GenerateDataKey',
-                                // SNS
-                                'sns:*',
-                                // SES
-                                'ses:*',
-                                // STS
-                                'sts:AssumeRole',
-                                // CloudWatch
-                                'cloudwatch:*',
-                                'logs:*',
-                                // AppSync
-                                "appsync:GraphQL",
-                                "appsync:GetGraphqlApi",
-                                "appsync:ListGraphqlApis",
-                                "appsync:ListApiKeys"
-                            ],
-                            resources: ['*']
-                        })
-                    ]
-                }),
-            },
+        //
+        // CDK for the `patients` Table
+        //
+
+        // DataSource to connect to patients DDB table
+        // Import patients DDB table and grant AppSync to access the DDB table
+        const patientsDetailTable = Table.fromTableAttributes(this,
+            'patientsDetailTable', {
+            tableName: HealthPlatformDynamoStack.PATIENT_TABLE,
         });
+        patientsDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
+
+        // Define Request DDB DataSource
+        const patientsDetailTableDataSource = api.addDynamoDbDataSource('patientsDetailTableDataSource', patientsDetailTable);
+
+        patientsDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getPatientsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Query.getPatientsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Query.getPatientsDetail.res.vtl`),
+        });
+
+        patientsDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'listPatientsDetails',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Query.listPatientsDetails.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Query.listPatientsDetails.res.vtl`),
+        });
+
+        patientsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'createPatientsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.createPatientsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.createPatientsDetail.res.vtl`),
+        });
+
+        patientsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'deletePatientsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.deletePatientsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.deletePatientsDetail.res.vtl`),
+        });
+
+        patientsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'updatePatientsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.updatePatientsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/Mutation.updatePatientsDetail.res.vtl`),
+        });
+
+        // None DataSource
+        //
+        // Add None DataSource for Local Resolver - to publish notification triggered by patients DDB
+        const newPatientsDetailNoneDataSource = api.addNoneDataSource('NewPatientsDetailNoneDataSource');
+        newPatientsDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishNewPatientsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/None.publishNewPatientsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/None.publishNewPatientsDetail.res.vtl`)
+        });
+        const updatePatientsDetailNoneDataSource = api.addNoneDataSource('PatientsDetailNoneDataSource');
+        updatePatientsDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishPatientsDetailUpdates',
+            requestMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/None.publishPatientsDetailUpdates.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${patientsDetailResolverPath}/None.publishPatientsDetailUpdates.res.vtl`)
+        });
+
+        //
+        // CDK for the `sensors` Table
+        //
+
+        // DataSource to connect to sensors DDB table
+        // Import sensors DDB table and grant AppSync to access the DDB table
+        const sensorsDetailTable = Table.fromTableAttributes(this,
+            'sensorsDetailTable', {
+            tableName: HealthPlatformDynamoStack.PATIENT_TABLE,
+        });
+        sensorsDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
+
+        // Define Request DDB DataSource
+        const sensorsDetailTableDataSource = api.addDynamoDbDataSource('sensorsDetailTableDataSource', sensorsDetailTable);
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getSensorsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetail.res.vtl`),
+        });
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'listSensorsDetails',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.listSensorsDetails.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.listSensorsDetails.res.vtl`),
+        });
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'createSensorsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.createSensorsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.createSensorsDetail.res.vtl`),
+        });
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'deleteSensorsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.deleteSensorsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.deleteSensorsDetail.res.vtl`),
+        });
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'updateSensorsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.updateSensorsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Mutation.updateSensorsDetail.res.vtl`),
+        });
+
+        // None DataSource
+        //
+        // Add None DataSource for Local Resolver - to publish notification triggered by sensors DDB
+        const newSensorsDetailNoneDataSource = api.addNoneDataSource('NewSensorsDetailNoneDataSource');
+        newSensorsDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishNewSensorsDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishNewSensorsDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishNewSensorsDetail.res.vtl`)
+        });
+        const updateSensorsDetailNoneDataSource = api.addNoneDataSource('SensorsDetailNoneDataSource');
+        updateSensorsDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishSensorsDetailUpdates',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishSensorsDetailUpdates.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishSensorsDetailUpdates.res.vtl`)
+        });
+
+        //
+        // Lambda Connectivity
+        //
 
         // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
         //

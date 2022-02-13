@@ -12,8 +12,8 @@ export const Navigation = (props: AppAuthStateProps) => {
             <ResponsiveAppBar {...props} />
             {props.authState === AuthState.SignedIn ? (
                 <Switch>
-                    <Route path="/" exact component={() => <Dashboard userName={props.userName} />} />
-                    <Route path="/dashboard" component={() => <Dashboard userName={props.userName} />} />
+                    <Route path="/" exact component={() => <Dashboard userName={props.userName} userId={props.userId} />} />
+                    <Route path="/dashboard" component={() => <Dashboard userName={props.userName} userId={props.userId} />} />
                     <Route path="/events" component={() => <Events userName={props.userName} />} />
                 </Switch>
             ) : (

@@ -81,3 +81,111 @@ export const publishEventDetailUpdates = /* GraphQL */ `
     }
   }
 `;
+export const createPatientsDetail = /* GraphQL */ `
+  mutation CreatePatientsDetail(
+    $input: PatientsDetailInput
+    $condition: ModelPatientsDetailConditionInput
+  ) {
+    createPatientsDetail(input: $input, condition: $condition) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const updatePatientsDetail = /* GraphQL */ `
+  mutation UpdatePatientsDetail(
+    $input: PatientsDetailInput
+    $condition: ModelPatientsDetailConditionInput
+  ) {
+    updatePatientsDetail(input: $input, condition: $condition) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const deletePatientsDetail = /* GraphQL */ `
+  mutation DeletePatientsDetail(
+    $input: PatientsDetailInput
+    $condition: ModelPatientsDetailConditionInput
+  ) {
+    deletePatientsDetail(input: $input, condition: $condition) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const publishNewPatientsDetail = /* GraphQL */ `
+  mutation PublishNewPatientsDetail($input: PatientsDetailInput!) {
+    publishNewPatientsDetail(input: $input) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const publishPatientsDetailUpdates = /* GraphQL */ `
+  mutation PublishPatientsDetailUpdates($input: PatientsDetailInput!) {
+    publishPatientsDetailUpdates(input: $input) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const createSensorsDetail = /* GraphQL */ `
+  mutation CreateSensorsDetail(
+    $input: SensorsDetailInput
+    $condition: ModelSensorsDetailConditionInput
+  ) {
+    createSensorsDetail(input: $input, condition: $condition) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const updateSensorsDetail = /* GraphQL */ `
+  mutation UpdateSensorsDetail(
+    $input: SensorsDetailInput
+    $condition: ModelSensorsDetailConditionInput
+  ) {
+    updateSensorsDetail(input: $input, condition: $condition) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const deleteSensorsDetail = /* GraphQL */ `
+  mutation DeleteSensorsDetail(
+    $input: SensorsDetailInput
+    $condition: ModelSensorsDetailConditionInput
+  ) {
+    deleteSensorsDetail(input: $input, condition: $condition) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const publishNewSensorsDetail = /* GraphQL */ `
+  mutation PublishNewSensorsDetail($input: SensorsDetailInput!) {
+    publishNewSensorsDetail(input: $input) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const publishSensorsDetailUpdates = /* GraphQL */ `
+  mutation PublishSensorsDetailUpdates($input: SensorsDetailInput!) {
+    publishSensorsDetailUpdates(input: $input) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;

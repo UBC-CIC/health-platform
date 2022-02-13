@@ -65,6 +65,16 @@ export class HealthPlatformCognitoStack extends Stack {
             },
         });
 
+        const createPatientsDetailFunction = new lambda.Function(this, 'CreatePatientsDetailFunction', {
+            functionName: "Patients-Detail-Create",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'patients-detail-create.handler',
+            runtime: lambda.Runtime.NODEJS_12_X,
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(30),
+            role: lambdaRole,
+        });
+
         // User Pool
         const userPool = new UserPool(this, 'HealthPlatformUserPool', {
             userPoolName: 'health-platform-admin-user-pool',
@@ -82,11 +92,15 @@ export class HealthPlatformCognitoStack extends Stack {
                 email: true
             },
             standardAttributes: {
+                // TODO: Add fullname in the future
             },
             customAttributes: {
                 'joinedOn': new DateTimeAttribute(),
             },
             accountRecovery: AccountRecovery.EMAIL_ONLY,
+            lambdaTriggers: {
+                postConfirmation: createPatientsDetailFunction,
+            }
         });
         this.UserPoolId = userPool.userPoolId;
 

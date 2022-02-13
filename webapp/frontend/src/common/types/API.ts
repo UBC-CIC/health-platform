@@ -52,6 +52,28 @@ export type EventDetail = {
   notes?: string | null,
 };
 
+export type PatientsDetailInput = {
+  patient_id: string,
+  name?: string | null,
+  sensor_types?: Array< string | null > | null,
+};
+
+export type ModelPatientsDetailConditionInput = {
+  patient_id: string,
+  name?: string | null,
+  sensor_types?: Array< string | null > | null,
+  and?: Array< ModelPatientsDetailConditionInput | null > | null,
+  or?: Array< ModelPatientsDetailConditionInput | null > | null,
+  not?: ModelPatientsDetailConditionInput | null,
+};
+
+export type PatientsDetail = {
+  __typename: "PatientsDetail",
+  patient_id?: string,
+  name?: string | null,
+  sensor_types?: Array< string | null > | null,
+};
+
 export type QueryRequest = {
   patient_id?: string | null,
   period?: string | null,
@@ -82,6 +104,21 @@ export type ModelEventDetailFilterInput = {
 export type EventDetailConnection = {
   __typename: "EventDetailConnection",
   items?:  Array<EventDetail | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelPatientsDetailFilterInput = {
+  patient_id: string,
+  name?: string | null,
+  sensor_types?: Array< string | null > | null,
+  and?: Array< ModelPatientsDetailFilterInput | null > | null,
+  or?: Array< ModelPatientsDetailFilterInput | null > | null,
+  not?: ModelPatientsDetailFilterInput | null,
+};
+
+export type PatientsDetailConnection = {
+  __typename: "PatientsDetailConnection",
+  items?:  Array<PatientsDetail | null > | null,
   nextToken?: string | null,
 };
 
@@ -175,6 +212,74 @@ export type PublishEventDetailUpdatesMutation = {
     mood?: string | null,
     food?: string | null,
     notes?: string | null,
+  } | null,
+};
+
+export type CreatePatientsDetailMutationVariables = {
+  input?: PatientsDetailInput | null,
+  condition?: ModelPatientsDetailConditionInput | null,
+};
+
+export type CreatePatientsDetailMutation = {
+  createPatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type UpdatePatientsDetailMutationVariables = {
+  input?: PatientsDetailInput | null,
+  condition?: ModelPatientsDetailConditionInput | null,
+};
+
+export type UpdatePatientsDetailMutation = {
+  updatePatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type DeletePatientsDetailMutationVariables = {
+  input?: PatientsDetailInput | null,
+  condition?: ModelPatientsDetailConditionInput | null,
+};
+
+export type DeletePatientsDetailMutation = {
+  deletePatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishNewPatientsDetailMutationVariables = {
+  input?: PatientsDetailInput,
+};
+
+export type PublishNewPatientsDetailMutation = {
+  publishNewPatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishPatientsDetailUpdatesMutationVariables = {
+  input?: PatientsDetailInput,
+};
+
+export type PublishPatientsDetailUpdatesMutation = {
+  publishPatientsDetailUpdates?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
   } | null,
 };
 
@@ -282,6 +387,38 @@ export type GetEventDetailsByUserAndCreateTimeQuery = {
   } | null,
 };
 
+export type GetPatientsDetailQueryVariables = {
+  patientId?: string,
+};
+
+export type GetPatientsDetailQuery = {
+  getPatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type ListPatientsDetailsQueryVariables = {
+  filter?: ModelPatientsDetailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListPatientsDetailsQuery = {
+  listPatientsDetails?:  {
+    __typename: "PatientsDetailConnection",
+    items?:  Array< {
+      __typename: "PatientsDetail",
+      patient_id: string,
+      name?: string | null,
+      sensor_types?: Array< string | null > | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateEventDetailSubscription = {
   onCreateEventDetail?:  {
     __typename: "EventDetail",
@@ -321,5 +458,32 @@ export type OnDeleteEventDetailSubscription = {
     mood?: string | null,
     food?: string | null,
     notes?: string | null,
+  } | null,
+};
+
+export type OnCreatePatientsDetailSubscription = {
+  onCreatePatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnUpdatePatientsDetailSubscription = {
+  onUpdatePatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnDeletePatientsDetailSubscription = {
+  onDeletePatientsDetail?:  {
+    __typename: "PatientsDetail",
+    patient_id: string,
+    name?: string | null,
+    sensor_types?: Array< string | null > | null,
   } | null,
 };

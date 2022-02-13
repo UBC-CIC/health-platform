@@ -93,13 +93,13 @@ export const Sidebar = (props: { userName: any}) => {
                         </div>
                     </FormControl>
                 </Box>
-        <hr />
+        {/* <hr />
         <FormGroup>
           <FormControlLabel
             control={<Switch defaultChecked />}
             label="Overlay Events"
           />
-        </FormGroup>
+        </FormGroup> */}
       </Box>
     </Drawer>
   );

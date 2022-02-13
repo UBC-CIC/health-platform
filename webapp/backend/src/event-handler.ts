@@ -1,6 +1,5 @@
 import AWS = require('aws-sdk');
-import { MetricsData, MetricsDataDao } from './ddb/metrics-dao';
-import { HealthPlatformTimestreamInsertClient } from './timestream/client-insert';
+import { HealthPlatformTimestreamInsertClient, MetricsData } from './timestream/client-insert';
 import { SensorDao } from './ddb/sensor-dao';
 var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
@@ -46,10 +45,6 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
         measure_value: event.measurement,
     };
     datapoints.push(modifiedData);
-
-    // This is now unused, data table has been moves to Timestream
-    // const metricsDataDao = new MetricsDataDao(ddb);
-    // await metricsDataDao.saveMetrics(datapoints);
 
     //Write to Timestream Database
     const region = "us-west-2";

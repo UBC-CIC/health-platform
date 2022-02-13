@@ -44,3 +44,57 @@ export const onDeleteEventDetail = /* GraphQL */ `
     }
   }
 `;
+export const onCreatePatientsDetail = /* GraphQL */ `
+  subscription OnCreatePatientsDetail {
+    onCreatePatientsDetail {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const onUpdatePatientsDetail = /* GraphQL */ `
+  subscription OnUpdatePatientsDetail {
+    onUpdatePatientsDetail {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const onDeletePatientsDetail = /* GraphQL */ `
+  subscription OnDeletePatientsDetail {
+    onDeletePatientsDetail {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const onCreateSensorsDetail = /* GraphQL */ `
+  subscription OnCreateSensorsDetail {
+    onCreateSensorsDetail {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const onUpdateSensorsDetail = /* GraphQL */ `
+  subscription OnUpdateSensorsDetail {
+    onUpdateSensorsDetail {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const onDeleteSensorsDetail = /* GraphQL */ `
+  subscription OnDeleteSensorsDetail {
+    onDeleteSensorsDetail {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;

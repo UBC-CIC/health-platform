@@ -58,6 +58,19 @@ export class HealthPlatformTimestreamQueryClient {
             return "";
         }
 
+        // TODO: 
+        // - patient_id is bigint in Timestream
+        // - 
+        // return `
+        //     SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
+        //         measure_name,
+        //         ROUND(${statisticQueryVal}, 2) AS measure_val
+        //     FROM HealthDatabase.MetricsDataTable
+        //     WHERE patient_id = '${patientId}'
+        //     AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
+        //     GROUP BY BIN(time, ${period}), measure_name
+        //     ORDER BY measure_name, binned_timestamp ASC
+        // `;
         return `
             SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
                 measure_name,

@@ -99,3 +99,53 @@ export const getEventDetailsByUserAndCreateTime = /* GraphQL */ `
     }
   }
 `;
+export const getPatientsDetail = /* GraphQL */ `
+  query GetPatientsDetail($patientId: String!) {
+    getPatientsDetail(patientId: $patientId) {
+      patient_id
+      name
+      sensor_types
+    }
+  }
+`;
+export const listPatientsDetails = /* GraphQL */ `
+  query ListPatientsDetails(
+    $filter: ModelPatientsDetailFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listPatientsDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        patient_id
+        name
+        sensor_types
+      }
+      nextToken
+    }
+  }
+`;
+export const getSensorsDetail = /* GraphQL */ `
+  query GetSensorsDetail($patientId: String!) {
+    getSensorsDetail(patientId: $patientId) {
+      sensor_id
+      patient_id
+      sensor_types
+    }
+  }
+`;
+export const listSensorsDetails = /* GraphQL */ `
+  query ListSensorsDetails(
+    $filter: ModelSensorsDetailFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listSensorsDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        sensor_id
+        patient_id
+        sensor_types
+      }
+      nextToken
+    }
+  }
+`;
