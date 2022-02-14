@@ -34,17 +34,51 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     let ttl = new Date(timestamp);
     ttl.setDate(timestamp.getUTCDate() + 1);
 
-    //Write to DynamoDB
+    //Create event data for Timestream Write
     const datapoints: MetricsData[] = [];
-    const modifiedData = {
-        patient_id: patientId,
-        sensor_id: event.sensorId,
-        timestamp: timestamp.toISOString(),
-        ttl: (ttl.getTime() / 1000) | 0,
-        measure_type: event.measurementType,
-        measure_value: event.measurement,
-    };
-    datapoints.push(modifiedData);
+    if (event.measurementType == "Accelerometer") {
+        const first_index = event.measurement.indexOf(",") + 2
+        const second_index = event.measurement.indexOf(",", first_index) + 2
+        const accelerometerX = {
+            patient_id: patientId,
+            sensor_id: event.sensorId,
+            timestamp: timestamp.toISOString(),
+            ttl: (ttl.getTime() / 1000) | 0,
+            measure_type: "Accelerometer X",
+            measure_value: event.measurement.substring(0, first_index - 2),
+        };
+        const accelerometerY = {
+            patient_id: patientId,
+            sensor_id: event.sensorId,
+            timestamp: timestamp.toISOString(),
+            ttl: (ttl.getTime() / 1000) | 0,
+            measure_type: "Accelerometer Y",
+            measure_value: event.measurement.substring(first_index, second_index - 2),
+        };
+        const accelerometerZ = {
+            patient_id: patientId,
+            sensor_id: event.sensorId,
+            timestamp: timestamp.toISOString(),
+            ttl: (ttl.getTime() / 1000) | 0,
+            measure_type: "Accelerometer Z",
+            measure_value: event.measurement.substring(second_index),
+        };
+        datapoints.push(accelerometerX);
+        datapoints.push(accelerometerY);
+        datapoints.push(accelerometerZ);
+    } else {
+        const modifiedData = {
+            patient_id: patientId,
+            sensor_id: event.sensorId,
+            timestamp: timestamp.toISOString(),
+            ttl: (ttl.getTime() / 1000) | 0,
+            measure_type: event.measurementType,
+            measure_value: event.measurement,
+        };
+        datapoints.push(modifiedData);
+    }
+    
+   
 
     //Write to Timestream Database
     const region = "us-west-2";
@@ -59,7 +93,9 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
-    await timestreamClient.writeRecords(modifiedData)
+    for (var measurements of datapoints) {
+        await timestreamClient.writeRecords(measurements)
+    }
 
     const response = {
         statusCode: 200,

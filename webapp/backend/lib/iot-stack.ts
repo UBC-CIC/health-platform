@@ -18,7 +18,6 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
     private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
-    private static LAYER_CODE_PREFIX = "health-platform-layer-code-"
 
     public readonly lambdaRole: Role;
 
@@ -145,13 +144,13 @@ export class HealthPlatformIotStack extends cdk.Stack {
             databaseName: 'HealthDatabase',
         });
         
-        const dataTable = new timestream.CfnTable(this, 'MetricsDataTable', {
+        const dataTable = new timestream.CfnTable(this, 'PatientMetricsDataTable', {
             databaseName: healthDatabase.ref,
             retentionProperties: {
                 MemoryStoreRetentionPeriodInHours : "24",
                 MagneticStoreRetentionPeriodInDays : "7"
             },
-            tableName: 'MetricsDataTable',
+            tableName: 'PatientMetricsDataTable',
         });
 
         let kinesisLogGroup = new LogGroup(this, "HealthPlatformKinesisLogGroup", {

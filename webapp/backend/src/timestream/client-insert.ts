@@ -34,7 +34,7 @@ export class HealthPlatformTimestreamInsertClient {
             {
                 'Name': 'patient_id',
                 'Value': event.patient_id,
-                'Type': 'BIGINT'
+                'Type': 'VARCHAR'
             },
             {
                 'Name': 'sensor_id',
@@ -49,7 +49,7 @@ export class HealthPlatformTimestreamInsertClient {
             {
                 'Name': 'measurement',
                 'Value': measurement_string,
-                'Type': 'VARCHAR'
+                'Type': 'DOUBLE'
             }
         ];
 
@@ -66,7 +66,7 @@ export class HealthPlatformTimestreamInsertClient {
     
         const params = {
             DatabaseName: "HealthDatabase",
-            TableName: "MetricsDataTable",
+            TableName: "PatientMetricsDataTable",
             Records: records
         };
     
