@@ -24,12 +24,6 @@ export class HealthPlatformTimestreamInsertClient {
         const dimensions = [
             {'Name': 'region', 'Value': 'us-west-2'}
         ];
-        if (event.measure_type != "Accelerometer") {
-            var measurement = new Number(event.measure_value)
-            var measurement_string = measurement.toString()
-        } else {
-            measurement_string = event.measure_value
-        }
         const measureValues = [
             {
                 'Name': 'patient_id',
@@ -48,7 +42,7 @@ export class HealthPlatformTimestreamInsertClient {
             },
             {
                 'Name': 'measurement',
-                'Value': measurement_string,
+                'Value': event.measure_value,
                 'Type': 'DOUBLE'
             }
         ];
@@ -66,7 +60,7 @@ export class HealthPlatformTimestreamInsertClient {
     
         const params = {
             DatabaseName: "HealthDatabase",
-            TableName: "PatientMetricsDataTable",
+            TableName: "MetricsDataTable",
             Records: records
         };
     

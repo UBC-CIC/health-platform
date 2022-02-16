@@ -18,6 +18,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
     private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
+    private static TIMESTREAM_REJECTED_DATA_PREFIX = "health-platform-rejected-data-"
 
     public readonly lambdaRole: Role;
 
@@ -143,16 +144,33 @@ export class HealthPlatformIotStack extends cdk.Stack {
         const healthDatabase = new timestream.CfnDatabase(this, 'HealthDatabase',  {
             databaseName: 'HealthDatabase',
         });
-        
-        const dataTable = new timestream.CfnTable(this, 'PatientMetricsDataTable', {
-            databaseName: healthDatabase.ref,
-            retentionProperties: {
-                MemoryStoreRetentionPeriodInHours : "24",
-                MagneticStoreRetentionPeriodInDays : "7"
-            },
-            tableName: 'PatientMetricsDataTable',
+
+        let timestreamRejectedDataBucket = new Bucket(this, 'TimestreamRejectedDataBucket', {
+            bucketName: HealthPlatformIotStack.TIMESTREAM_REJECTED_DATA_PREFIX + this.account,
+            encryption: BucketEncryption.S3_MANAGED,
         });
 
+        const dataTable = new cdk.CfnResource(this, 'MetricsDataTable', {
+            type: 'AWS::Timestream::Table',
+            properties: {
+                DatabaseName: healthDatabase.ref,
+                MagneticStoreWriteProperties: {
+                    EnableMagneticStoreWrites : true,
+                    MagneticStoreRejectedDataLocation : {
+                        S3Configuration : {
+                            BucketName : timestreamRejectedDataBucket.bucketName,
+                            EncryptionOption : "SSE_S3"
+                        } 
+                    }
+                },
+                RetentionProperties: {
+                    MemoryStoreRetentionPeriodInHours : "24",
+                    MagneticStoreRetentionPeriodInDays : "365"
+                },
+                TableName: 'MetricsDataTable',
+            },
+          });
+          
         let kinesisLogGroup = new LogGroup(this, "HealthPlatformKinesisLogGroup", {
             retention: RetentionDays.ONE_MONTH,
         });
@@ -222,10 +240,11 @@ export class HealthPlatformIotStack extends cdk.Stack {
                     columns: [
                         {'name': 'patientId', 'type': 'string'},
                         {'name': 'sensorId', 'type': 'string'},
-                        {'name': 'timestamp', 'type': 'int'},
-                        {'name': 'temp', 'type': 'int'},
-                        {'name': 'heartrate', 'type': 'int'},
-                        {'name': 'ecg', 'type': 'int'},
+                        {'name': 'deviceOS', 'type': 'string'},
+                        {'name': 'measurementDuration', 'type': 'string'},
+                        {'name': 'measurementType', 'type': 'string'},
+                        {'name': 'measurement', 'type': 'string'},
+                        {'name': 'timestamp', 'type': 'string'},
                     ],
                     inputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat",
                     outputFormat: "org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat",
