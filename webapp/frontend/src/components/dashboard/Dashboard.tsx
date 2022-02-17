@@ -20,7 +20,7 @@ import ReactApexChart from "react-apexcharts";
 import { LineChart } from './LineChart';
 
 
-const DEFAULT_HOURS_AGO = 6;
+const DEFAULT_HOURS_AGO = 3;
 
 interface Module {
     "sensor_type": string;
@@ -181,7 +181,7 @@ export const Dashboard = (props: {
         // Run the update logic
         //
         const input = {
-            "patient_id": "", // TODO
+            "patient_id": props.userId,
             "period": searchProperties.period,
             "statistic": searchProperties.statistic,
             "start": start,
@@ -218,9 +218,9 @@ export const Dashboard = (props: {
             // Timestream does not have timezone support
             const t = row[columnToIndex.get("binned_timestamp")!]
             const timestamp = moment(`${t}Z`).valueOf(); // Get epoch milliseconds
-            const measureName = row[columnToIndex.get("measure_name")!]
+            const measureName = row[columnToIndex.get("measurement_type")!]
             const val = row[columnToIndex.get("measure_val")!]
-            if (val !== "" && Number(val)) {
+            if (val !== "" && Number(val) && measureNameToVals.has(measureName)) {
                 measureNameToVals.get(measureName)![0].data.push([timestamp, +val]);
             }
         });

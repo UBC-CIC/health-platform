@@ -18,27 +18,27 @@ export class HealthPlatformTimestreamQueryClient {
         let statisticQueryVal = "";
         switch(statistic) {
             case "avg": {
-                statisticQueryVal = "AVG(measure_value::double)";
+                statisticQueryVal = "AVG(measurement)";
                 break;
             }
             case "min": {
-                statisticQueryVal = "MIN(measure_value::double)";
+                statisticQueryVal = "MIN(measurement)";
                 break;
             }
             case "p50": {
-                statisticQueryVal = "APPROX_PERCENTILE(measure_value::double, 0.5)";
+                statisticQueryVal = "APPROX_PERCENTILE(measurement, 0.5)";
                 break;
             }
             case "p90": {
-                statisticQueryVal = "APPROX_PERCENTILE(measure_value::double, 0.9)";
+                statisticQueryVal = "APPROX_PERCENTILE(measurement, 0.9)";
                 break; 
             }
             case "p99": {
-                statisticQueryVal = "APPROX_PERCENTILE(measure_value::double, 0.99)";
+                statisticQueryVal = "APPROX_PERCENTILE(measurement, 0.99)";
                 break; 
             }
             case "max": {
-                statisticQueryVal = "MAX(measure_value::double)";
+                statisticQueryVal = "MAX(measurement)";
                 break;
             }
             default: {
@@ -58,28 +58,15 @@ export class HealthPlatformTimestreamQueryClient {
             return "";
         }
 
-        // TODO: 
-        // - patient_id is bigint in Timestream
-        // - 
-        // return `
-        //     SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
-        //         measure_name,
-        //         ROUND(${statisticQueryVal}, 2) AS measure_val
-        //     FROM HealthDatabase.MetricsDataTable
-        //     WHERE patient_id = '${patientId}'
-        //     AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
-        //     GROUP BY BIN(time, ${period}), measure_name
-        //     ORDER BY measure_name, binned_timestamp ASC
-        // `;
         return `
             SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
-                measure_name,
+                measurement_type,
                 ROUND(${statisticQueryVal}, 2) AS measure_val
-            FROM "devops-single".DevOps
-            WHERE hostname = 'host-Hovjv'
+            FROM HealthDatabase.MetricsDataTable
+            WHERE patient_id = '${patientId}'
             AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
-            GROUP BY BIN(time, ${period}), measure_name
-            ORDER BY measure_name, binned_timestamp ASC
+            GROUP BY BIN(time, ${period}), measurement_type
+            ORDER BY measurement_type, binned_timestamp ASC
         `;
     }
 
