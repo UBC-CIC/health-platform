@@ -15,6 +15,7 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
     public readonly dataTable: dynamodb.Table;
     public readonly patientTable: dynamodb.Table;
     public readonly sensorTable: dynamodb.Table;
+    public readonly eventDetailsTable: dynamodb.Table;
 
     constructor(app: cdk.App, id: string) {
         super(app, id, {
@@ -25,7 +26,7 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
 
         // Event Table
         //
-        const eventDetailsTable = new dynamodb.Table(this, HealthPlatformDynamoStack.EVENT_DETAIL_TABLE_ID, {
+        this.eventDetailsTable = new dynamodb.Table(this, HealthPlatformDynamoStack.EVENT_DETAIL_TABLE_ID, {
             tableName: HealthPlatformDynamoStack.EVENT_DETAIL_TABLE_NAME,
             partitionKey: {
                 name: 'event_id',
@@ -48,12 +49,12 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
             },
             projectionType: dynamodb.ProjectionType.ALL
         };
-        eventDetailsTable.addGlobalSecondaryIndex(eventUserGsiProps);
+        this.eventDetailsTable.addGlobalSecondaryIndex(eventUserGsiProps);
 
-        if (eventDetailsTable.tableStreamArn) {
+        if (this.eventDetailsTable.tableStreamArn) {
             new CfnOutput(this, `EventDetailTableStreamArn`, {
                 exportName: `EventDetailTableStreamArn`,
-                value: eventDetailsTable.tableStreamArn
+                value: this.eventDetailsTable.tableStreamArn
             })
         }
 
