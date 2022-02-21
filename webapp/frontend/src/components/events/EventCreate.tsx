@@ -17,7 +17,7 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 const { v4: uuidv4 } = require('uuid');
 
 
-export const EventCreate = (props: { userName: string; disabled: any }) => {
+export const EventCreate = (props: { userName: string; disabled: any; updateFn?: any }) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
@@ -54,6 +54,10 @@ export const EventCreate = (props: { userName: string; disabled: any }) => {
             console.log("createEventDetail response:", response);
 
             setOpen(false);
+
+            if (props.updateFn) {
+                props.updateFn();
+            }
         } catch (e) {
             console.log("createEventDetail errors:", e);
         }

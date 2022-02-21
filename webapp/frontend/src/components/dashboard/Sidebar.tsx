@@ -81,6 +81,13 @@ export const Sidebar = ({
         });
     }
 
+    const toggleUseLocalTimezone = () => {
+        setSearchProperties({
+            ...searchProperties,
+            useLocalTimezone: !searchProperties.useLocalTimezone,
+        });
+    }
+
     return (
         <Drawer
             className="sidebar"
@@ -244,6 +251,10 @@ export const Sidebar = ({
                         </Select>
                     </FormControl>
                 </Box>
+                <hr />
+                <FormGroup>
+                    <FormControlLabel control={<Switch defaultChecked onChange={(event: any) => toggleUseLocalTimezone()} />} label="Use Local Timezone" />
+                </FormGroup>
                 {/* <hr />
                 <FormGroup>
                     <FormControlLabel control={<Switch checked={searchProperties.showOverlay} onChange={(event: any) => toggleSetShowOverlay()} />} label="Overlay Events" />

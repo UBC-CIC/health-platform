@@ -15,10 +15,7 @@ import { ThemeColor } from './types';
 import EventCreate from '../events/EventCreate';
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from '../../utils/time';
 import { EventDetail } from '../../common/types/API';
-import { differenceInSeconds } from 'date-fns';
 import ReactApexChart from "react-apexcharts";
-import { LineChart } from './LineChart';
-
 
 const DEFAULT_HOURS_AGO = 3;
 
@@ -29,6 +26,46 @@ interface Module {
 interface DataSeries {
     data: number[][];
 }
+
+const initialEventsOptions: any = {
+    chart: {
+        id: 'events',
+        group: 'metrics',
+        type: 'area',
+        height: 160,
+        animations: {
+            enabled: true,
+        },
+    },
+    fill: {
+        type: 'solid',
+        opacity: [0.35, 1],
+    },
+    dataLabels: {
+        enabled: false
+    },
+    markers: {
+        size: 0,
+    },
+    xaxis: {
+        type: 'datetime',
+        min: subtractHours(new Date(), DEFAULT_HOURS_AGO).getTime(),
+        max: new Date().getTime(),
+        labels: {
+            datetimeUTC: false
+        }
+    },
+    stroke: {
+        curve: 'stepline',
+        width: 1,
+    },
+    tooltip: {
+        enabled: false
+    },
+    colors: ['#00E396']
+};
+
+const initialModulesOptions: any = {};
 
 export const Dashboard = (props: { 
     userName: any, 
@@ -44,21 +81,35 @@ export const Dashboard = (props: {
         period: "5m",
         statistic: "avg",
         showOverlay: true,
+        useLocalTimezone: true
     });
 
-    const [isLoading, setIsLoading] = useState<any>(false);
+    const [updatedEventsOptionsFlag, setUpdatedEventsOptionsFlag] = useState(false);
+    const [updatedModulesOptionsFlag, setUpdatedModulesOptionsFlag] = useState(false);
 
-    const [eventsStart, setEventsStart] = useState<any>(subtractHours(new Date(), DEFAULT_HOURS_AGO));
-    const [eventsEnd, setEventsEnd] = useState<any>(new Date());
-    const [eventsData, setEventsData] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState<any>(false);
+    const [eventsData, setEventsData] = useState<any>([{
+        data: []
+    }]);
 
     const [modules, setModules] = useState<any>([]);
-    const [modulesOptions, setModulesOptions] = useState<any>({});
-    const [modulesData, setModulesData] = useState<Map<string, DataSeries[]>>(new Map<string, DataSeries[]>());
+    const [modulesData, setModulesData] = useState<any>({});
 
     useEffect(() => {
         update();
     }, []);
+
+    useEffect(() => {
+        if (updatedEventsOptionsFlag) {
+            setUpdatedEventsOptionsFlag(false);
+        }
+    }, [updatedEventsOptionsFlag]);
+
+    useEffect(() => {
+        if (updatedModulesOptionsFlag) {
+            setUpdatedModulesOptionsFlag(false);
+        }
+    }, [updatedModulesOptionsFlag]);
 
     async function callGetPatientsDetail(): Promise<Module[]> {
         try {
@@ -91,32 +142,11 @@ export const Dashboard = (props: {
             });
 
             const newModulesLoading: any = {};
-            const newModulesOptions: any = {};
             patientsDetail["data"]["getPatientsDetail"]["sensor_types"].forEach((st: string) => {
                 newModulesLoading[st] = true;
-                newModulesOptions[st] = {
-                    chart: {
-                        id: st,
-                        group: 'social',
-                        type: 'scatter',
-                        height: 160,
-                        animations: {
-                            enabled: false,
-                        },
-                    },
-                    stroke: {
-                        curve: 'straight',
-                        width: 1,
-                    },
-                    xaxis: {
-                        type: 'datetime',
-                    },
-                    colors: ['#008FFB']
-                };
             });
             
             setModules(modules);
-            setModulesOptions(newModulesOptions);
             return modules;
         } catch (e) {
             console.log('callGetPatientsDetail errors:', e );
@@ -163,8 +193,6 @@ export const Dashboard = (props: {
         //
         let start = searchProperties.start;
         let end = searchProperties.end;
-        setEventsStart(start);
-        setEventsEnd(end);
         setIsLoading(true);
         if (searchProperties.type === "relative") {
             start = getAbsoluteTimeFromRelativeTime(searchProperties.startRelative);
@@ -175,6 +203,17 @@ export const Dashboard = (props: {
                 end: end,
             });
         }
+
+        // Update the graph boundaries
+        initialEventsOptions.xaxis = {
+            ...initialEventsOptions.xaxis,
+            min: start.getTime(),
+            max: end.getTime(),
+            labels: {
+                datetimeUTC: !searchProperties.useLocalTimezone
+            }
+        };
+        setUpdatedEventsOptionsFlag(true);
 
         callListAllEvents();
 
@@ -189,6 +228,12 @@ export const Dashboard = (props: {
         };
         console.log(`callQueryRequest request with ${JSON.stringify(input)}`);
     
+        modules.forEach((module: any) => {
+            const newOptions = getChartOptions(module, start.getTime(), end.getTime(), !searchProperties.useLocalTimezone);
+            initialModulesOptions[module.sensor_type] = newOptions;
+        });
+        setUpdatedModulesOptionsFlag(true);
+
         const response: any = await API.graphql({
             query: query,
             variables: {
@@ -202,16 +247,16 @@ export const Dashboard = (props: {
         setIsLoading(false);
 
         const columnToIndex = new Map<string, number>();
-        const measureNameToVals = new Map<string, DataSeries[]>();
+        const measureNameToVals: any = {};
         
         columns.forEach((item: string, index: number) => {
             columnToIndex.set(item, index);
         });
 
         modules.forEach((module: Module) => {
-            measureNameToVals.set(module.sensor_type, [{
+            measureNameToVals[module.sensor_type] = [{
                 data: [],
-            }]);
+            }];
         })
 
         rows.forEach((row: string[], index: number) => {
@@ -220,14 +265,44 @@ export const Dashboard = (props: {
             const timestamp = moment(`${t}Z`).valueOf(); // Get epoch milliseconds
             const measureName = row[columnToIndex.get("measurement_type")!]
             const val = row[columnToIndex.get("measure_val")!]
-            if (val !== "" && Number(val) && measureNameToVals.has(measureName)) {
-                measureNameToVals.get(measureName)![0].data.push([timestamp, +val]);
+            if (val !== "" && Number(val) && measureName in measureNameToVals) {
+                measureNameToVals[measureName]![0].data.push([timestamp, +val]);
             }
         });
 
         console.log('MODULES DATA:', measureNameToVals);
         setModulesData(measureNameToVals);
+
         return false;
+    }
+
+    function getChartOptions(sensorType: string, min: number, max: number, useUTC: boolean): any {
+        return {
+            chart: {
+                id: sensorType,
+                group: 'metrics',
+                type: 'scatter',
+                animations: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                curve: 'straight',
+                width: 1,
+            },
+            xaxis: {
+                type: 'datetime',
+                min: min,
+                max: max,
+                labels: {
+                    datetimeUTC: useUTC
+                }
+            },
+            colors: ['#008FFB'],
+            tooltip: {
+                enabled: false
+            }
+        };
     }
 
     function generateDayWiseTimeSeries(baseval: any, count: any, yrange: any) {
@@ -242,44 +317,6 @@ export const Dashboard = (props: {
         }
         return series;
     }
-
-    const eventsOptions: any = {
-        chart: {
-            id: 'events',
-            group: 'social',
-            type: 'area',
-            height: 160,
-            animations: {
-                enabled: false,
-            },
-        },
-        fill: {
-            type: 'solid',
-            opacity: [0.35, 1],
-        },
-        dataLabels: {
-            enabled: false
-        },
-        markers: {
-            size: 0,
-        },
-        xaxis: {
-            type: 'datetime',
-        },
-        stroke: {
-            curve: 'stepline',
-            width: 1,
-        },
-        tooltip: {
-            shared: false,
-            y: {
-                formatter: function (val: any) {
-                    return (val / 1000000).toFixed(0)
-                }
-            }
-        },
-        colors: ['#00E396']
-    };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -307,10 +344,14 @@ export const Dashboard = (props: {
                                 <Typography variant="h6" gutterBottom component="div">
                                     Event Timeline
                                 </Typography>
-                                <EventCreate userName={props.userName} disabled="true" />
+                                <EventCreate userName={props.userName} disabled="true" updateFn={update} />
                             </Box>
 
-                            <ReactApexChart options={eventsOptions} series={eventsData} type="bar" height={160} />
+                            {!updatedEventsOptionsFlag && (
+                                <>
+                                    <ReactApexChart options={initialEventsOptions} series={eventsData} type="area" height={160} />
+                                </>
+                            )}
                         </CardContent>
                     </Card>
                 </Box>
@@ -324,23 +365,28 @@ export const Dashboard = (props: {
                                     </Typography>
 
                                     {
-                                        (!(module.sensor_type in modulesOptions) || !(modulesData.has(module.sensor_type))) ? (
+                                        (!(module.sensor_type in initialModulesOptions) || !(module.sensor_type in modulesData)) ? (
                                             <Box
                                                 style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
                                             >
                                                 <CircularProgress size={12} color='inherit' />{' '}Loading...
                                             </Box>
-                                        ) : (modulesData.get(module.sensor_type)![0].data.length === 0) ? (
+                                        ) : (modulesData[module.sensor_type]![0].data.length === 0) ? (
                                             <Box
                                                 style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
                                             >
                                                 No Data Found
                                             </Box>
                                         ) : (
-                                            <ReactApexChart options={modulesOptions[module.sensor_type]} series={modulesData.get(module.sensor_type)} type="scatter" height={350} />
+                                            <>
+                                                {!updatedModulesOptionsFlag && (
+                                                    <>
+                                                        <ReactApexChart options={initialModulesOptions[module.sensor_type]} series={modulesData[module.sensor_type]} type="scatter" height={350} />
+                                                    </>
+                                                )}
+                                            </>
                                         )
                                     }
-                                    {/* <Timeline /> */}
                                 </CardContent>
                             </Card>
                         </Box>
