@@ -129,6 +129,10 @@ export const Dashboard = (props: {
                     sensorName = "Heart Rate";
                 } else if (st === "Temperature") {
                     sensorName = "Temperature";
+                } else if (st === "Steps") {
+                    sensorName = "Steps";
+                } else if (st === "HeartBeat") {
+                    sensorName = "Heart Beat";
                 } else if (st === "cpu_utilization") {
                     sensorName = "CPU Utilization";
                 } else if (st === "memory_utilization") {
