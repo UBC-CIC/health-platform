@@ -1,0 +1,30 @@
+## [Start] Prepare DynamoDB PutItem Request. **
+#set( $condition = {
+  "expression": "attribute_not_exists(#user_id)",
+  "expressionNames": {
+      "#user_id": "user_id"
+  }
+} )
+#if( $context.args.condition )
+  #set( $condition.expressionValues = {} )
+  #set( $conditionFilterExpressions = $util.parseJson($util.transform.toDynamoDBConditionExpression($context.args.condition)) )
+  $util.qr($condition.put("expression", "($condition.expression) AND $conditionFilterExpressions.expression"))
+  $util.qr($condition.expressionNames.putAll($conditionFilterExpressions.expressionNames))
+  $util.qr($condition.expressionValues.putAll($conditionFilterExpressions.expressionValues))
+#end
+#if( $condition.expressionValues && $condition.expressionValues.size() == 0 )
+  #set( $condition = {
+  "expression": $condition.expression,
+  "expressionNames": $condition.expressionNames
+} )
+#end
+{
+  "version": "2018-05-29",
+  "operation": "PutItem",
+  "key": #if( $modelObjectKey ) $util.toJson($modelObjectKey) #else {
+  "user_id":   $util.dynamodb.toDynamoDBJson($ctx.args.input.user_id)
+} #end,
+  "attributeValues": $util.dynamodb.toMapValuesJson($context.args.input),
+  "condition": $util.toJson($condition)
+}
+## [End] Prepare DynamoDB PutItem Request. **

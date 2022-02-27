@@ -189,3 +189,62 @@ export const publishSensorsDetailUpdates = /* GraphQL */ `
     }
   }
 `;
+export const createUsersDetail = /* GraphQL */ `
+  mutation CreateUsersDetail(
+    $input: UsersDetailInput
+    $condition: ModelUsersDetailConditionInput
+  ) {
+    createUsersDetail(input: $input, condition: $condition) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const updateUsersDetail = /* GraphQL */ `
+  mutation UpdateUsersDetail(
+    $input: UsersDetailInput
+    $condition: ModelUsersDetailConditionInput
+  ) {
+    updateUsersDetail(input: $input, condition: $condition) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const deleteUsersDetail = /* GraphQL */ `
+  mutation DeleteUsersDetail(
+    $input: UsersDetailInput
+    $condition: ModelUsersDetailConditionInput
+  ) {
+    deleteUsersDetail(input: $input, condition: $condition) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const publishNewUsersDetail = /* GraphQL */ `
+  mutation PublishNewUsersDetail($input: UsersDetailInput!) {
+    publishNewUsersDetail(input: $input) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const publishUsersDetailUpdates = /* GraphQL */ `
+  mutation PublishUsersDetailUpdates($input: UsersDetailInput!) {
+    publishUsersDetailUpdates(input: $input) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;

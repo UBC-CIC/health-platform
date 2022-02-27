@@ -30,6 +30,7 @@ export class HealthPlatformAppSyncStack extends Stack {
         const eventDetailResolverPath = './vtl/resolvers/event-detail'
         const patientsDetailResolverPath = './vtl/resolvers/patients-detail'
         const sensorsDetailResolverPath = './vtl/resolvers/sensors-detail'
+        const usersDetailResolverPath = './vtl/resolvers/users-detail'
 
         const authorizationType = AuthorizationType.USER_POOL;
         const userPool = UserPool.fromUserPoolId(this, 'UserPool', userPoolId);
@@ -233,7 +234,8 @@ export class HealthPlatformAppSyncStack extends Stack {
         // Import sensors DDB table and grant AppSync to access the DDB table
         const sensorsDetailTable = Table.fromTableAttributes(this,
             'sensorsDetailTable', {
-            tableName: HealthPlatformDynamoStack.PATIENT_TABLE,
+            tableName: HealthPlatformDynamoStack.SENSOR_TABLE,
+            globalIndexes: [HealthPlatformDynamoStack.SENSOR_PATIENT_GLOBAL_INDEX_NAME],
         });
         sensorsDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
 
@@ -245,6 +247,13 @@ export class HealthPlatformAppSyncStack extends Stack {
             fieldName: 'getSensorsDetail',
             requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetail.req.vtl`),
             responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetail.res.vtl`),
+        });
+
+        sensorsDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getSensorsDetailByUser',
+            requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetailByUser.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/Query.getSensorsDetailByUser.res.vtl`),
         });
 
         sensorsDetailTableDataSource.createResolver({
@@ -291,6 +300,74 @@ export class HealthPlatformAppSyncStack extends Stack {
             fieldName: 'publishSensorsDetailUpdates',
             requestMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishSensorsDetailUpdates.req.vtl`),
             responseMappingTemplate: MappingTemplate.fromFile(`${sensorsDetailResolverPath}/None.publishSensorsDetailUpdates.res.vtl`)
+        });
+
+        //
+        // CDK for the `users` Table
+        //
+
+        // DataSource to connect to users DDB table
+        // Import users DDB table and grant AppSync to access the DDB table
+        const usersDetailTable = Table.fromTableAttributes(this,
+            'usersDetailTable', {
+            tableName: HealthPlatformDynamoStack.USER_TABLE,
+        });
+        usersDetailTable.grantFullAccess(healthPlatformAdminAppSyncRole);
+
+        // Define Request DDB DataSource
+        const usersDetailTableDataSource = api.addDynamoDbDataSource('usersDetailTableDataSource', usersDetailTable);
+
+        usersDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getUsersDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Query.getUsersDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Query.getUsersDetail.res.vtl`),
+        });
+
+        usersDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'listUsersDetails',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Query.listUsersDetails.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Query.listUsersDetails.res.vtl`),
+        });
+
+        usersDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'createUsersDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.createUsersDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.createUsersDetail.res.vtl`),
+        });
+
+        usersDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'deleteUsersDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.deleteUsersDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.deleteUsersDetail.res.vtl`),
+        });
+
+        usersDetailTableDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'updateUsersDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.updateUsersDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/Mutation.updateUsersDetail.res.vtl`),
+        });
+
+        // None DataSource
+        //
+        // Add None DataSource for Local Resolver - to publish notification triggered by users DDB
+        const newUsersDetailNoneDataSource = api.addNoneDataSource('NewUsersDetailNoneDataSource');
+        newUsersDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishNewUsersDetail',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/None.publishNewUsersDetail.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/None.publishNewUsersDetail.res.vtl`)
+        });
+        const updateUsersDetailNoneDataSource = api.addNoneDataSource('UsersDetailNoneDataSource');
+        updateUsersDetailNoneDataSource.createResolver({
+            typeName: 'Mutation',
+            fieldName: 'publishUsersDetailUpdates',
+            requestMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/None.publishUsersDetailUpdates.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${usersDetailResolverPath}/None.publishUsersDetailUpdates.res.vtl`)
         });
 
         //

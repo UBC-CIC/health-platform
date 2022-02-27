@@ -4,6 +4,8 @@ import { Dashboard } from "../dashboard/Dashboard";
 import { Events } from "../events/Events";
 import { AppAuthStateProps } from "../../types/propTypes";
 import ResponsiveAppBar from "./ResponsiveAppBar";
+import Patients from "../patients/Patients";
+import Users from "../users/Users";
 
 export const Navigation = (props: AppAuthStateProps) => {
     return (
@@ -15,6 +17,8 @@ export const Navigation = (props: AppAuthStateProps) => {
                     <Route path="/" exact component={() => <Dashboard userName={props.userName} userId={props.userId} />} />
                     <Route path="/dashboard" component={() => <Dashboard userName={props.userName} userId={props.userId} />} />
                     <Route path="/events" component={() => <Events userName={props.userName} />} />
+                    <Route path="/patients" component={() => <Patients userName={props.userName} userId={props.userId} />} />
+                    <Route path="/users" component={() => <Users userName={props.userName} />} />
                 </Switch>
             ) : (
                 <div />

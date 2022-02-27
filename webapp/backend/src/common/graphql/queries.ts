@@ -133,6 +133,26 @@ export const getSensorsDetail = /* GraphQL */ `
     }
   }
 `;
+export const getSensorsDetailByUser = /* GraphQL */ `
+  query GetSensorsDetailByUser(
+    $patientId: String!
+    $limit: Int
+    $nextToken: String
+  ) {
+    getSensorsDetailByUser(
+      patientId: $patientId
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        sensor_id
+        patient_id
+        sensor_types
+      }
+      nextToken
+    }
+  }
+`;
 export const listSensorsDetails = /* GraphQL */ `
   query ListSensorsDetails(
     $filter: ModelSensorsDetailFilterInput
@@ -144,6 +164,33 @@ export const listSensorsDetails = /* GraphQL */ `
         sensor_id
         patient_id
         sensor_types
+      }
+      nextToken
+    }
+  }
+`;
+export const getUsersDetail = /* GraphQL */ `
+  query GetUsersDetail($userId: String!) {
+    getUsersDetail(userId: $userId) {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const listUsersDetails = /* GraphQL */ `
+  query ListUsersDetails(
+    $filter: ModelUsersDetailFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUsersDetails(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        user_id
+        email
+        user_type
+        patient_ids
       }
       nextToken
     }

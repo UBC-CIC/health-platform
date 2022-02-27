@@ -15,7 +15,7 @@ import { AppAuthStateProps } from '../../types/propTypes';
 import { Link } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
 
-const pages = ['Dashboard', 'Events', 'Devices'];
+const pages = ['Dashboard', 'Events', 'Patients', 'Users'];
 
 const ResponsiveAppBar = (props: AppAuthStateProps) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);

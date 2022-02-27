@@ -98,3 +98,33 @@ export const onDeleteSensorsDetail = /* GraphQL */ `
     }
   }
 `;
+export const onCreateUsersDetail = /* GraphQL */ `
+  subscription OnCreateUsersDetail {
+    onCreateUsersDetail {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const onUpdateUsersDetail = /* GraphQL */ `
+  subscription OnUpdateUsersDetail {
+    onUpdateUsersDetail {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;
+export const onDeleteUsersDetail = /* GraphQL */ `
+  subscription OnDeleteUsersDetail {
+    onDeleteUsersDetail {
+      user_id
+      email
+      user_type
+      patient_ids
+    }
+  }
+`;

@@ -84,6 +84,8 @@ export const Dashboard = (props: {
         useLocalTimezone: true
     });
 
+    // These fields are used to re-load the charts when the options change due to a bug in the charting library.
+    // See: https://github.com/apexcharts/react-apexcharts/issues/151
     const [updatedEventsOptionsFlag, setUpdatedEventsOptionsFlag] = useState(false);
     const [updatedModulesOptionsFlag, setUpdatedModulesOptionsFlag] = useState(false);
 

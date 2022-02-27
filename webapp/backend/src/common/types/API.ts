@@ -74,6 +74,53 @@ export type PatientsDetail = {
   sensor_types?: Array< string | null > | null,
 };
 
+export type SensorsDetailInput = {
+  sensor_id: string,
+  patient_id?: string | null,
+  sensor_types?: Array< string | null > | null,
+};
+
+export type ModelSensorsDetailConditionInput = {
+  sensor_id: string,
+  patient_id?: string | null,
+  sensor_types?: Array< string | null > | null,
+  and?: Array< ModelSensorsDetailConditionInput | null > | null,
+  or?: Array< ModelSensorsDetailConditionInput | null > | null,
+  not?: ModelSensorsDetailConditionInput | null,
+};
+
+export type SensorsDetail = {
+  __typename: "SensorsDetail",
+  sensor_id?: string,
+  patient_id?: string | null,
+  sensor_types?: Array< string | null > | null,
+};
+
+export type UsersDetailInput = {
+  user_id: string,
+  email?: string | null,
+  user_type?: string | null,
+  patient_ids?: Array< string | null > | null,
+};
+
+export type ModelUsersDetailConditionInput = {
+  user_id: string,
+  email?: string | null,
+  user_type?: string | null,
+  patient_ids?: Array< string | null > | null,
+  and?: Array< ModelUsersDetailConditionInput | null > | null,
+  or?: Array< ModelUsersDetailConditionInput | null > | null,
+  not?: ModelUsersDetailConditionInput | null,
+};
+
+export type UsersDetail = {
+  __typename: "UsersDetail",
+  user_id?: string,
+  email?: string | null,
+  user_type?: string | null,
+  patient_ids?: Array< string | null > | null,
+};
+
 export type QueryRequest = {
   patient_id?: string | null,
   period?: string | null,
@@ -119,6 +166,37 @@ export type ModelPatientsDetailFilterInput = {
 export type PatientsDetailConnection = {
   __typename: "PatientsDetailConnection",
   items?:  Array<PatientsDetail | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelSensorsDetailFilterInput = {
+  sensor_id: string,
+  patient_id?: string | null,
+  sensor_types?: Array< string | null > | null,
+  and?: Array< ModelSensorsDetailFilterInput | null > | null,
+  or?: Array< ModelSensorsDetailFilterInput | null > | null,
+  not?: ModelSensorsDetailFilterInput | null,
+};
+
+export type SensorsDetailConnection = {
+  __typename: "SensorsDetailConnection",
+  items?:  Array<SensorsDetail | null > | null,
+  nextToken?: string | null,
+};
+
+export type ModelUsersDetailFilterInput = {
+  user_id: string,
+  email?: string | null,
+  user_type?: string | null,
+  patient_ids?: Array< string | null > | null,
+  and?: Array< ModelUsersDetailFilterInput | null > | null,
+  or?: Array< ModelUsersDetailFilterInput | null > | null,
+  not?: ModelUsersDetailFilterInput | null,
+};
+
+export type UsersDetailConnection = {
+  __typename: "UsersDetailConnection",
+  items?:  Array<UsersDetail | null > | null,
   nextToken?: string | null,
 };
 
@@ -283,6 +361,147 @@ export type PublishPatientsDetailUpdatesMutation = {
   } | null,
 };
 
+export type CreateSensorsDetailMutationVariables = {
+  input?: SensorsDetailInput | null,
+  condition?: ModelSensorsDetailConditionInput | null,
+};
+
+export type CreateSensorsDetailMutation = {
+  createSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type UpdateSensorsDetailMutationVariables = {
+  input?: SensorsDetailInput | null,
+  condition?: ModelSensorsDetailConditionInput | null,
+};
+
+export type UpdateSensorsDetailMutation = {
+  updateSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type DeleteSensorsDetailMutationVariables = {
+  input?: SensorsDetailInput | null,
+  condition?: ModelSensorsDetailConditionInput | null,
+};
+
+export type DeleteSensorsDetailMutation = {
+  deleteSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishNewSensorsDetailMutationVariables = {
+  input?: SensorsDetailInput,
+};
+
+export type PublishNewSensorsDetailMutation = {
+  publishNewSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishSensorsDetailUpdatesMutationVariables = {
+  input?: SensorsDetailInput,
+};
+
+export type PublishSensorsDetailUpdatesMutation = {
+  publishSensorsDetailUpdates?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type CreateUsersDetailMutationVariables = {
+  input?: UsersDetailInput | null,
+  condition?: ModelUsersDetailConditionInput | null,
+};
+
+export type CreateUsersDetailMutation = {
+  createUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type UpdateUsersDetailMutationVariables = {
+  input?: UsersDetailInput | null,
+  condition?: ModelUsersDetailConditionInput | null,
+};
+
+export type UpdateUsersDetailMutation = {
+  updateUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type DeleteUsersDetailMutationVariables = {
+  input?: UsersDetailInput | null,
+  condition?: ModelUsersDetailConditionInput | null,
+};
+
+export type DeleteUsersDetailMutation = {
+  deleteUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishNewUsersDetailMutationVariables = {
+  input?: UsersDetailInput,
+};
+
+export type PublishNewUsersDetailMutation = {
+  publishNewUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type PublishUsersDetailUpdatesMutationVariables = {
+  input?: UsersDetailInput,
+};
+
+export type PublishUsersDetailUpdatesMutation = {
+  publishUsersDetailUpdates?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
 export type QueryQueryVariables = {
   input?: QueryRequest | null,
 };
@@ -419,6 +638,72 @@ export type ListPatientsDetailsQuery = {
   } | null,
 };
 
+export type GetSensorsDetailQueryVariables = {
+  patientId?: string,
+};
+
+export type GetSensorsDetailQuery = {
+  getSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type ListSensorsDetailsQueryVariables = {
+  filter?: ModelSensorsDetailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListSensorsDetailsQuery = {
+  listSensorsDetails?:  {
+    __typename: "SensorsDetailConnection",
+    items?:  Array< {
+      __typename: "SensorsDetail",
+      sensor_id: string,
+      patient_id?: string | null,
+      sensor_types?: Array< string | null > | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetUsersDetailQueryVariables = {
+  userId?: string,
+};
+
+export type GetUsersDetailQuery = {
+  getUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type ListUsersDetailsQueryVariables = {
+  filter?: ModelUsersDetailFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListUsersDetailsQuery = {
+  listUsersDetails?:  {
+    __typename: "UsersDetailConnection",
+    items?:  Array< {
+      __typename: "UsersDetail",
+      user_id: string,
+      email?: string | null,
+      user_type?: string | null,
+      patient_ids?: Array< string | null > | null,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
 export type OnCreateEventDetailSubscription = {
   onCreateEventDetail?:  {
     __typename: "EventDetail",
@@ -485,5 +770,62 @@ export type OnDeletePatientsDetailSubscription = {
     patient_id: string,
     name?: string | null,
     sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnCreateSensorsDetailSubscription = {
+  onCreateSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnUpdateSensorsDetailSubscription = {
+  onUpdateSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnDeleteSensorsDetailSubscription = {
+  onDeleteSensorsDetail?:  {
+    __typename: "SensorsDetail",
+    sensor_id: string,
+    patient_id?: string | null,
+    sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnCreateUsersDetailSubscription = {
+  onCreateUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnUpdateUsersDetailSubscription = {
+  onUpdateUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type OnDeleteUsersDetailSubscription = {
+  onDeleteUsersDetail?:  {
+    __typename: "UsersDetail",
+    user_id: string,
+    email?: string | null,
+    user_type?: string | null,
+    patient_ids?: Array< string | null > | null,
   } | null,
 };

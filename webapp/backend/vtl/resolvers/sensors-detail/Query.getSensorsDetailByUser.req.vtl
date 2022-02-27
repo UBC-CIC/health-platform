@@ -1,0 +1,17 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#patient_id = :patient_id",
+        "expressionNames" : {
+            "#patient_id" : "patient_id",
+        },
+        "expressionValues" : {
+            ":patient_id" : $util.dynamodb.toDynamoDBJson($context.arguments.patientId)
+        },
+    },
+    "index" : "sensorsPatient",
+    "limit" : $util.defaultIfNull($context.arguments.limit, 100),
+    "nextToken" : $util.toJson($util.defaultIfNullOrBlank($context.arguments.nextToken, null)),
+    "select" : "ALL_ATTRIBUTES",
+}

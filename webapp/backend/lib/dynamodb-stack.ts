@@ -8,14 +8,16 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
     public static EVENT_DETAIL_TABLE_NAME = "event-detail"
     public static EVENT_STATUS_GLOBAL_INDEX_NAME = "eventUserGsi"
 
-    public static DATA_TABLE = "metrics-data"
     public static PATIENT_TABLE = "patients"
     public static SENSOR_TABLE = "sensors"
+    public static SENSOR_PATIENT_GLOBAL_INDEX_NAME = "sensorsPatient"
+    public static USER_TABLE = "users"
 
     public readonly dataTable: dynamodb.Table;
     public readonly patientTable: dynamodb.Table;
     public readonly sensorTable: dynamodb.Table;
     public readonly eventDetailsTable: dynamodb.Table;
+    public readonly userTable: dynamodb.Table;
 
     constructor(app: cdk.App, id: string) {
         super(app, id, {
@@ -82,6 +84,32 @@ export class HealthPlatformDynamoStack extends cdk.Stack {
             billingMode: BillingMode.PAY_PER_REQUEST,
             pointInTimeRecovery: true,
             timeToLiveAttribute: "ttl",
+        });
+
+        const sensorPatientGsiProps: dynamodb.GlobalSecondaryIndexProps = {
+            indexName: HealthPlatformDynamoStack.SENSOR_PATIENT_GLOBAL_INDEX_NAME,
+            partitionKey: {
+                name: 'patient_id',
+                type: dynamodb.AttributeType.STRING
+            },
+            sortKey: {
+                name: 'sensor_id',
+                type: dynamodb.AttributeType.STRING
+            },
+            projectionType: dynamodb.ProjectionType.ALL
+        };
+        this.sensorTable.addGlobalSecondaryIndex(sensorPatientGsiProps);
+
+        // Users Table
+        //
+        this.userTable = new dynamodb.Table(this, HealthPlatformDynamoStack.USER_TABLE, {
+            tableName: HealthPlatformDynamoStack.USER_TABLE,
+            partitionKey: {
+                name: 'user_id',
+                type: dynamodb.AttributeType.STRING,
+            },
+            billingMode: BillingMode.PAY_PER_REQUEST,
+            pointInTimeRecovery: true,
         });
     }
 }
