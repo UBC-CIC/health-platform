@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box } from "@mui/system";
+import { Box, useTheme } from "@mui/system";
 import {
     Dialog,
     DialogActions,
@@ -9,6 +9,12 @@ import {
     TextField,
     Button,
     TableContainer,
+    FormControl,
+    InputLabel,
+    Select,
+    OutlinedInput,
+    MenuItem,
+    FormHelperText,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -17,16 +23,47 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { API } from "aws-amplify";
-import { createEventDetail } from "../../common/graphql/mutations";
-import { EventDetailInput, SensorsDetail } from "../../common/types/API";
+import { createEventDetail, createSensorsDetail, deleteSensorsDetail, updatePatientsDetail } from "../../common/graphql/mutations";
+import { EventDetailInput, PatientsDetail, SensorsDetail } from "../../common/types/API";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { getSensorsDetail, getSensorsDetailByUser } from "../../common/graphql/queries";
 const { v4: uuidv4 } = require('uuid');
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
-export const ManageSensors = (props: { patientId: string }) => {
+const SENSORS = [
+    {"name": "Heart Rate", "id": "HeartRate"},
+    {"name": "Temperature", "id": "Temperature"},
+    {"name": "Heart Beat", "id": "HeartBeat"},
+    {"name": "Steps", "id": "Steps"},
+];
+
+function getStyles(name: any, personName: any, theme: any) {
+    return {
+      fontWeight:
+        personName.indexOf(name) === -1
+          ? theme.typography.fontWeightRegular
+          : theme.typography.fontWeightMedium,
+    };
+}
+
+
+export const ManageSensors = (props: { patientId: string, patient: PatientsDetail }) => {
+    const theme = useTheme();
+
     const [items, updateItems] = useState<Array<SensorsDetail>>(new Array<SensorsDetail>());
+    const [sensorsToRemove, setSensorsToRemove] = useState<Array<SensorsDetail>>(new Array<SensorsDetail>());
+    const [sensorsToAdd, setSensorsToAdd] = useState<Array<SensorsDetail>>(new Array<SensorsDetail>());
     const [loading, setLoading] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
@@ -35,12 +72,9 @@ export const ManageSensors = (props: { patientId: string }) => {
         setOpen(true);
     };
 
-    const [start, setStart] = useState("");
-    const [end, setEnd] = useState("");
-    const [medication, setMedication] = useState("");
-    const [mood, setMood] = useState("");
-    const [food, setFood] = useState("");
-    const [notes, setNotes] = useState("");
+    const [showCreate, setShowCreate] = useState(false);
+    const [sensorId, setSensorId] = useState("");
+    const [sensorTypes, setSensorTypes] = useState<Array<string>>(new Array<string>());
 
     async function callListAllSensors() {
         try {
@@ -62,36 +96,155 @@ export const ManageSensors = (props: { patientId: string }) => {
         }
     }
 
-    const handleCreateRequest = async () => {
-        setOpen(true);
+    const handleSensorTypeChange = (event: any) => {
+        const {
+            target: { value },
+        } = event;
+        setSensorTypes(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
 
-        console.log(start, end, medication, mood, food, notes);
-
-        const eventDetail: EventDetailInput = {
-            event_id: uuidv4(),
-            user_id: props.patientId,
-            start_date_time: start,
-            end_date_time: end,
-            medication: medication,
-            mood: mood,
-            food: food,
-            notes: notes
-        };
-        console.log("createEventDetail request:", eventDetail);
-
-        try {
-            const response: any = await API.graphql({
-                query: createEventDetail,
-                variables: { input: eventDetail },
-            });
-            console.log("createEventDetail response:", response);
-
-            setOpen(false);
-
-        } catch (e) {
-            console.log("createEventDetail errors:", e);
+    const handleAddSensor = () => {
+        if (sensorId !== "") {
+            const newSensor: SensorsDetail = {
+                __typename: "SensorsDetail",
+                sensor_id: sensorId,
+                patient_id: props.patientId,
+                sensor_types: sensorTypes,
+            };
+            setSensorsToAdd([
+                ...sensorsToAdd,
+                newSensor,
+            ]);
+            setSensorsToRemove([
+                ...sensorsToRemove.filter(i => i.sensor_id !== sensorId),
+            ]);
+            updateItems([
+                ...items,
+                newSensor,
+            ]);
+            setShowCreate(false);
         }
     };
+
+    const handleRemoveSensor = (sensorId: string) => {
+        if (sensorId !== "") {
+            const found = items.find(i => i.sensor_id === sensorId);
+            if (found) {
+                setSensorsToRemove([
+                    ...sensorsToRemove,
+                    found,
+                ]);
+                setSensorsToAdd([
+                    ...sensorsToAdd.filter(i => i.sensor_id !== sensorId),
+                ]);
+                updateItems([
+                    ...items.filter(i => i.sensor_id !== sensorId),
+                ]);
+            }
+            setShowCreate(false);
+        }
+    };
+
+    const handleSave = async () => {
+        if (sensorsToRemove.length > 0) {
+            for (const sensorToRemove of sensorsToRemove) {
+                console.log("Removing sensor " + JSON.stringify(sensorToRemove));
+                try {
+                    const response: any = await API.graphql({
+                        query: deleteSensorsDetail,
+                        variables: {
+                            input: {
+                                sensor_id: sensorToRemove.sensor_id,
+                            }
+                        },
+                    });
+                    console.log("deleteSensorsDetail response:", response);
+                } catch (e) {
+                    console.log("deleteSensorsDetail errors:", e);
+                }
+            }
+        }
+        if (sensorsToAdd.length > 0) {
+            for (const sensorToAdd of sensorsToAdd) {
+                console.log("Adding sensor " + JSON.stringify(sensorToAdd));
+                try {
+                    const response: any = await API.graphql({
+                        query: createSensorsDetail,
+                        variables: { 
+                            input: {
+                                sensor_id: sensorToAdd.sensor_id,
+                                patient_id: sensorToAdd.patient_id,
+                                sensor_types: sensorToAdd.sensor_types,
+                            }
+                        },
+                    });
+                    console.log("createSensorsDetail response:", response);
+                } catch (e) {
+                    console.log("createSensorsDetail errors:", e);
+                }
+            }
+        }
+
+
+        try {
+            const remainingSensorTypes = new Set<String>();
+            for (const item of items) {
+                for (const st of item.sensor_types!) {
+                    remainingSensorTypes.add(st!);
+                }
+            }
+
+            const response: any = await API.graphql({
+                query: updatePatientsDetail,
+                variables: {
+                    input: {
+                        ...props.patient,
+                        sensor_types: [...Array.from(remainingSensorTypes)]
+                    }
+                },
+            });
+            console.log("updatePatientsDetail response:", response);
+        } catch (e) {
+            console.log("updatePatientsDetail errors:", e);
+        }
+
+        // TODO: Update table to avoid reloading page
+        window.location.reload();
+    };
+
+    // const handleCreateRequest = async () => {
+    //     setOpen(true);
+
+    //     console.log(start, end, medication, mood, food, notes);
+
+    //     const eventDetail: EventDetailInput = {
+    //         event_id: uuidv4(),
+    //         user_id: props.patientId,
+    //         start_date_time: start,
+    //         end_date_time: end,
+    //         medication: medication,
+    //         mood: mood,
+    //         food: food,
+    //         notes: notes
+    //     };
+    //     console.log("createEventDetail request:", eventDetail);
+
+    //     try {
+    //         const response: any = await API.graphql({
+    //             query: createEventDetail,
+    //             variables: { input: eventDetail },
+    //         });
+    //         console.log("createEventDetail response:", response);
+
+    //         setOpen(false);
+
+    //     } catch (e) {
+    //         console.log("createEventDetail errors:", e);
+    //     }
+    // };
 
     return (
         <>
@@ -99,21 +252,71 @@ export const ManageSensors = (props: { patientId: string }) => {
                 Manage Sensors
             </Button>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Manage Sensors</DialogTitle>
+                {
+                    showCreate ? (
+                        <DialogTitle>Add Sensor</DialogTitle>
+                    ) : (
+                        <DialogTitle>Manage Sensors</DialogTitle>
+                    )
+                }
                 <DialogContent>
+
+                {showCreate ? (
+                    <Box
+                        sx={{
+                            "& .MuiTextField-root": { marginBottom: 1, width: "100%" },
+                        }}
+                    >
+                        <TextField
+                            required
+                            id="filled-required"
+                            label="Sensor ID"
+                            variant="filled"
+                            value={sensorId}
+                            onChange={(e) => {
+                                setSensorId(e.target.value);
+                            }}
+                        />
+                        <FormControl sx={{ width: 300, mt: 2 }}>
+                            <InputLabel id="sensor-type-label">Types</InputLabel>
+                            <Select
+                                labelId="sensor-type-label"
+                                id="sensor-type-label"
+                                multiple
+                                value={sensorTypes}
+                                onChange={handleSensorTypeChange}
+                                input={<OutlinedInput label="Name" />}
+                                MenuProps={MenuProps}
+                            >
+                            {SENSORS.map((sensor) => (
+                                <MenuItem
+                                    key={sensor.id}
+                                    value={sensor.id}
+                                    style={getStyles(sensor.id, sensorTypes, theme)}
+                                >
+                                    {sensor.name}
+                                </MenuItem>
+                            ))}
+                            </Select>
+                            <FormHelperText>What does this sensor monitor?</FormHelperText>
+                        </FormControl>
+                    </Box>
+                ) : (
                     <TableContainer component={Paper}>
                         {
                             loading ? (
                                 <>Loading...</>
                             ) : items.length === 0 ? (
-                                <>No patients found</>
+                                <>No sensors found</>
                             ) : (
                                 <Table aria-label="caption table">
                                     <TableHead>
                                         <TableRow>
                                             <TableCell>Sensor ID</TableCell>
-                                            <TableCell>Sensors</TableCell>
-                                            <TableCell></TableCell>
+                                            <TableCell>Monitors</TableCell>
+                                            <TableCell align="right">
+                                                <Button onClick={() => setShowCreate(true)} variant="outlined" size="small">Add Sensor</Button>
+                                            </TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
@@ -124,7 +327,7 @@ export const ManageSensors = (props: { patientId: string }) => {
                                                 </TableCell>
                                                 <TableCell>{row.sensor_types?.join(", ")}</TableCell>
                                                 <TableCell>
-                                                    <Button variant="text">Remove Sensor</Button>
+                                                    <Button variant="text" size="small" onClick={() => handleRemoveSensor(row.sensor_id!)}>Remove Sensor</Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -133,10 +336,15 @@ export const ManageSensors = (props: { patientId: string }) => {
                             )
                         }
                     </TableContainer>
+                )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleCreateRequest}>Create</Button>
+                    {showCreate ? (
+                        <Button onClick={handleAddSensor}>Add</Button>
+                    ) : (
+                        <Button onClick={handleSave}>Save</Button>
+                    )}
                 </DialogActions>
             </Dialog>
         </>

@@ -107,9 +107,9 @@ export const Patients = (props: { userName: any, userId: any }) => {
                 <TableContainer component={Paper}>
                     {
                         loading ? (
-                            <caption>Loading...</caption>
+                            <>Loading...</>
                         ) : items.length === 0 ? (
-                            <caption>No patients found</caption>
+                            <>No patients found</>
                         ) : (
                             <Table sx={{ minWidth: 650 }} aria-label="caption table">
                                 <TableHead>
@@ -127,9 +127,9 @@ export const Patients = (props: { userName: any, userId: any }) => {
                                                 {row.name}
                                             </TableCell>
                                             <TableCell>{row.patient_id}</TableCell>
-                                            <TableCell>{row.sensor_types?.length} sensors</TableCell>
+                                            <TableCell>{row.sensor_types?.length} measures monitored</TableCell>
                                             <TableCell align="right">
-                                                <ManageSensors patientId={row.patient_id!} />
+                                                <ManageSensors patientId={row.patient_id!} patient={row} />
                                                 <Button variant="text">Edit Patient</Button>
                                             </TableCell>
                                         </TableRow>
