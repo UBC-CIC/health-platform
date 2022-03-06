@@ -4,4 +4,5 @@ export type AppAuthStateProps = {
     userName?: string;
     userId?: string;
     authState?: AuthState;
+    isAdmin: boolean;
 }

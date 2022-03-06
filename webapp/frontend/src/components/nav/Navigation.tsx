@@ -1,13 +1,14 @@
-import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { AuthState } from "@aws-amplify/ui-components";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { AppAuthStateProps } from "../../types/propTypes";
 import { Dashboard } from "../dashboard/Dashboard";
 import { Events } from "../events/Events";
-import { AppAuthStateProps } from "../../types/propTypes";
-import ResponsiveAppBar from "./ResponsiveAppBar";
 import Patients from "../patients/Patients";
 import Users from "../users/Users";
+import ResponsiveAppBar from "./ResponsiveAppBar";
 
 export const Navigation = (props: AppAuthStateProps) => {
+
     return (
         <BrowserRouter>
             {/* <Header userName={props.userName} authState={props.authState} /> */}
@@ -18,7 +19,9 @@ export const Navigation = (props: AppAuthStateProps) => {
                     <Route path="/dashboard" component={() => <Dashboard userName={props.userName} userId={props.userId} />} />
                     <Route path="/events" component={() => <Events userName={props.userName} />} />
                     <Route path="/patients" component={() => <Patients userName={props.userName} userId={props.userId} />} />
-                    <Route path="/users" component={() => <Users userName={props.userName} />} />
+                    {
+                        props.isAdmin && <Route path="/users" component={() => <Users userName={props.userName} userId={props.userId} />} />
+                    }
                 </Switch>
             ) : (
                 <div />

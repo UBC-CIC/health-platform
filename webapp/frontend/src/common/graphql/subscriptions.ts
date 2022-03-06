@@ -50,6 +50,7 @@ export const onCreatePatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -59,6 +60,7 @@ export const onUpdatePatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -68,6 +70,7 @@ export const onDeletePatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;

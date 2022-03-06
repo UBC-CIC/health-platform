@@ -88,6 +88,7 @@ type PatientsDetail @aws_cognito_user_pools
 	patient_id: String!
 	name: String
 	sensor_types: [String]
+    user_ids: [String]
 }
 
 type PatientsDetailConnection @aws_cognito_user_pools

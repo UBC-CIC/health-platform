@@ -1,20 +1,6 @@
-import { useState } from "react";
-import { Box, useTheme } from "@mui/system";
 import {
-    Dialog,
-    DialogActions,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    TextField,
-    Button,
-    TableContainer,
-    FormControl,
-    InputLabel,
-    Select,
-    OutlinedInput,
-    MenuItem,
-    FormHelperText,
+    Button, Dialog,
+    DialogActions, DialogContent, DialogTitle, FormControl, FormHelperText, InputLabel, MenuItem, OutlinedInput, Select, TableContainer, TextField
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -22,12 +8,12 @@ import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { Box, useTheme } from "@mui/system";
 import { API } from "aws-amplify";
-import { createEventDetail, createSensorsDetail, deleteSensorsDetail, updatePatientsDetail } from "../../common/graphql/mutations";
-import { EventDetailInput, PatientsDetail, SensorsDetail } from "../../common/types/API";
-import { DateTimePicker, LocalizationProvider } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import { getSensorsDetail, getSensorsDetailByUser } from "../../common/graphql/queries";
+import { useState } from "react";
+import { createSensorsDetail, deleteSensorsDetail, updatePatientsDetail } from "../../common/graphql/mutations";
+import { getSensorsDetailByUser } from "../../common/graphql/queries";
+import { PatientsDetail, SensorsDetail } from "../../common/types/API";
 const { v4: uuidv4 } = require('uuid');
 
 const ITEM_HEIGHT = 48;
@@ -260,83 +246,89 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                     )
                 }
                 <DialogContent>
-
-                {showCreate ? (
                     <Box
-                        sx={{
-                            "& .MuiTextField-root": { marginBottom: 1, width: "100%" },
-                        }}
+                        style={{ marginTop: 8, marginBottom: 0, width: "480px" }}
                     >
-                        <TextField
-                            required
-                            id="filled-required"
-                            label="Sensor ID"
-                            variant="filled"
-                            value={sensorId}
-                            onChange={(e) => {
-                                setSensorId(e.target.value);
+
+                    {showCreate ? (
+                        <Box
+                            sx={{
+                                "& .MuiTextField-root": { marginBottom: 1, width: "100%" },
                             }}
-                        />
-                        <FormControl sx={{ width: 300, mt: 2 }}>
-                            <InputLabel id="sensor-type-label">Types</InputLabel>
-                            <Select
-                                labelId="sensor-type-label"
-                                id="sensor-type-label"
-                                multiple
-                                value={sensorTypes}
-                                onChange={handleSensorTypeChange}
-                                input={<OutlinedInput label="Name" />}
-                                MenuProps={MenuProps}
-                            >
-                            {SENSORS.map((sensor) => (
-                                <MenuItem
-                                    key={sensor.id}
-                                    value={sensor.id}
-                                    style={getStyles(sensor.id, sensorTypes, theme)}
+                        >
+                            <TextField
+                                required
+                                label="Sensor ID"
+                                value={sensorId}
+                                onChange={(e) => {
+                                    setSensorId(e.target.value);
+                                }}
+                            />
+                            <FormControl sx={{ width: 480, mt: 2 }}>
+                                <InputLabel id="sensor-type-label">Types</InputLabel>
+                                <Select
+                                    labelId="sensor-type-label"
+                                    id="sensor-type-label"
+                                    multiple
+                                    value={sensorTypes}
+                                    onChange={handleSensorTypeChange}
+                                    input={<OutlinedInput label="Name" />}
+                                    MenuProps={MenuProps}
                                 >
-                                    {sensor.name}
-                                </MenuItem>
-                            ))}
-                            </Select>
-                            <FormHelperText>What does this sensor monitor?</FormHelperText>
-                        </FormControl>
-                    </Box>
-                ) : (
-                    <TableContainer component={Paper}>
-                        {
-                            loading ? (
-                                <>Loading...</>
-                            ) : items.length === 0 ? (
-                                <>No sensors found</>
-                            ) : (
-                                <Table aria-label="caption table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>Sensor ID</TableCell>
-                                            <TableCell>Monitors</TableCell>
-                                            <TableCell align="right">
-                                                <Button onClick={() => setShowCreate(true)} variant="outlined" size="small">Add Sensor</Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {items.map((row) => (
-                                            <TableRow key={row.sensor_id}>
-                                                <TableCell component="th" scope="row">
-                                                    {row.sensor_id}
-                                                </TableCell>
-                                                <TableCell>{row.sensor_types?.join(", ")}</TableCell>
-                                                <TableCell>
-                                                    <Button variant="text" size="small" onClick={() => handleRemoveSensor(row.sensor_id!)}>Remove Sensor</Button>
+                                {SENSORS.map((sensor) => (
+                                    <MenuItem
+                                        key={sensor.id}
+                                        value={sensor.id}
+                                        style={getStyles(sensor.id, sensorTypes, theme)}
+                                    >
+                                        {sensor.name}
+                                    </MenuItem>
+                                ))}
+                                </Select>
+                                <FormHelperText>What does this sensor monitor?</FormHelperText>
+                            </FormControl>
+                        </Box>
+                    ) : (
+                        <TableContainer component={Paper}>
+                            {
+                                loading ? (
+                                    <>Loading...</>
+                                ) : (
+                                    <Table aria-label="caption table">
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell>Sensor ID</TableCell>
+                                                <TableCell>Monitors</TableCell>
+                                                <TableCell align="right">
+                                                    <Button onClick={() => setShowCreate(true)} variant="outlined" size="small">Add Sensor</Button>
                                                 </TableCell>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            )
-                        }
-                    </TableContainer>
-                )}
+                                        </TableHead>
+                                        <TableBody>
+                                            {items.length === 0 ? (
+                                                <p style={{paddingLeft: 16}}>No sensors found</p>
+                                            ) : (
+                                                <>
+                                                    {items.map((row) => (
+                                                        <TableRow key={row.sensor_id}>
+                                                            <TableCell component="th" scope="row">
+                                                                {row.sensor_id}
+                                                            </TableCell>
+                                                            <TableCell>{row.sensor_types?.join(", ")}</TableCell>
+                                                            <TableCell>
+                                                                <Button variant="text" size="small" onClick={() => handleRemoveSensor(row.sensor_id!)}>Remove Sensor</Button>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                )
+                            }
+                        </TableContainer>
+                    )}
+                    </Box>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>Cancel</Button>

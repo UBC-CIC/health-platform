@@ -105,6 +105,7 @@ export const getPatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -119,6 +120,7 @@ export const listPatientsDetails = /* GraphQL */ `
         patient_id
         name
         sensor_types
+        user_ids
       }
       nextToken
     }

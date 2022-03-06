@@ -90,6 +90,7 @@ export const createPatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -102,6 +103,7 @@ export const updatePatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -114,6 +116,7 @@ export const deletePatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -123,6 +126,7 @@ export const publishNewPatientsDetail = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;
@@ -132,6 +136,7 @@ export const publishPatientsDetailUpdates = /* GraphQL */ `
       patient_id
       name
       sensor_types
+      user_ids
     }
   }
 `;

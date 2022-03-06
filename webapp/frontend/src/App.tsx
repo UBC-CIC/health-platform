@@ -2,8 +2,11 @@ import { Hub, HubCallback } from '@aws-amplify/core';
 import { AuthState, onAuthUIStateChange, TOAST_AUTH_ERROR_EVENT, UI_AUTH_CHANNEL } from '@aws-amplify/ui-components';
 import { AmplifyAuthenticator, AmplifySignUp } from '@aws-amplify/ui-react';
 import { Alert, createTheme, Grid, ThemeProvider } from '@mui/material';
+import { API } from 'aws-amplify';
 import React from 'react';
 import './App.css';
+import { getUsersDetail } from './common/graphql/queries';
+import { UsersDetail } from './common/types/API';
 import { Navigation } from './components/nav/Navigation';
 import UserContext from './context/UserContext';
 
@@ -27,6 +30,25 @@ function App() {
     const { user, setUser } = React.useContext(UserContext);
     const [alertMessage, setAlertMessage] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<any>(true);
+    const [isAdmin, setIsAdmin] = React.useState(false);
+
+    async function getIsAdmin(userId: string) {
+        try {
+            const response: any = await API.graphql({
+                query: getUsersDetail,
+                variables: {
+                    userId: userId,
+                },
+            });
+            console.log("getUsersDetail response:", response);
+            const userDetail: UsersDetail = response["data"]["getUsersDetail"];
+
+            setIsAdmin(userDetail.user_type === "ADMIN")
+            console.log("Is User Admin? ", userDetail.user_type === "ADMIN")
+        } catch (e) {
+            console.log('getUsersDetail errors:', e);
+        }
+    }
 
     const theme = createTheme({
         palette: {
@@ -65,6 +87,7 @@ function App() {
                         username: authData.attributes.email,
                         userId: authData.username,
                     });
+                    getIsAdmin(authData.username);
                 } else {
                     // When user first signs up, the `attributes` object does not exist
                     setUser({
@@ -91,7 +114,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <UserContext.Provider value={user}>
                 <div className="App">
-                    <Navigation userName={user.username} userId={user.userId} authState={authState} />
+                    <Navigation userName={user.username} userId={user.userId} isAdmin={isAdmin} authState={authState} />
                 </div>
             </UserContext.Provider>
         </ThemeProvider>

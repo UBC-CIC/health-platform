@@ -15,12 +15,15 @@ import { useEffect, useRef, useState } from "react";
 import { getPatientsDetail, getUsersDetail } from "../../common/graphql/queries";
 import { onCreatePatientsDetail } from "../../common/graphql/subscriptions";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
+import CreatePatient from "./CreatePatient";
+import EditPatient from "./EditPatient";
 import ManageSensors from "./ManageSensors";
 
 import "./patients.css";
 
 export const Patients = (props: { userName: any, userId: any }) => {
     const [items, updateItems] = useState<Array<PatientsDetail>>(new Array<PatientsDetail>());
+    const [user, setUser] = useState<UsersDetail>({} as UsersDetail);
     const [loading, setLoading] = useState<boolean>(true);
     const stateRef = useRef<Array<PatientsDetail>>();
     stateRef.current = items;
@@ -68,6 +71,7 @@ export const Patients = (props: { userName: any, userId: any }) => {
                 });
                 console.log(userDetailObj);
                 const userDetail: UsersDetail = userDetailObj['data']['getUsersDetail'];
+                setUser(userDetail);
 
                 // Get the patients that this user cares for
                 const patientDetails: Array<PatientsDetail> = [];
@@ -117,7 +121,9 @@ export const Patients = (props: { userName: any, userId: any }) => {
                                         <TableCell>Patient Name</TableCell>
                                         <TableCell>Patient ID</TableCell>
                                         <TableCell>Sensors</TableCell>
-                                        <TableCell align="right"></TableCell>
+                                        <TableCell align="right">
+                                            <CreatePatient user={user} />
+                                        </TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -130,7 +136,7 @@ export const Patients = (props: { userName: any, userId: any }) => {
                                             <TableCell>{row.sensor_types?.length} measures monitored</TableCell>
                                             <TableCell align="right">
                                                 <ManageSensors patientId={row.patient_id!} patient={row} />
-                                                <Button variant="text">Edit Patient</Button>
+                                                <EditPatient user={user} patientId={row.patient_id!} patient={row} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

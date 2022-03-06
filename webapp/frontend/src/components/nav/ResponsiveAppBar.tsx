@@ -15,7 +15,7 @@ import { AppAuthStateProps } from '../../types/propTypes';
 import { Link } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
 
-const pages = ['Dashboard', 'Events', 'Patients', 'Users'];
+const pages = ['Dashboard', 'Events', 'Patients'];
 
 const ResponsiveAppBar = (props: AppAuthStateProps) => {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -84,6 +84,12 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
+
+                            {props.isAdmin && 
+                                <MenuItem key={`collapse-Users`} onClick={handleCloseNavMenu} component={Link} to={`/users`}>
+                                    <Typography textAlign="center">Users</Typography>
+                                </MenuItem>
+                            }
                     </Menu>
                 </Box>
     
@@ -107,6 +113,18 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                             </Button>
                         </Link>
                     ))}
+
+                    {props.isAdmin && 
+                        <Link key="Users" to={`/users`} style={{textDecoration: "none"}}>
+                            <Button
+                                key="Users"
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: 'white', display: 'block' }}
+                            >
+                                Users
+                            </Button>
+                        </Link>
+                    }
                 </Box>
 
                 <Box sx={{ flexGrow: 0 }}>

@@ -72,6 +72,7 @@ export type PatientsDetail = {
   patient_id?: string,
   name?: string | null,
   sensor_types?: Array< string | null > | null,
+  user_ids?: Array< string | null > | null,
 };
 
 export type SensorsDetailInput = {
@@ -169,6 +170,12 @@ export type PatientsDetailConnection = {
   nextToken?: string | null,
 };
 
+export type SensorsDetailConnection = {
+  __typename: "SensorsDetailConnection",
+  items?:  Array<SensorsDetail | null > | null,
+  nextToken?: string | null,
+};
+
 export type ModelSensorsDetailFilterInput = {
   sensor_id: string,
   patient_id?: string | null,
@@ -176,12 +183,6 @@ export type ModelSensorsDetailFilterInput = {
   and?: Array< ModelSensorsDetailFilterInput | null > | null,
   or?: Array< ModelSensorsDetailFilterInput | null > | null,
   not?: ModelSensorsDetailFilterInput | null,
-};
-
-export type SensorsDetailConnection = {
-  __typename: "SensorsDetailConnection",
-  items?:  Array<SensorsDetail | null > | null,
-  nextToken?: string | null,
 };
 
 export type ModelUsersDetailFilterInput = {
@@ -648,6 +649,25 @@ export type GetSensorsDetailQuery = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+  } | null,
+};
+
+export type GetSensorsDetailByUserQueryVariables = {
+  patientId?: string,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type GetSensorsDetailByUserQuery = {
+  getSensorsDetailByUser?:  {
+    __typename: "SensorsDetailConnection",
+    items?:  Array< {
+      __typename: "SensorsDetail",
+      sensor_id: string,
+      patient_id?: string | null,
+      sensor_types?: Array< string | null > | null,
+    } | null > | null,
+    nextToken?: string | null,
   } | null,
 };
 
