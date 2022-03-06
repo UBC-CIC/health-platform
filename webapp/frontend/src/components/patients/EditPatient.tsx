@@ -76,7 +76,7 @@ export const EditPatient = (props: { patientId: string, patient: PatientsDetail,
 
     return (
         <>
-            <Button variant="text" onClick={handleOpen}>
+            <Button variant="text" size="small" onClick={handleOpen}>
                 Edit Patient
             </Button>
             <Dialog open={open} onClose={handleClose}>

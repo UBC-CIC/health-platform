@@ -202,7 +202,6 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                                                 <TableCell>Patient ID</TableCell>
                                                 <TableCell>Patient Name</TableCell>
                                                 <TableCell align="right">
-                                                    <Button onClick={() => setShowCreate(true)} variant="outlined" size="small">Add Patient</Button>
                                                 </TableCell>
                                             </TableRow>
                                         </TableHead>

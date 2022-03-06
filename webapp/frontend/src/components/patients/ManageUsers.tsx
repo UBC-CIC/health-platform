@@ -44,7 +44,7 @@ function getStyles(name: any, personName: any, theme: any) {
 }
 
 
-export const ManageSensors = (props: { patientId: string, patient: PatientsDetail }) => {
+export const ManageUsers = (props: { patientId: string, patient: PatientsDetail }) => {
     const theme = useTheme();
 
     const [items, updateItems] = useState<Array<SensorsDetail>>(new Array<SensorsDetail>());
@@ -240,9 +240,9 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
             <Dialog open={open} onClose={handleClose}>
                 {
                     showCreate ? (
-                        <DialogTitle>Add Sensor</DialogTitle>
+                        <DialogTitle>Add Caregiver</DialogTitle>
                     ) : (
-                        <DialogTitle>Manage Sensors</DialogTitle>
+                        <DialogTitle>Manage Caregivers</DialogTitle>
                     )
                 }
                 <DialogContent>
@@ -343,4 +343,4 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
     );
 };
 
-export default ManageSensors;
+export default ManageUsers;

@@ -33,7 +33,7 @@ function getStyles(name: any, personName: any, theme: any) {
     };
 }
 
-export const EditPatient = (props: { user: UsersDetail }) => {
+export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
     const theme = useTheme();
 
     const [open, setOpen] = useState(false);
@@ -139,7 +139,7 @@ export const EditPatient = (props: { user: UsersDetail }) => {
                 </DialogContent>
                 <DialogActions style={{marginLeft: 8}}>
                     {
-                        props.user.user_type === "ADMIN" ? (
+                        (props.user.user_type === "ADMIN" && props.numAdmin <= 1) ? (
                             <small>At least one ADMIN user must remain to delete this user</small>
                         ) : deleteConfirm ? (
                             <>

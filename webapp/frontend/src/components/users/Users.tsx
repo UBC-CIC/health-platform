@@ -12,7 +12,6 @@ import { API } from "aws-amplify";
 import { useEffect, useRef, useState } from "react";
 import { listUsersDetails } from "../../common/graphql/queries";
 import { UsersDetail } from "../../common/types/API";
-import CreateUser from "./CreateUser";
 import EditUser from "./EditUser";
 import ManagePatients from "./ManagePatients";
 import "./users.css";
@@ -20,6 +19,7 @@ import "./users.css";
 
 export const Users = (props: { userName: any, userId: any }) => {
     const [items, updateItems] = useState<Array<UsersDetail>>(new Array<UsersDetail>());
+    const [numAdmin, updateNumAdmin] = useState(0);
     const [loading, setLoading] = useState<boolean>(true);
     const stateRef = useRef<Array<UsersDetail>>();
     stateRef.current = items;
@@ -35,21 +35,13 @@ export const Users = (props: { userName: any, userId: any }) => {
                 const itemsReturned: Array<UsersDetail> = userDetailObj['data']['listUsersDetails']['items'];
                 updateItems(itemsReturned);
 
-                // // Get the patients that this user cares for
-                // const patientDetails: Array<PatientsDetail> = [];
-                // if (userDetail.patient_ids) {
-                //     for (const patient_id of userDetail.patient_ids) {
-                //         const patientDetailObj: any = await API.graphql({
-                //             query: getPatientsDetail,
-                //             variables: {
-                //                 patientId: patient_id,
-                //             }
-                //         });
-                //         const patientDetail: PatientsDetail = patientDetailObj["data"]["getPatientsDetail"];
-                //         patientDetails.push(patientDetail);
-                //     }
-                // }
-
+                let numAdminLocal = 0
+                for (const user of itemsReturned) {
+                    if (user.user_type === "ADMIN") {
+                        numAdminLocal += 1;
+                    }
+                }
+                updateNumAdmin(numAdminLocal);
                 setLoading(false);
                 console.log('itemsReturned:', itemsReturned);
             } catch (e) {
@@ -83,7 +75,6 @@ export const Users = (props: { userName: any, userId: any }) => {
                                         <TableCell>Patient IDs</TableCell>
                                         <TableCell>User Type</TableCell>
                                         <TableCell align="right">
-                                            <CreateUser />
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -98,7 +89,7 @@ export const Users = (props: { userName: any, userId: any }) => {
                                             <TableCell>{row.user_type}</TableCell>
                                             <TableCell align="right">
                                                 <ManagePatients user={row} />
-                                                <EditUser user={row} />
+                                                <EditUser numAdmin={numAdmin} user={row} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

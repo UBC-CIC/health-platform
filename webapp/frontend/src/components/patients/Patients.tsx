@@ -18,10 +18,11 @@ import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import CreatePatient from "./CreatePatient";
 import EditPatient from "./EditPatient";
 import ManageSensors from "./ManageSensors";
+import ManageUsers from "./ManageUsers";
 
 import "./patients.css";
 
-export const Patients = (props: { userName: any, userId: any }) => {
+export const Patients = (props: { isAdmin: boolean, userName: any, userId: any }) => {
     const [items, updateItems] = useState<Array<PatientsDetail>>(new Array<PatientsDetail>());
     const [user, setUser] = useState<UsersDetail>({} as UsersDetail);
     const [loading, setLoading] = useState<boolean>(true);
@@ -120,9 +121,11 @@ export const Patients = (props: { userName: any, userId: any }) => {
                                     <TableRow>
                                         <TableCell>Patient Name</TableCell>
                                         <TableCell>Patient ID</TableCell>
+                                        <TableCell>Caregivers</TableCell>
                                         <TableCell>Sensors</TableCell>
                                         <TableCell align="right">
-                                            <CreatePatient user={user} />
+                                            {props.isAdmin &&
+                                            <CreatePatient user={user} />}
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -133,9 +136,9 @@ export const Patients = (props: { userName: any, userId: any }) => {
                                                 {row.name}
                                             </TableCell>
                                             <TableCell>{row.patient_id}</TableCell>
-                                            <TableCell>{row.sensor_types?.length} measures monitored</TableCell>
+                                            <TableCell>{row.user_ids?.length} caregivers <ManageUsers patientId={row.patient_id!} patient={row} /></TableCell>
+                                            <TableCell>{row.sensor_types?.length} measures monitored <ManageSensors patientId={row.patient_id!} patient={row} /></TableCell>
                                             <TableCell align="right">
-                                                <ManageSensors patientId={row.patient_id!} patient={row} />
                                                 <EditPatient user={user} patientId={row.patient_id!} patient={row} />
                                             </TableCell>
                                         </TableRow>
