@@ -242,12 +242,25 @@ type QueryResponse {
     rows: [[String]]
 }
 
+# 
+# Event Search Lambda function
+# 
+input SearchRequest {
+    patient_ids: [String]
+    keyword: String!
+}
+
+type SearchResponse {
+	events: [[String]]
+}
+
 #
 # QUERIES
 #
 type Query @aws_cognito_user_pools
 @aws_iam {
     query(input: QueryRequest): QueryResponse
+	searchEvents(input: SearchRequest): SearchResponse
 
 	getEventDetail(eventId: String!): EventDetail
 	listEventDetails(filter: ModelEventDetailFilterInput, limit: Int, nextToken: String): EventDetailConnection

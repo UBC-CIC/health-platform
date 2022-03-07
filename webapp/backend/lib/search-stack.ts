@@ -1,16 +1,20 @@
 import cdk = require('@aws-cdk/core');
-import * as opensearch from '@aws-cdk/aws-opensearchservice';
-import * as lambda from "@aws-cdk/aws-lambda";
-import { Role, ServicePrincipal, PolicyDocument, PolicyStatement, Effect } from '@aws-cdk/aws-iam';
-import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import dynamodb = require('aws-sdk/clients/dynamodb');
-import { StartingPosition } from '@aws-cdk/aws-lambda';
 import { ITable } from '@aws-cdk/aws-dynamodb';
-
+import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import * as lambda from "@aws-cdk/aws-lambda";
+import { StartingPosition } from '@aws-cdk/aws-lambda';
+import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
+import * as opensearch from '@aws-cdk/aws-opensearchservice';
+import { Domain } from '@aws-cdk/aws-opensearchservice';
+import { Bucket } from '@aws-cdk/aws-s3';
+import dynamodb = require('aws-sdk/clients/dynamodb');
 
 export class HealthPlatformSearchStack extends cdk.Stack {
-    public readonly lambdaRole: Role;
     public readonly deliveryFunction: lambda.Function;
+    public readonly searchFunction: lambda.Function;
+    public readonly bucket: Bucket;
+    public readonly devDomain: Domain;
+
 
     constructor(app: cdk.App, id: string, sourceTable: ITable) {
         super(app, id, {
@@ -20,13 +24,13 @@ export class HealthPlatformSearchStack extends cdk.Stack {
         });
 
         // configuration for prototyping, not suitable for production
-        const devDomain = new opensearch.Domain(this, 'HealthPlatformDomain', {
+        this.devDomain = new opensearch.Domain(this, 'HealthPlatformDomain', {
             version: opensearch.EngineVersion.OPENSEARCH_1_1,
             enableVersionUpgrade: true,
             capacity: {
                 dataNodes: 1,
                 dataNodeInstanceType: "t2.small.search"
-              },
+            },
             //   ebs: {
             //     volumeSize: 2,
             //   },
@@ -37,7 +41,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             // },
         });
 
-        this.lambdaRole = new Role(this, 'HealthPlatformSearchLambdaRole', {
+        const lambdaRole = new Role(this, 'HealthPlatformSearchLambdaRole', {
             roleName: 'HealthPlatformSearchLambdaRole',
             assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
             inlinePolicies: {
@@ -48,6 +52,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                             actions: [
                                 "es:ESHttpPost",
                                 "es:ESHttpPut",
+                                "es:ESHttpGet",
                                 "dynamodb:DescribeStream",
                                 "dynamodb:GetRecords",
                                 "dynamodb:GetShardIterator",
@@ -66,21 +71,35 @@ export class HealthPlatformSearchStack extends cdk.Stack {
         });
 
         this.deliveryFunction = new lambda.Function(this, 'HealthPlatformIndexerLambda', {
-            functionName: "DynamoDbstream-Indexer",
+            functionName: "EventOpenSearch-Indexer",
             code: new lambda.AssetCode('build/src'),
-            handler: 'ddb-to-opensearch.handler',
+            handler: 'eventsearch-indexer.handler',
             runtime: lambda.Runtime.NODEJS_14_X,
-            role: this.lambdaRole,
+            role: lambdaRole,
             memorySize: 512,
-            timeout: cdk.Duration.seconds(300), 
+            timeout: cdk.Duration.seconds(300),
             environment: {
-                "ROLE_ARN": this.lambdaRole.roleArn,
-                "OPENSEARCH_ENDPOINT": devDomain.domainEndpoint,
+                "ROLE_ARN": lambdaRole.roleArn,
+                "OPENSEARCH_ENDPOINT": this.devDomain.domainEndpoint,
             }
         });
         this.deliveryFunction.addEventSource(new DynamoEventSource(sourceTable, {
             startingPosition: StartingPosition.LATEST
-        }));    
-    
+        }));
+
+        this.searchFunction = new lambda.Function(this, 'HealthPlatformQueryLambda', {
+            functionName: "EventOpenSearch-Query",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'eventsearch-search.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: lambdaRole,
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300),
+            environment: {
+                "ROLE_ARN": lambdaRole.roleArn,
+                "OPENSEARCH_ENDPOINT": this.devDomain.domainEndpoint,
+            }
+        });
+
     }
 }

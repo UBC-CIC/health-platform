@@ -11,7 +11,7 @@ const app = new App();
 const ddb = new HealthPlatformDynamoStack(app, 'HealthPlatformDynamoStack');
 const cognito = new HealthPlatformCognitoStack(app, 'HealthPlatformCognitoStack');
 const lambdaStack = new HealthPlatformLambdaStack(app, 'HealthPlatformLambdaStack');
-new HealthPlatformAppSyncStack(app, 'HealthPlatformAppSyncStack', cognito.UserPoolId, lambdaStack);
 new HealthPlatformIotStack(app, 'HealthPlatformIotStack');
-new HealthPlatformSearchStack(app, "HealthPlatformSearchStack", ddb.eventDetailsTable);
+const searchStack = new HealthPlatformSearchStack(app, "HealthPlatformSearchStack", ddb.eventDetailsTable);
 
+new HealthPlatformAppSyncStack(app, 'HealthPlatformAppSyncStack', cognito.UserPoolId, lambdaStack, searchStack);

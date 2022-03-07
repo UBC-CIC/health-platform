@@ -1,4 +1,3 @@
-import { CfnOutput, Construct, Stack } from '@aws-cdk/core';
 import {
     AuthorizationType,
     FieldLogLevel,
@@ -9,9 +8,11 @@ import {
 } from '@aws-cdk/aws-appsync';
 import { UserPool } from '@aws-cdk/aws-cognito';
 import { Table } from '@aws-cdk/aws-dynamodb';
-import { CompositePrincipal, ManagedPolicy, Role, ServicePrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam'
+import { CompositePrincipal, Effect, ManagedPolicy, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { CfnOutput, Construct, Stack } from '@aws-cdk/core';
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
 import { HealthPlatformLambdaStack } from './lambda-stack';
+import { HealthPlatformSearchStack } from './search-stack';
 
 /**
  * HealthPlatformAppSyncStack defines a GraphQL API for accessing DynamoDB table.
@@ -19,8 +20,9 @@ import { HealthPlatformLambdaStack } from './lambda-stack';
  */
 export class HealthPlatformAppSyncStack extends Stack {
     public readonly GraphQLUrl: string;
+    public readonly api: GraphqlApi;
 
-    constructor(scope: Construct, id: string, userPoolId: string, lambdaStack: HealthPlatformLambdaStack) {
+    constructor(scope: Construct, id: string, userPoolId: string, lambdaStack: HealthPlatformLambdaStack, searchStack: HealthPlatformSearchStack) {
         super(scope, id, {
             env: {
                 region: 'us-west-2'
@@ -379,6 +381,13 @@ export class HealthPlatformAppSyncStack extends Stack {
         api.addLambdaDataSource('QueryDataSource', lambdaStack.queryFunction).createResolver({
             typeName: 'Query',
             fieldName: 'query'
+        });
+
+        // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
+        //
+        api.addLambdaDataSource('OpenSearchEventsDataSource', searchStack.searchFunction).createResolver({
+            typeName: 'Query',
+            fieldName: 'searchEvents'
         });
 
         // Cloudformation Output

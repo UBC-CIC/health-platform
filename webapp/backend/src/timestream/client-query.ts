@@ -1,5 +1,5 @@
 import AWS = require('aws-sdk');
-import { ColumnInfo, QueryRequest, QueryResponse, QueryString, Row } from 'aws-sdk/clients/timestreamquery';
+import { ColumnInfo, QueryRequest } from 'aws-sdk/clients/timestreamquery';
 
 
 export interface HealthPlatformQueryResponse {
@@ -16,7 +16,7 @@ export class HealthPlatformTimestreamQueryClient {
 
     buildQuery(patientId: string, period: string, statistic: string, start: string, end: string): string {
         let statisticQueryVal = "";
-        switch(statistic) {
+        switch (statistic) {
             case "avg": {
                 statisticQueryVal = "AVG(measurement)";
                 break;
@@ -31,11 +31,11 @@ export class HealthPlatformTimestreamQueryClient {
             }
             case "p90": {
                 statisticQueryVal = "APPROX_PERCENTILE(measurement, 0.9)";
-                break; 
+                break;
             }
             case "p99": {
                 statisticQueryVal = "APPROX_PERCENTILE(measurement, 0.99)";
-                break; 
+                break;
             }
             case "max": {
                 statisticQueryVal = "MAX(measurement)";
@@ -84,7 +84,7 @@ export class HealthPlatformTimestreamQueryClient {
                 console.log(`Pagination requested: ${nextToken}`);
                 params.NextToken = nextToken;
             }
-    
+
             const response = await this.client.query(params).promise();
             console.log(`Got response with columns ${JSON.stringify(response.ColumnInfo)}`);
             const queriedRows = response.Rows.map(r => {

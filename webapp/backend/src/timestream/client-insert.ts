@@ -1,5 +1,4 @@
 import AWS = require('aws-sdk');
-import { ColumnInfo, QueryRequest, QueryResponse, QueryString, Row } from 'aws-sdk/clients/timestreamquery';
 
 export type MetricsData = {
     "patient_id": string;
@@ -20,9 +19,9 @@ export class HealthPlatformTimestreamInsertClient {
     async writeRecords(event: any = {}): Promise<boolean> {
         console.log("Writing records");
         const currentTime = Date.now().toString(); // Unix time in milliseconds
-    
+
         const dimensions = [
-            {'Name': 'region', 'Value': 'us-west-2'}
+            { 'Name': 'region', 'Value': 'us-west-2' }
         ];
         const measureValues = [
             {
@@ -48,24 +47,24 @@ export class HealthPlatformTimestreamInsertClient {
         ];
 
 
-        const patientMetrics = { 
-            "Dimensions": dimensions,  
+        const patientMetrics = {
+            "Dimensions": dimensions,
             "MeasureName": "patient_metrics",
             "MeasureValueType": "MULTI",
             "Time": currentTime.toString(),
             "MeasureValues": measureValues
         }
-       
+
         const records = [patientMetrics];
-    
+
         const params = {
             DatabaseName: "HealthDatabase",
             TableName: "MetricsDataTable",
             Records: records
         };
-    
+
         const request = this.client.writeRecords(params);
-    
+
         await request.promise().then(
             (data) => {
                 console.log("Write records successful");

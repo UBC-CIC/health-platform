@@ -10,6 +10,13 @@ export const query = /* GraphQL */ `
     }
   }
 `;
+export const searchEvents = /* GraphQL */ `
+  query SearchEvents($input: SearchRequest) {
+    searchEvents(input: $input) {
+      events
+    }
+  }
+`;
 export const getEventDetail = /* GraphQL */ `
   query GetEventDetail($eventId: String!) {
     getEventDetail(eventId: $eventId) {
