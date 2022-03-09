@@ -62,7 +62,7 @@ export class HealthPlatformTimestreamQueryClient {
             SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
                 measurement_type,
                 ROUND(${statisticQueryVal}, 2) AS measure_val
-            FROM HealthDatabase.MetricsDataTable
+            FROM HealthDatabase.HealthMetricsDataTable
             WHERE patient_id = '${patientId}'
             AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
             GROUP BY BIN(time, ${period}), measurement_type
