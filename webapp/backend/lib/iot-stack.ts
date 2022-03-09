@@ -150,7 +150,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
             encryption: BucketEncryption.S3_MANAGED,
         });
 
-        const dataTable = new cdk.CfnResource(this, 'MetricsDataTable', {
+        const dataTable = new cdk.CfnResource(this, 'HealthMetricsDataTable', {
             type: 'AWS::Timestream::Table',
             properties: {
                 DatabaseName: healthDatabase.ref,
@@ -167,7 +167,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
                     MemoryStoreRetentionPeriodInHours : "24",
                     MagneticStoreRetentionPeriodInDays : "365"
                 },
-                TableName: 'MetricsDataTable',
+                TableName: 'HealthMetricsDataTable',
             },
           });
           

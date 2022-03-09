@@ -19,6 +19,7 @@ export class HealthPlatformTimestreamInsertClient {
     async writeRecords(event: any = {}): Promise<boolean> {
         console.log("Writing records");
         const currentTime = Date.now().toString(); // Unix time in milliseconds
+        const recordTime = new Date(event.timestamp).getTime().toString()
 
         const dimensions = [
             { 'Name': 'region', 'Value': 'us-west-2' }
@@ -51,7 +52,7 @@ export class HealthPlatformTimestreamInsertClient {
             "Dimensions": dimensions,
             "MeasureName": "patient_metrics",
             "MeasureValueType": "MULTI",
-            "Time": currentTime.toString(),
+            "Time": recordTime,
             "MeasureValues": measureValues
         }
 
@@ -59,7 +60,7 @@ export class HealthPlatformTimestreamInsertClient {
 
         const params = {
             DatabaseName: "HealthDatabase",
-            TableName: "MetricsDataTable",
+            TableName: "HealthMetricsDataTable",
             Records: records
         };
 

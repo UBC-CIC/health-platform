@@ -67,15 +67,40 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
         datapoints.push(accelerometerY);
         datapoints.push(accelerometerZ);
     } else {
-        const modifiedData = {
-            patient_id: patientId,
-            sensor_id: event.sensorId,
-            timestamp: timestamp.toISOString(),
-            ttl: (ttl.getTime() / 1000) | 0,
-            measure_type: event.measurementType,
-            measure_value: event.measurement,
-        };
-        datapoints.push(modifiedData);
+        var measurementString = event.measurement
+        var measurementTimestamps = event.timestamp
+        while (measurementString !== "") {
+            var measurementIndex = measurementString.indexOf(",")
+            var timestampIndex = measurementTimestamps.indexOf(",")
+            if (measurementIndex != -1) {
+                var dataTimestamp = new Date(measurementTimestamps.substring(0, timestampIndex))
+                const modifiedData = {
+                    patient_id: patientId,
+                    sensor_id: event.sensorId,
+                    timestamp: dataTimestamp.toISOString(),
+                    ttl: (ttl.getTime() / 1000) | 0,
+                    measure_type: event.measurementType,
+                    measure_value: measurementString.substring(0, measurementIndex),
+                };
+                datapoints.push(modifiedData);
+                measurementString = measurementString.substring(measurementIndex + 2)
+                measurementTimestamps = measurementTimestamps.substring(timestampIndex + 2)
+            } else {
+                var dataTimestamp = new Date(measurementTimestamps)
+                const modifiedData = {
+                    patient_id: patientId,
+                    sensor_id: event.sensorId,
+                    timestamp: dataTimestamp.toISOString(),
+                    ttl: (ttl.getTime() / 1000) | 0,
+                    measure_type: event.measurementType,
+                    measure_value: measurementString,
+                };
+                datapoints.push(modifiedData);
+                measurementString = ""
+                measurementTimestamps = ""
+            }
+
+        } 
     }
     
    
