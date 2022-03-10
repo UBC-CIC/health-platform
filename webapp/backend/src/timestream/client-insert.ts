@@ -4,7 +4,6 @@ export type MetricsData = {
     "patient_id": string;
     "sensor_id": string;
     "timestamp": string;
-    "ttl"?: number;
     "measure_type": string;
     "measure_value": string;
 };
@@ -18,8 +17,7 @@ export class HealthPlatformTimestreamInsertClient {
 
     async writeRecords(event: any = {}): Promise<boolean> {
         console.log("Writing records");
-        const currentTime = Date.now().toString(); // Unix time in milliseconds
-        const recordTime = new Date(event.timestamp).getTime().toString()
+        const recordTime = new Date(event.timestamp).getTime().toString() // Unix time in milliseconds
 
         const dimensions = [
             { 'Name': 'region', 'Value': 'us-west-2' }
