@@ -141,6 +141,38 @@ export class HealthPlatformIotStack extends cdk.Stack {
             }
         });
 
+        const gasSensor = new iot.CfnThing(this, 'GasSensor', {
+            thingName: 'GasSensor',
+        });
+
+        var fs = require('fs');
+        var path = require('path');
+        const gasSensorCertificate = new iot.CfnCertificate(this, 'GasSensorCertificate', {
+              status: 'ACTIVE',
+              certificateSigningRequest: fs.readFileSync(
+                path.resolve("cert/cert.csr"),
+                "utf8"
+              ),
+        });
+
+        const policyPrincipalAttachment = new iot.CfnPolicyPrincipalAttachment(
+            this,
+            'PolicyPrincipalAttachment',
+            {
+              policyName: cfnPolicy.policyName || 'HealthPlatformIotPolicy',
+              principal: gasSensorCertificate.attrArn,
+        });
+
+        const thingPrincipalAttachment = new iot.CfnThingPrincipalAttachment(
+            this,
+            'ThingPrincipalAttachment',
+            {
+              thingName: gasSensor.thingName || 'GasSensor',
+              principal: gasSensorCertificate.attrArn,
+            },
+          );
+
+
         const healthDatabase = new timestream.CfnDatabase(this, 'HealthDatabase',  {
             databaseName: 'HealthDatabase',
         });

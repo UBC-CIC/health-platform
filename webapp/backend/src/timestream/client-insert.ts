@@ -16,7 +16,6 @@ export class HealthPlatformTimestreamInsertClient {
     }
 
     async writeRecords(event: any = {}): Promise<boolean> {
-        console.log("Writing records");
         const recordTime = new Date(event.timestamp).getTime().toString() // Unix time in milliseconds
 
         const dimensions = [
@@ -66,7 +65,6 @@ export class HealthPlatformTimestreamInsertClient {
 
         await request.promise().then(
             (data) => {
-                console.log("Write records successful");
             },
             (err) => {
                 console.log("Error writing records:", err);

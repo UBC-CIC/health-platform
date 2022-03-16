@@ -5,6 +5,7 @@ The `backend` folder contains AWS CDK stacks and AWS Lambda function code that w
 ## Table of Contents
 - [Deployment](#deployment)
     - [Install](#install)
+    - [Create an IoT Certificate](#create-an-iot-certificate)
     - [CDK Deployment](#cdk-deployment)
     - [Set Up Amazon Simple Email Service](#set-up-amazon-simple-email-service)
     - [Updating GraphQL Schema](#updating-graphql-schema)
@@ -22,6 +23,18 @@ Install dependencies required by the AWS Lambda functions. Note that this genera
 cd src/
 npm install
 cd ..
+```
+
+### Create an IoT Certificate
+Download OpenSSL [here](https://wiki.openssl.org/index.php/Binaries). Select the correct download link for your operating system and install OpenSSL. 
+
+Open the OpenSSL console and run the following commands. Ensure that you have navigated to the to the backend folder of this project. Replace the "/C=CA/ST=BC/L=Vancouver/O=UBCCIC/CN=AWS IoT Certificate" portion of the command with your own values.
+
+```
+mkdir cert
+cd cert
+openssl genrsa -out privatekey.pem 2048
+openssl req -new -subj "/C=CA/ST=BC/L=Vancouver/O=UBCCIC/CN=AWS IoT Certificate" -key privatekey.pem -out cert.csr
 ```
 
 ### CDK Deployment
@@ -52,6 +65,7 @@ cdk deploy HealthPlatformLambdaStack  --profile health-platform
 cdk deploy HealthPlatformCognitoStack --profile health-platform
 cdk deploy HealthPlatformAppSyncStack --profile health-platform
 cdk deploy HealthPlatformIotStack --profile health-platform
+cdk deploy HealthPlatformSearchStack --profile health-platform
 ```
 
 ### Set Up Amazon Simple Email Service
