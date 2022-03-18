@@ -14,7 +14,7 @@ export class HealthPlatformTimestreamQueryClient {
         this.client = client;
     }
 
-    buildQuery(patientId: string, period: string, statistic: string, start: string, end: string): string {
+    buildQuery(patientIds: string[], period: string, statistic: string, start: string, end: string): string {
         let statisticQueryVal = "";
         switch (statistic) {
             case "avg": {
@@ -60,13 +60,14 @@ export class HealthPlatformTimestreamQueryClient {
 
         return `
             SELECT to_iso8601(BIN(time, ${period})) AS binned_timestamp,
+                patient_id,
                 measurement_type,
                 ROUND(${statisticQueryVal}, 2) AS measure_val
             FROM HealthDatabase.HealthMetricsDataTable
-            WHERE patient_id = '${patientId}'
+            WHERE patient_id IN ('${patientIds.join("', '")}')
             AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
-            GROUP BY BIN(time, ${period}), measurement_type
-            ORDER BY measurement_type, binned_timestamp ASC
+            GROUP BY BIN(time, ${period}), patient_id, measurement_type
+            ORDER BY patient_id, measurement_type, binned_timestamp ASC
         `;
     }
 

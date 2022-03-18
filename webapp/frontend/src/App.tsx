@@ -5,8 +5,8 @@ import { Alert, createTheme, Grid, ThemeProvider } from '@mui/material';
 import { API } from 'aws-amplify';
 import React from 'react';
 import './App.css';
-import { getUsersDetail } from './common/graphql/queries';
-import { UsersDetail } from './common/types/API';
+import { getPatientsDetail, getUsersDetail } from './common/graphql/queries';
+import { PatientsDetail, UsersDetail } from './common/types/API';
 import { Navigation } from './components/nav/Navigation';
 import UserContext from './context/UserContext';
 
@@ -30,9 +30,10 @@ function App() {
     const { user, setUser } = React.useContext(UserContext);
     const [alertMessage, setAlertMessage] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<any>(true);
-    const [isAdmin, setIsAdmin] = React.useState(false);
+    const [userDetail, setUserDetail] = React.useState<UsersDetail>({} as UsersDetail);
+    const [patients, setPatients] = React.useState<PatientsDetail[]>([] as PatientsDetail[]);
 
-    async function getIsAdmin(userId: string) {
+    async function loadUserDetails(userId: string) {
         try {
             const response: any = await API.graphql({
                 query: getUsersDetail,
@@ -43,8 +44,23 @@ function App() {
             console.log("getUsersDetail response:", response);
             const userDetail: UsersDetail = response["data"]["getUsersDetail"];
 
-            setIsAdmin(userDetail.user_type === "ADMIN")
+            setUserDetail(userDetail)
             console.log("Is User Admin? ", userDetail.user_type === "ADMIN")
+
+            const patientDetails: PatientsDetail[] = [];
+            if (userDetail.patient_ids) {
+                for (const patient_id of userDetail.patient_ids) {
+                    const patientDetailObj: any = await API.graphql({
+                        query: getPatientsDetail,
+                        variables: {
+                            patientId: patient_id,
+                        }
+                    });
+                    const patientDetail: PatientsDetail = patientDetailObj["data"]["getPatientsDetail"];
+                    patientDetails.push(patientDetail);
+                }
+            }
+            setPatients(patientDetails);
         } catch (e) {
             console.log('getUsersDetail errors:', e);
         }
@@ -87,7 +103,7 @@ function App() {
                         username: authData.attributes.email,
                         userId: authData.username,
                     });
-                    getIsAdmin(authData.username);
+                    loadUserDetails(authData.username);
                 } else {
                     // When user first signs up, the `attributes` object does not exist
                     setUser({
@@ -114,7 +130,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <UserContext.Provider value={user}>
                 <div className="App">
-                    <Navigation userName={user.username} userId={user.userId} isAdmin={isAdmin} authState={authState} />
+                    <Navigation userName={user.username} userId={user.userId} userDetail={userDetail} patients={patients} authState={authState} />
                 </div>
             </UserContext.Provider>
         </ThemeProvider>

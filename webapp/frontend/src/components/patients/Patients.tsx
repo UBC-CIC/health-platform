@@ -22,9 +22,8 @@ import ManageUsers from "./ManageUsers";
 
 import "./patients.css";
 
-export const Patients = (props: { isAdmin: boolean, userName: any, userId: any }) => {
+export const Patients = (props: { userDetail: UsersDetail, userName: any, userId: any }) => {
     const [items, updateItems] = useState<Array<PatientsDetail>>(new Array<PatientsDetail>());
-    const [user, setUser] = useState<UsersDetail>({} as UsersDetail);
     const [loading, setLoading] = useState<boolean>(true);
     const stateRef = useRef<Array<PatientsDetail>>();
     stateRef.current = items;
@@ -64,20 +63,19 @@ export const Patients = (props: { isAdmin: boolean, userName: any, userId: any }
 
         async function callListAllEvents() {
             try {
-                const userDetailObj: any = await API.graphql({
-                    query: getUsersDetail,
-                    variables: {
-                        userId: props.userId,
-                    }
-                });
-                console.log(userDetailObj);
-                const userDetail: UsersDetail = userDetailObj['data']['getUsersDetail'];
-                setUser(userDetail);
+                // const userDetailObj: any = await API.graphql({
+                //     query: getUsersDetail,
+                //     variables: {
+                //         userId: props.userId,
+                //     }
+                // });
+                // console.log(userDetailObj);
+                // const userDetail: UsersDetail = userDetailObj['data']['getUsersDetail'];
 
                 // Get the patients that this user cares for
                 const patientDetails: Array<PatientsDetail> = [];
-                if (userDetail.patient_ids) {
-                    for (const patient_id of userDetail.patient_ids) {
+                if (props.userDetail.patient_ids) {
+                    for (const patient_id of props.userDetail.patient_ids) {
                         const patientDetailObj: any = await API.graphql({
                             query: getPatientsDetail,
                             variables: {
@@ -124,8 +122,8 @@ export const Patients = (props: { isAdmin: boolean, userName: any, userId: any }
                                         <TableCell>Caregivers</TableCell>
                                         <TableCell>Sensors</TableCell>
                                         <TableCell align="right">
-                                            {props.isAdmin &&
-                                            <CreatePatient user={user} />}
+                                            {(props.userDetail.user_type === "ADMIN") &&
+                                            <CreatePatient user={props.userDetail} />}
                                         </TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -139,7 +137,7 @@ export const Patients = (props: { isAdmin: boolean, userName: any, userId: any }
                                             <TableCell>{row.user_ids?.length} caregivers <ManageUsers patientId={row.patient_id!} patient={row} /></TableCell>
                                             <TableCell>{row.sensor_types?.length} measures monitored <ManageSensors patientId={row.patient_id!} patient={row} /></TableCell>
                                             <TableCell align="right">
-                                                <EditPatient user={user} patientId={row.patient_id!} patient={row} />
+                                                <EditPatient user={props.userDetail} patientId={row.patient_id!} patient={row} />
                                             </TableCell>
                                         </TableRow>
                                     ))}

@@ -230,7 +230,7 @@ input DeleteUsersDetailInput {
 # Query Lambda function
 # 
 input QueryRequest {
-    patient_id: String
+    patient_ids: [String]
     period: String
     statistic: String
     start: String

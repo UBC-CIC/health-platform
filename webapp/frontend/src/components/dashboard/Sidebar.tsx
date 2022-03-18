@@ -6,6 +6,7 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
 import { propTypes } from 'react-notification-system';
+import { PatientsDetail } from '../../common/types/API';
 import { getRelativeScale, getRelativeValue } from '../../utils/time';
 import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
@@ -18,11 +19,11 @@ type SidebarProps = {
     setSearchProperties: any;
     isLoading: boolean;
     update: any;
-    userName: string;
+    patients: PatientsDetail[];
 };
 
 export const Sidebar = ({
-    searchProperties, setSearchProperties, isLoading, update, userName,
+    searchProperties, setSearchProperties, isLoading, update, patients,
 }: SidebarProps) => {
     const [relativeShortCut, setRelativeShortCut] = React.useState("3h"); // e.g. quicklinks to 3h, 12h, etc.
 
@@ -112,6 +113,23 @@ export const Sidebar = ({
                 }
             </Box>
             <Box sx={{ overflow: 'auto', pl: 2, pr: 2, pt: 4 }}>
+                <Box sx={{ mt: 0, mb: 3 }}>
+                    <FormControl fullWidth>
+                        <InputLabel id="patient-select-label">Patient</InputLabel>
+                        <Select
+                            labelId="patient-select-label"
+                            id="patient-select"
+                            value={searchProperties.patient}
+                            label="Patient"
+                            onChange={(event: any) => handleSearchPropertyChange("patient", event.target.value)}
+                        >
+                            <MenuItem value="all">All Patients</MenuItem>
+                            {patients.map((patient: PatientsDetail) => (
+                                <MenuItem value={patient.patient_id}>{patient.name}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
                 <Box sx={{ overflow: 'auto', mb: 3 }}>
                     <ToggleButtonGroup
                         color="primary"

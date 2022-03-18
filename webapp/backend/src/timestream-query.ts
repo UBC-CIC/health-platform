@@ -5,7 +5,7 @@ var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 /**
  * Input event:
  * {
- *     "patient_id": "6789",
+ *     "patient_ids": ["6789"],
  *     "period": "1m",
  *     "statistic": "avg",
  *     "start": "2022-01-29T13:58:10.104Z",
@@ -28,7 +28,7 @@ exports.handler = async (event: any = {},) => {
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamQueryClient(queryClient);
-    const query = timestreamClient.buildQuery(input.patient_id, input.period, input.statistic, input.start, input.end);
+    const query = timestreamClient.buildQuery(input.patient_ids, input.period, input.statistic, input.start, input.end);
     const queryResponse = await timestreamClient.getAllRows(query)
 
     console.log(`Columns: ${JSON.stringify(queryResponse.columns)}`);

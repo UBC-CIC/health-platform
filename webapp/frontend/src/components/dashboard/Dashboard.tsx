@@ -8,13 +8,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
 import moment from 'moment';
-import { getPatientsDetail, getEventDetailsByUser, query } from '../../common/graphql/queries';
+import { getPatientsDetail, getEventDetailsByUser, query, getUsersDetail } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { CircularProgress, Grid, LinearProgress } from '@mui/material';
 import { ThemeColor } from './types';
 import EventCreate from '../events/EventCreate';
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from '../../utils/time';
-import { EventDetail } from '../../common/types/API';
+import { EventDetail, PatientsDetail, UsersDetail } from '../../common/types/API';
 import ReactApexChart from "react-apexcharts";
 
 const DEFAULT_HOURS_AGO = 3;
@@ -70,6 +70,8 @@ const initialModulesOptions: any = {};
 export const Dashboard = (props: { 
     userName: any, 
     userId: any,
+    userDetail: UsersDetail,
+    patients: PatientsDetail[],
 }) => {
     
     const [searchProperties, setSearchProperties] = React.useState<any>({
@@ -80,6 +82,7 @@ export const Dashboard = (props: {
         type: "relative",
         period: "5m",
         statistic: "avg",
+        patient: "all",
         showOverlay: true,
         useLocalTimezone: true
     });
@@ -99,6 +102,7 @@ export const Dashboard = (props: {
 
     useEffect(() => {
         update();
+        // TODO: This is called more than once
     }, []);
 
     useEffect(() => {
@@ -115,22 +119,23 @@ export const Dashboard = (props: {
 
     async function callGetPatientsDetail(): Promise<Module[]> {
         try {
-            const patientsDetail: any = await API.graphql({
-                query: getPatientsDetail,
-                variables: {
-                    patientId: props.userId,
-                    limit: 100,
+            const sensorTypesArr: Array<string> = [];
+            for (const patient of props.patients) {
+                for (const st of patient.sensor_types!) {
+                    sensorTypesArr.push(st!)
                 }
-            });
-            console.log("callGetPatientsDetail");
-            console.log(patientsDetail);
-            
-            const modules = patientsDetail["data"]["getPatientsDetail"]["sensor_types"].map((st: string) => {
+            }
+
+            const sensorTypes = Array.from(new Set(sensorTypesArr));
+            sensorTypes.sort();
+            const modules = sensorTypes.map((st: string) => {
                 let sensorName = "";
                 if (st === "HeartRate") {
                     sensorName = "Heart Rate";
                 } else if (st === "HeartRateVariability") {
                     sensorName = "Heart Rate Variability";
+                } else {
+                    sensorName = st;
                 }
 
                 return {
@@ -140,7 +145,7 @@ export const Dashboard = (props: {
             });
 
             const newModulesLoading: any = {};
-            patientsDetail["data"]["getPatientsDetail"]["sensor_types"].forEach((st: string) => {
+            sensorTypes.forEach((st: string) => {
                 newModulesLoading[st] = true;
             });
             
@@ -154,6 +159,8 @@ export const Dashboard = (props: {
 
     async function callListAllEvents() {
         try {
+            // TODO: Search events by date range and caregiver
+
             const events: any = await API.graphql({
                 query: getEventDetailsByUser,
                 variables: {
@@ -218,7 +225,7 @@ export const Dashboard = (props: {
         // Run the update logic
         //
         const input = {
-            "patient_id": props.userId,
+            "patient_ids": searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient],
             "period": searchProperties.period,
             "statistic": searchProperties.statistic,
             "start": start,
@@ -251,20 +258,39 @@ export const Dashboard = (props: {
             columnToIndex.set(item, index);
         });
 
+        const patientToIndex: any = {};
         modules.forEach((module: Module) => {
-            measureNameToVals[module.sensor_type] = [{
-                data: [],
-            }];
+            if (searchProperties.patient === "all") {
+                measureNameToVals[module.sensor_type] = [];
+                var p = 0
+                for (const pt of props.patients) {
+                    measureNameToVals[module.sensor_type].push({
+                        name: pt.name,
+                        data: [],
+                    });
+                    patientToIndex[pt.patient_id!] = p;
+                    p++;
+                }
+            } else {
+                measureNameToVals[module.sensor_type] = [{
+                    data: [],
+                }];
+            }
         })
 
         rows.forEach((row: string[], index: number) => {
             // Timestream does not have timezone support
+            const patientId = row[columnToIndex.get("patient_id")!]
             const t = row[columnToIndex.get("binned_timestamp")!]
             const timestamp = moment(`${t}Z`).valueOf(); // Get epoch milliseconds
             const measureName = row[columnToIndex.get("measurement_type")!]
             const val = row[columnToIndex.get("measure_val")!]
             if (val !== "" && Number(val) && measureName in measureNameToVals) {
-                measureNameToVals[measureName]![0].data.push([timestamp, +val]);
+                if (searchProperties.patient === "all") {
+                    measureNameToVals[measureName]![patientToIndex[patientId]].data.push([timestamp, +val]);
+                } else {
+                    measureNameToVals[measureName]![0].data.push([timestamp, +val]);
+                }
             }
         });
 
@@ -296,36 +322,25 @@ export const Dashboard = (props: {
                     datetimeUTC: useUTC
                 }
             },
-            colors: ['#008FFB'],
+            onItemClick: {
+                toggleDataSeries: false
+            },
             tooltip: {
                 enabled: false
             }
         };
     }
 
-    function generateDayWiseTimeSeries(baseval: any, count: any, yrange: any) {
-        var i = 0;
-        var series = [];
-        while (i < count) {
-            var y = Math.floor(Math.random() * (yrange.max - yrange.min + 1)) + yrange.min;
-
-            series.push([baseval, y]);
-            baseval += 86400000;
-            i++;
-        }
-        return series;
-    }
-
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
 
-            <Sidebar 
+            <Sidebar
                 searchProperties={searchProperties}
                 setSearchProperties={setSearchProperties}
                 isLoading={isLoading}
                 update={update}
-                userName={props.userName}
+                patients={props.patients}
             />
 
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
