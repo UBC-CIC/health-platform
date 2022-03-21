@@ -369,7 +369,7 @@ export const Dashboard = (props: {
                                 <Typography variant="h6" gutterBottom component="div">
                                     Event Timeline
                                 </Typography>
-                                <EventCreate userName={props.userName} disabled="true" updateFn={update} />
+                                <EventCreate userName={props.userName} patients={props.patients} disabled="true" updateFn={update} />
                             </Box>
 
                             {!updatedEventsOptionsFlag && (

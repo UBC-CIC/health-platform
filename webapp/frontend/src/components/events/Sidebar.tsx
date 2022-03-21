@@ -229,7 +229,7 @@ export const Sidebar = ({
                 <Box sx={{ mb: 3 }}>
                     <FormControl fullWidth>
                         <div>
-                            <EventCreate userName={userName} disabled="true" />
+                            <EventCreate userName={userName} patients={patients} disabled="true" />
                         </div>
                     </FormControl>
                 </Box>

@@ -106,36 +106,36 @@ export const Events = (props: {
         setIsLoading(false);
     }
 
-    // async function subscribeCreateEvents() {
-    //     const subscription: any = API.graphql({
-    //         query: onCreateEventDetail
-    //     });
+    async function subscribeCreateEvents() {
+        const subscription: any = API.graphql({
+            query: onCreateEventDetail
+        });
 
-    //     subscription.subscribe({
-    //         next: (data: any) => {
-    //             console.log("data received from create subscription:", data);
-    //             const newItems = [];
-    //             let found = false;
-    //             if (data.value.data) {
-    //                 for (let item of stateRef.current!) {
-    //                     if (data.value.data.onCreateEventDetail.userId === item.user_id) {
-    //                         // Found existing item so we will update this item
-    //                         newItems.push(data.value.data.onCreateEventDetail);
-    //                         found = true;
-    //                     } else {
-    //                         // Keep existing item
-    //                         newItems.push(item);
-    //                     }
-    //                 }
-    //                 if (!found) {
-    //                     newItems.push(data.value.data.onCreateEventDetail);
-    //                 }
-    //                 updateItems(newItems);
-    //             }
-    //         },
-    //         error: (error: any) => console.warn(error)
-    //     });
-    // };
+        subscription.subscribe({
+            next: (data: any) => {
+                console.log("data received from create subscription:", data);
+                const newItems = [];
+                let found = false;
+                if (data.value.data) {
+                    for (let item of stateRef.current!) {
+                        if (data.value.data.onCreateEventDetail.userId === item.user_id) {
+                            // Found existing item so we will update this item
+                            newItems.push(data.value.data.onCreateEventDetail);
+                            found = true;
+                        } else {
+                            // Keep existing item
+                            newItems.push(item);
+                        }
+                    }
+                    if (!found) {
+                        newItems.push(data.value.data.onCreateEventDetail);
+                    }
+                    updateItems(newItems);
+                }
+            },
+            error: (error: any) => console.warn(error)
+        });
+    };
 
 
     // async function subscribeUpdateMeetings() {
@@ -174,6 +174,16 @@ export const Events = (props: {
         callListAllEvents()
     }
 
+    function getPatientName(patientId: string) {
+        let patientName = "";
+        for (const p of props.patients) {
+            if (p.patient_id === patientId) {
+                patientName = p.name!;
+            }
+        }
+        return patientName;
+    }
+
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
@@ -198,6 +208,7 @@ export const Events = (props: {
                             <TableRow>
                                 <TableCell>Start</TableCell>
                                 <TableCell>Finish</TableCell>
+                                <TableCell align="right">Name</TableCell>
                                 <TableCell align="right">Food</TableCell>
                                 <TableCell align="right">Mood</TableCell>
                                 <TableCell align="right">Medication</TableCell>
@@ -211,6 +222,7 @@ export const Events = (props: {
                                         {row.start_date_time}
                                     </TableCell>
                                     <TableCell>{row.end_date_time}</TableCell>
+                                    <TableCell align="right">{getPatientName(row.user_id!)}</TableCell>
                                     <TableCell align="right">{row.food}</TableCell>
                                     <TableCell align="right">{row.mood}</TableCell>
                                     <TableCell align="right">{row.medication}</TableCell>

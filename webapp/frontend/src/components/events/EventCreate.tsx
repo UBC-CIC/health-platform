@@ -8,20 +8,24 @@ import {
     DialogContentText,
     TextField,
     Button,
+    Select,
+    MenuItem,
+    InputLabel,
 } from "@mui/material";
 import { API } from "aws-amplify";
 import { createEventDetail } from "../../common/graphql/mutations";
-import { EventDetailInput } from "../../common/types/API";
+import { EventDetailInput, PatientsDetail } from "../../common/types/API";
 import { DateTimePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 const { v4: uuidv4 } = require('uuid');
 
 
-export const EventCreate = (props: { userName: string; disabled: any; updateFn?: any }) => {
+export const EventCreate = (props: { userName: string; patients: PatientsDetail[], disabled: any; updateFn?: any }) => {
     const [open, setOpen] = useState(false);
     const handleClose = () => setOpen(false);
     const handleOpen = () => setOpen(true);
 
+    const [patientId, setPatientId] = useState(props.patients.length === 0 ? "" : props.patients[0].patient_id!);
     const [start, setStart] = useState("");
     const [end, setEnd] = useState("");
     const [medication, setMedication] = useState("");
@@ -36,7 +40,7 @@ export const EventCreate = (props: { userName: string; disabled: any; updateFn?:
 
         const eventDetail: EventDetailInput = {
             event_id: uuidv4(),
-            user_id: props.userName,
+            user_id: patientId,
             start_date_time: start,
             end_date_time: end,
             medication: medication,
@@ -58,6 +62,9 @@ export const EventCreate = (props: { userName: string; disabled: any; updateFn?:
             if (props.updateFn) {
                 props.updateFn();
             }
+
+            // TODO: Update table to avoid reloading page
+            window.location.reload();
         } catch (e) {
             console.log("createEventDetail errors:", e);
         }
@@ -81,7 +88,7 @@ export const EventCreate = (props: { userName: string; disabled: any; updateFn?:
                     >
                         <Box
                             sx={{
-                                "& .MuiTextField-root": { m: 1, width: "25ch" },
+                                "& .MuiTextField-root": { marginTop: 1, marginBottom: 1,width: "100%" },
                             }}
                         >
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -103,7 +110,22 @@ export const EventCreate = (props: { userName: string; disabled: any; updateFn?:
                         </Box>
                         <Box
                             sx={{
-                                "& .MuiTextField-root": { marginBottom: 1, width: "100%" },
+                                "& .MuiTextField-root": { marginTop: 1, marginBottom: 1, width: "100%" },
+                            }}
+                        >   
+                            <Select
+                                id="patient-select"
+                                value={patientId}
+                                onChange={(event: any) => setPatientId(event.target.value)}
+                            >
+                                {props.patients.map((patient: PatientsDetail) => (
+                                    <MenuItem value={patient.patient_id}>{patient.name}</MenuItem>
+                                ))}
+                            </Select>
+                        </Box>
+                        <Box
+                            sx={{
+                                "& .MuiTextField-root": { marginTop: 1, marginBottom: 1, width: "100%" },
                             }}
                         >
                             <TextField
