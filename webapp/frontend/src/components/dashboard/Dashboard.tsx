@@ -8,7 +8,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import './dashboard.css';
 import { Sidebar } from './Sidebar';
 import moment from 'moment';
-import { getPatientsDetail, getEventDetailsByUser, query, getUsersDetail } from '../../common/graphql/queries';
+import { getPatientsDetail, getEventDetailsByUser, query, getUsersDetail, getEventDetailsByUserAndCreateTime } from '../../common/graphql/queries';
 import { API, Auth } from 'aws-amplify';
 import { CircularProgress, Grid, LinearProgress } from '@mui/material';
 import { ThemeColor } from './types';
@@ -61,8 +61,7 @@ const initialEventsOptions: any = {
     },
     tooltip: {
         enabled: false
-    },
-    colors: ['#00E396']
+    }
 };
 
 const initialModulesOptions: any = {};
@@ -75,8 +74,8 @@ export const Dashboard = (props: {
 }) => {
     
     const [searchProperties, setSearchProperties] = React.useState<any>({
-        start: new Date(),
-        end: subtractHours(new Date(), DEFAULT_HOURS_AGO),
+        start: subtractHours(new Date(), DEFAULT_HOURS_AGO),
+        end: new Date(),
         startRelative: `${DEFAULT_HOURS_AGO}h`,
         endRelative: "0h",
         type: "relative",
@@ -93,9 +92,7 @@ export const Dashboard = (props: {
     const [updatedModulesOptionsFlag, setUpdatedModulesOptionsFlag] = useState(false);
 
     const [isLoading, setIsLoading] = useState<any>(false);
-    const [eventsData, setEventsData] = useState<any>([{
-        data: []
-    }]);
+    const [eventsData, setEventsData] = useState<any>([]);
 
     const [modules, setModules] = useState<any>([]);
     const [modulesData, setModulesData] = useState<any>({});
@@ -159,32 +156,47 @@ export const Dashboard = (props: {
 
     async function callListAllEvents() {
         try {
-            // TODO: Search events by date range and caregiver
+            const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
+            const eventsData = [];
+            if (patientIds) {
+                for (const patientId of patientIds) {
+                    const events: any = await API.graphql({
+                        query: getEventDetailsByUserAndCreateTime,
+                        variables: {
+                            userId: patientId,
+                            startTime: searchProperties.start.toISOString(),
+                            endTime: searchProperties.end.toISOString(),
+                            limit: 100,
+                        }
+                    });
+                    console.log("callListAllEvents");
+                    console.log(events);
 
-            const events: any = await API.graphql({
-                query: getEventDetailsByUser,
-                variables: {
-                    userId: props.userName,
-                    limit: 100,
+                    const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUserAndCreateTime']['items'];
+
+                    const phases: any[] = [];
+                    phases.push([new Date(searchProperties.start).getTime(), 0]);
+                    for (var event of itemsReturned) {
+                        phases.push([new Date(event.start_date_time!).getTime(), 1]);
+                        phases.push([new Date(event.end_date_time!).getTime(), 1]);
+                        phases.push([new Date(event.end_date_time!).getTime() + 1, 0]);
+                    }
+
+                    console.log('PHASES:', phases);
+
+                    let patientName = "";
+                    for (const pt of props.patients) {
+                        if (patientId === pt.patient_id) {
+                            patientName = pt.name!;
+                        }
+                    }
+                    eventsData.push({
+                        name: patientName,
+                        data: phases,
+                    });
                 }
-            });
-            console.log("callListAllEvents");
-            console.log(events);
-
-            const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUser']['items'];
-
-            const phases: any[] = [];
-            phases.push([new Date(searchProperties.start).getTime(), 0]);
-            for (var event of itemsReturned) {
-                phases.push([new Date(event.start_date_time!).getTime(), 1]);
-                phases.push([new Date(event.end_date_time!).getTime(), 1]);
-                phases.push([new Date(event.end_date_time!).getTime() + 1, 0]);
             }
-
-            console.log('PHASES:', phases);
-            setEventsData([{
-                data: phases
-            }]);
+            setEventsData(eventsData);
         } catch (e) {
             console.log('getEventDetailsByUser errors:', e );
         }

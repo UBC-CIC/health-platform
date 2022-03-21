@@ -270,9 +270,9 @@ export const Sidebar = ({
                     </FormControl>
                 </Box>
                 <hr />
-                <FormGroup>
+                {/* <FormGroup>
                     <FormControlLabel control={<Switch defaultChecked onChange={(event: any) => toggleUseLocalTimezone()} />} label="Use Local Timezone" />
-                </FormGroup>
+                </FormGroup> */}
                 {/* <hr />
                 <FormGroup>
                     <FormControlLabel control={<Switch checked={searchProperties.showOverlay} onChange={(event: any) => toggleSetShowOverlay()} />} label="Overlay Events" />

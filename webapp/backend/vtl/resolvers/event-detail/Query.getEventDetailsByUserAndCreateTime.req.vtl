@@ -9,7 +9,8 @@
         },
         "expressionValues" : {
             ":user_id" : $util.dynamodb.toDynamoDBJson($context.arguments.userId),
-            ":end_date_time" : $util.dynamodb.toDynamoDBJson($context.arguments.endDateTime),
+            ":start_time" : $util.dynamodb.toDynamoDBJson($context.arguments.startTime),
+            ":end_time" : $util.dynamodb.toDynamoDBJson($context.arguments.endTime),
         },
     },
     "index" : "eventUserGsi",

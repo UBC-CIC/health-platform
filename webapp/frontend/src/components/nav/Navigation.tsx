@@ -19,7 +19,7 @@ export const Navigation = (props: AppAuthStateProps) => {
                         <>
                             <Route path="/" exact component={() => <Dashboard userName={props.userName} userId={props.userId} userDetail={props.userDetail} patients={props.patients} />} />
                             <Route path="/dashboard" component={() => <Dashboard userName={props.userName} userId={props.userId} userDetail={props.userDetail} patients={props.patients} />} />
-                            <Route path="/events" component={() => <Events userName={props.userName} />} />
+                            <Route path="/events" component={() => <Events userName={props.userName} userId={props.userId} userDetail={props.userDetail} patients={props.patients} />} />
                             <Route path="/patients" component={() => <Patients userDetail={props.userDetail} userName={props.userName} userId={props.userId} />} />
                             {
                                 (props.userDetail.user_type === "ADMIN") && <Route path="/users" component={() => <Users userName={props.userName} userId={props.userId} />} />
