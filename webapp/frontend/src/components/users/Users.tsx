@@ -49,8 +49,6 @@ export const Users = (props: { userName: any, userId: any }) => {
                 console.log('getUsersDetail errors:', e);
             }
         }
-
-        callListAllEvents()
     }, []);
 
 

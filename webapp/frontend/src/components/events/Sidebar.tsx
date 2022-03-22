@@ -113,7 +113,7 @@ export const Sidebar = ({
                         >
                             <MenuItem value="all">All Patients</MenuItem>
                             {patients.map((patient: PatientsDetail) => (
-                                <MenuItem value={patient.patient_id}>{patient.name}</MenuItem>
+                                <MenuItem key={patient.patient_id} value={patient.patient_id}>{patient.name}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>

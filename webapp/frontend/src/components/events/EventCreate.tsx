@@ -119,7 +119,7 @@ export const EventCreate = (props: { userName: string; patients: PatientsDetail[
                                 onChange={(event: any) => setPatientId(event.target.value)}
                             >
                                 {props.patients.map((patient: PatientsDetail) => (
-                                    <MenuItem value={patient.patient_id}>{patient.name}</MenuItem>
+                                    <MenuItem key={patient.patient_id} value={patient.patient_id}>{patient.name}</MenuItem>
                                 ))}
                             </Select>
                         </Box>

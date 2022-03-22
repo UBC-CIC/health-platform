@@ -16,6 +16,8 @@ import EventCreate from '../events/EventCreate';
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from '../../utils/time';
 import { EventDetail, PatientsDetail, UsersDetail } from '../../common/types/API';
 import ReactApexChart from "react-apexcharts";
+import { useHistory, useLocation } from 'react-router-dom';
+import queryString from 'query-string';
 
 const DEFAULT_HOURS_AGO = 3;
 
@@ -72,18 +74,23 @@ export const Dashboard = (props: {
     userDetail: UsersDetail,
     patients: PatientsDetail[],
 }) => {
+    const history = useHistory();
+    const location = useLocation();
+    const queryModel = queryString.parse(location.search);
     
     const [searchProperties, setSearchProperties] = React.useState<any>({
-        start: subtractHours(new Date(), DEFAULT_HOURS_AGO),
-        end: new Date(),
-        startRelative: `${DEFAULT_HOURS_AGO}h`,
-        endRelative: "0h",
-        type: "relative",
-        period: "5m",
-        statistic: "avg",
-        patient: "all",
-        showOverlay: true,
-        useLocalTimezone: true
+        // @ts-ignore
+        start: queryModel["start"] ? new Date(parseInt(queryModel["start"])) : subtractHours(new Date(), DEFAULT_HOURS_AGO),
+        // @ts-ignore
+        end: queryModel["end"] ? new Date(parseInt(queryModel["end"])) : new Date(),
+        startRelative: queryModel["startRelative"] ? queryModel["startRelative"] : `${DEFAULT_HOURS_AGO}h`,
+        endRelative: queryModel["endRelative"] ? queryModel["endRelative"] : "0h",
+        type: queryModel["type"] ? queryModel["type"] : "relative",
+        period: queryModel["period"] ? queryModel["period"] : "5m",
+        statistic: queryModel["statistic"] ? queryModel["statistic"] : "avg",
+        patient: queryModel["patient"] ? queryModel["patient"] : "all",
+        showOverlay: queryModel["showOverlay"] ? queryModel["showOverlay"] === 'true' : true,
+        useLocalTimezone: queryModel["useLocalTimezone"] ? queryModel["useLocalTimezone"] === 'true' : true
     });
 
     // These fields are used to re-load the charts when the options change due to a bug in the charting library.
@@ -98,8 +105,9 @@ export const Dashboard = (props: {
     const [modulesData, setModulesData] = useState<any>({});
 
     useEffect(() => {
-        update();
-        // TODO: This is called more than once
+        if (Object.keys(props.userDetail).length > 0 && props.patients.length > 0) {
+            update();
+        }
     }, []);
 
     useEffect(() => {
@@ -154,7 +162,7 @@ export const Dashboard = (props: {
         }
     }
 
-    async function callListAllEvents() {
+    async function callListAllEvents(start: any, end: any) {
         try {
             const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
             const eventsData = [];
@@ -164,8 +172,8 @@ export const Dashboard = (props: {
                         query: getEventDetailsByUserAndCreateTime,
                         variables: {
                             userId: patientId,
-                            startTime: searchProperties.start.toISOString(),
-                            endTime: searchProperties.end.toISOString(),
+                            startTime: start.toISOString(),
+                            endTime: end.toISOString(),
                             limit: 100,
                         }
                     });
@@ -221,6 +229,8 @@ export const Dashboard = (props: {
             });
         }
 
+        history.push(`/dashboard?start=${start.getTime()}&end=${end.getTime()}&startRelative=${searchProperties.startRelative}&endRelative=${searchProperties.endRelative}&type=${searchProperties.type}&period=${searchProperties.period}&statistic=${searchProperties.statistic}&patient=${searchProperties.patient}&showOverlay=${searchProperties.showOverlay}&useLocalTimezone=${searchProperties.useLocalTimezone}`);
+
         // Update the graph boundaries
         initialEventsOptions.xaxis = {
             ...initialEventsOptions.xaxis,
@@ -232,7 +242,7 @@ export const Dashboard = (props: {
         };
         setUpdatedEventsOptionsFlag(true);
 
-        callListAllEvents();
+        callListAllEvents(start, end);
 
         // Run the update logic
         //

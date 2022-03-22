@@ -96,8 +96,10 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
             }
         }
 
-        callListAllEvents()
-        subscribeCreateEvents()
+        if (Object.keys(props.userDetail).length > 0) {
+            callListAllEvents()
+            subscribeCreateEvents()
+        }
     }, []);
 
 

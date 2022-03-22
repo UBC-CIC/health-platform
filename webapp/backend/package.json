@@ -7,6 +7,7 @@
     "build": "tsc && mkdir -p build/src && cp src/package.json build/src/package.json && cd build/src && npm install --only=production",
     "build-windows": "tsc && copy src\\package.json build\\src\\package.json && cd build\\src && npm install --only=production",
     "watch": "tsc -w",
+    "version": "tsc --version",
     "cdk": "cdk",
     "clean": "rm -rf build"
   },

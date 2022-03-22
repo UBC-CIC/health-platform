@@ -30,6 +30,7 @@
     "faker": "5.5.3",
     "formik": "^2.2.6",
     "fs": "0.0.1-security",
+    "query-string": "^7.1.1",
     "react": "^17.0.1",
     "react-apexcharts": "1.3.9",
     "react-dom": "^17.0.1",

@@ -125,7 +125,7 @@ export const Sidebar = ({
                         >
                             <MenuItem value="all">All Patients</MenuItem>
                             {patients.map((patient: PatientsDetail) => (
-                                <MenuItem value={patient.patient_id}>{patient.name}</MenuItem>
+                                <MenuItem key={patient.patient_id} value={patient.patient_id}>{patient.name}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -270,9 +270,9 @@ export const Sidebar = ({
                     </FormControl>
                 </Box>
                 <hr />
-                {/* <FormGroup>
+                <FormGroup>
                     <FormControlLabel control={<Switch defaultChecked onChange={(event: any) => toggleUseLocalTimezone()} />} label="Use Local Timezone" />
-                </FormGroup> */}
+                </FormGroup>
                 {/* <hr />
                 <FormGroup>
                     <FormControlLabel control={<Switch checked={searchProperties.showOverlay} onChange={(event: any) => toggleSetShowOverlay()} />} label="Overlay Events" />

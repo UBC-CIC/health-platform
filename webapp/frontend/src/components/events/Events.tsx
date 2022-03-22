@@ -16,9 +16,11 @@ import { getEventDetailsByUser, getEventDetailsByUserAndCreateTime } from "../..
 import { onCreateEventDetail } from "../../common/graphql/subscriptions";
 import { EventDetail, PatientsDetail, UsersDetail } from "../../common/types/API";
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from "../../utils/time";
+import queryString from 'query-string';
 
 import "./events.css";
 import { Sidebar } from "./Sidebar";
+import { useHistory, useLocation } from "react-router-dom";
 
 function createData(
     name: string,
@@ -44,16 +46,23 @@ export const Events = (props: {
     userDetail: UsersDetail,
     patients: PatientsDetail[],
 }) => {
+    const history = useHistory();
+    const location = useLocation();
+    const queryModel = queryString.parse(location.search);
+
     const [searchProperties, setSearchProperties] = React.useState<any>({
-        start: subtractHours(new Date(), DEFAULT_HOURS_AGO),
-        end: new Date(),
-        startRelative: `${DEFAULT_HOURS_AGO}h`,
-        endRelative: "0h",
-        type: "relative",
-        period: "5m",
-        statistic: "avg",
-        patient: "all"
+        // @ts-ignore
+        start: queryModel["start"] ? new Date(parseInt(queryModel["start"])) : subtractHours(new Date(), DEFAULT_HOURS_AGO),
+        // @ts-ignore
+        end: queryModel["end"] ? new Date(parseInt(queryModel["end"])) : new Date(),
+        startRelative: queryModel["startRelative"] ? queryModel["startRelative"] : `${DEFAULT_HOURS_AGO}h`,
+        endRelative: queryModel["endRelative"] ? queryModel["endRelative"] : "0h",
+        type: queryModel["type"] ? queryModel["type"] : "relative",
+        period: queryModel["period"] ? queryModel["period"] : "5m",
+        statistic: queryModel["statistic"] ? queryModel["statistic"] : "avg",
+        patient: queryModel["patient"] ? queryModel["patient"] : "all"
     });
+
     const [isLoading, setIsLoading] = useState<any>(false);
 
     const [items, updateItems] = useState<Array<EventDetail>>(new Array<EventDetail>());
@@ -78,19 +87,21 @@ export const Events = (props: {
             });
         }
 
+        history.push(`/events?start=${start.getTime()}&end=${end.getTime()}&startRelative=${searchProperties.startRelative}&endRelative=${searchProperties.endRelative}&type=${searchProperties.type}&period=${searchProperties.period}&statistic=${searchProperties.statistic}&patient=${searchProperties.patient}&showOverlay=${searchProperties.showOverlay}&useLocalTimezone=${searchProperties.useLocalTimezone}`);
+
         const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
         console.log("patientIds: ")
         console.log(patientIds)
         const items = [];
         if (patientIds) {
             for (const patientId of patientIds) {
-                console.log("looking for patient ", patientId, searchProperties.start.toISOString(), searchProperties.end.toISOString())
+                console.log("looking for patient ", patientId, start.toISOString(), end.toISOString())
                 const events: any = await API.graphql({
                     query: getEventDetailsByUserAndCreateTime,
                     variables: {
                         userId: patientId,
-                        startTime: searchProperties.start.toISOString(),
-                        endTime: searchProperties.end.toISOString(),
+                        startTime: start.toISOString(),
+                        endTime: end.toISOString(),
                         limit: 100,
                     }
                 });
@@ -164,10 +175,11 @@ export const Events = (props: {
     // };
 
     useEffect(() => {
-        callListAllEvents()
-        // subscribeCreateEvents()
-        // subscribeUpdateMeetings()
-
+        if (Object.keys(props.userDetail).length > 0 && props.patients.length > 0) {
+            callListAllEvents()
+            // subscribeCreateEvents()
+            // subscribeUpdateMeetings()
+        }
     }, []);
 
     async function update() {

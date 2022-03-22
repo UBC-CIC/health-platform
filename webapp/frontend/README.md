@@ -80,3 +80,9 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
+
+## TODOs
+- Register each new sensor as a Partner Cognito:
+    - Store returned client ID and client key in parameter store
+    - IoT to access client ID and client key from parameter store
+    - See: https://github.com/aws-samples/aws-serverless-security-workshop/tree/master/docs/01-add-authentication
