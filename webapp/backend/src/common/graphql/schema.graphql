@@ -103,12 +103,14 @@ input PatientsDetailInput {
 	patient_id: String!
 	name: String
 	sensor_types: [String]
+    user_ids: [String]
 }
 
 input ModelPatientsDetailConditionInput {
 	patient_id: String!
 	name: String
 	sensor_types: [String]
+    user_ids: [String]
 	and: [ModelPatientsDetailConditionInput]
 	or: [ModelPatientsDetailConditionInput]
 	not: ModelPatientsDetailConditionInput
@@ -118,6 +120,7 @@ input ModelPatientsDetailFilterInput {
 	patient_id: String!
 	name: String
 	sensor_types: [String]
+    user_ids: [String]
 	and: [ModelPatientsDetailFilterInput]
 	or: [ModelPatientsDetailFilterInput]
 	not: ModelPatientsDetailFilterInput
@@ -242,6 +245,26 @@ type QueryResponse {
     rows: [[String]]
 }
 
+
+# 
+# Insert Data Lambda function
+#
+input MetricsData {
+    patient_id: String
+    sensor_id: String
+    timestamp: String
+    measure_type: String
+    measure_value: String
+}
+
+input InsertRequest {
+    events: [MetricsData]
+}
+
+type InsertResponse {
+	status: String
+}
+
 # 
 # Event Search Lambda function
 # 
@@ -312,6 +335,8 @@ type Mutation @aws_cognito_user_pools
 	deleteUsersDetail(input: UsersDetailInput, condition: ModelUsersDetailConditionInput): UsersDetail
 	publishNewUsersDetail(input: UsersDetailInput!): UsersDetail
 	publishUsersDetailUpdates(input: UsersDetailInput!): UsersDetail
+
+    insertMetrics(input: InsertRequest): InsertResponse
 }
 
 #

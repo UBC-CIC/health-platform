@@ -106,7 +106,7 @@ export const EditPatient = (props: { patientId: string, patient: PatientsDetail,
                     </Box>
                 </DialogContent>
                 <DialogActions style={{marginLeft: 8}}>
-                    {
+                    {/* {
                         deleteConfirm ? (
                             <>
                                 Confirm dissociation? <Button variant="text" color="error" onClick={handleDelete}>Yes</Button>
@@ -114,7 +114,7 @@ export const EditPatient = (props: { patientId: string, patient: PatientsDetail,
                         ) : (
                             <Button variant="text" color="error" onClick={() => setDeleteConfirm(true)}>Dissociate Patient</Button>
                         )
-                    }
+                    } */}
                     <div style={{flex: '1 0 0'}} />
                     <Button onClick={handleClose}>Cancel</Button>
                     <Button onClick={handleSave}>Save</Button>

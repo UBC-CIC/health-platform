@@ -17,7 +17,7 @@ import ManagePatients from "./ManagePatients";
 import "./users.css";
 
 
-export const Users = (props: { userName: any, userId: any }) => {
+export const Users = (props: { userName: any, userId: any, userDetail: any }) => {
     const [items, updateItems] = useState<Array<UsersDetail>>(new Array<UsersDetail>());
     const [numAdmin, updateNumAdmin] = useState(0);
     const [loading, setLoading] = useState<boolean>(true);
@@ -48,6 +48,10 @@ export const Users = (props: { userName: any, userId: any }) => {
                 setLoading(false);
                 console.log('getUsersDetail errors:', e);
             }
+        }
+
+        if (Object.keys(props.userDetail).length > 0) {
+            callListAllEvents()
         }
     }, []);
 

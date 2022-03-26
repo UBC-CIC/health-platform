@@ -237,7 +237,10 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
             <Button variant="text" size="small" onClick={handleOpen}>
                 Manage
             </Button>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose}
+                fullWidth
+                maxWidth="xl"
+            >
                 {
                     showCreate ? (
                         <DialogTitle>Add Sensor</DialogTitle>
@@ -246,9 +249,7 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                     )
                 }
                 <DialogContent>
-                    <Box
-                        style={{ marginTop: 8, marginBottom: 0, width: "480px" }}
-                    >
+                    <Box>
 
                     {showCreate ? (
                         <Box
@@ -264,7 +265,7 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                                     setSensorId(e.target.value);
                                 }}
                             />
-                            <FormControl sx={{ width: 480, mt: 2 }}>
+                            <FormControl sx={{ width: 800, mt: 2 }}>
                                 <InputLabel id="sensor-type-label">Types</InputLabel>
                                 <Select
                                     labelId="sensor-type-label"

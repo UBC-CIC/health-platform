@@ -12,7 +12,7 @@ import TableRow from "@mui/material/TableRow";
 import Toolbar from "@mui/material/Toolbar";
 import { API } from "aws-amplify";
 import { useEffect, useRef, useState } from "react";
-import { getPatientsDetail, getUsersDetail } from "../../common/graphql/queries";
+import { getPatientsDetail, getUsersDetail, listPatientsDetails } from "../../common/graphql/queries";
 import { onCreatePatientsDetail } from "../../common/graphql/subscriptions";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import CreatePatient from "./CreatePatient";
@@ -72,18 +72,27 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
                 // console.log(userDetailObj);
                 // const userDetail: UsersDetail = userDetailObj['data']['getUsersDetail'];
 
-                // Get the patients that this user cares for
-                const patientDetails: Array<PatientsDetail> = [];
-                if (props.userDetail.patient_ids) {
-                    for (const patient_id of props.userDetail.patient_ids) {
-                        const patientDetailObj: any = await API.graphql({
-                            query: getPatientsDetail,
-                            variables: {
-                                patientId: patient_id,
-                            }
-                        });
-                        const patientDetail: PatientsDetail = patientDetailObj["data"]["getPatientsDetail"];
-                        patientDetails.push(patientDetail);
+                // Get the patients that this user cares for or all patients if admin
+                let patientDetails: Array<PatientsDetail> = [];
+                if (props.userDetail.user_type === "ADMIN") {
+                    const userDetailObj: any = await API.graphql({
+                        query: listPatientsDetails,
+                        variables: {}
+                    });
+                    console.log(userDetailObj);
+                    patientDetails = userDetailObj['data']['listPatientsDetails']['items'];
+                } else {
+                    if (props.userDetail.patient_ids) {
+                        for (const patient_id of props.userDetail.patient_ids) {
+                            const patientDetailObj: any = await API.graphql({
+                                query: getPatientsDetail,
+                                variables: {
+                                    patientId: patient_id,
+                                }
+                            });
+                            const patientDetail: PatientsDetail = patientDetailObj["data"]["getPatientsDetail"];
+                            patientDetails.push(patientDetail);
+                        }
                     }
                 }
 
@@ -136,7 +145,7 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
                                                 {row.name}
                                             </TableCell>
                                             <TableCell>{row.patient_id}</TableCell>
-                                            <TableCell>{row.user_ids?.length} caregivers <ManageUsers patientId={row.patient_id!} patient={row} /></TableCell>
+                                            <TableCell>{row.user_ids?.length} caregivers <ManageUsers patient={row} /></TableCell>
                                             <TableCell>{row.sensor_types?.length} measures monitored <ManageSensors patientId={row.patient_id!} patient={row} /></TableCell>
                                             <TableCell align="right">
                                                 <EditPatient user={props.userDetail} patientId={row.patient_id!} patient={row} />

@@ -378,6 +378,13 @@ export class HealthPlatformAppSyncStack extends Stack {
 
         // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
         //
+        api.addLambdaDataSource('InsertMetricsDataSource', lambdaStack.insertFunction).createResolver({
+            typeName: 'Mutation',
+            fieldName: 'insertMetrics'
+        });
+
+        // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
+        //
         api.addLambdaDataSource('QueryDataSource', lambdaStack.queryFunction).createResolver({
             typeName: 'Query',
             fieldName: 'query'

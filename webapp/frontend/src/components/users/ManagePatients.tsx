@@ -11,7 +11,7 @@ import TableRow from "@mui/material/TableRow";
 import { Box, useTheme } from "@mui/system";
 import { API } from "aws-amplify";
 import { useState } from "react";
-import { createPatientsDetail, deletePatientsDetail, updateUsersDetail } from "../../common/graphql/mutations";
+import { createPatientsDetail, deletePatientsDetail, updatePatientsDetail, updateUsersDetail } from "../../common/graphql/mutations";
 import { getPatientsDetail, getUsersDetail } from "../../common/graphql/queries";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import { ManageSensors } from "../patients/ManageSensors";
@@ -106,10 +106,11 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                 console.log("Removing patient " + JSON.stringify(patientToRemove));
                 try {
                     const response: any = await API.graphql({
-                        query: deletePatientsDetail,
+                        query: updatePatientsDetail,
                         variables: {
                             input: {
-                                patient_id: patientToRemove.patient_id,
+                                ...patientToRemove,
+                                user_ids: patientToRemove.user_ids?.filter(id => id !== props.user.user_id)
                             }
                         },
                     });
@@ -162,7 +163,10 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
             <Button variant="text" onClick={handleOpen}>
                 Manage Patients
             </Button>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose}
+                fullWidth
+                maxWidth="xl"
+            >
                 {
                     showCreate ? (
                         <DialogTitle>Add New Patient</DialogTitle>
@@ -171,9 +175,7 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                     )
                 }
                 <DialogContent>
-                    <Box
-                        style={{ marginTop: 8, marginBottom: 0, width: "480px" }}
-                    >
+                    <Box>
 
                     {showCreate ? (
                         <Box
@@ -217,7 +219,7 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                                                             </TableCell>
                                                             <TableCell>{row.name}</TableCell>
                                                             <TableCell>
-                                                                <ManageSensors patientId={row.patient_id!} patient={row} />
+                                                                {/* <ManageSensors patientId={row.patient_id!} patient={row} /> */}
                                                                 <Button variant="text" onClick={() => handleRemovePatient(row.patient_id!)}>Dissociate Patient</Button>
                                                             </TableCell>
                                                         </TableRow>

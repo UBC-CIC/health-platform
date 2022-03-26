@@ -15,6 +15,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly lambdaRole: Role;
     // public readonly queryFunction: DockerImageFunction;
     public readonly queryFunction: Function;
+    public readonly insertFunction: Function;
 
     constructor(app: cdk.App, id: string) {
         super(app, id, {
@@ -104,7 +105,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             timeout: cdk.Duration.seconds(300), 
         });
 
-        new lambda.Function(this, 'TimestreamInsertFunction', {
+        this.insertFunction = new lambda.Function(this, 'TimestreamInsertFunction', {
             functionName: "Timestream-Insert",
             code: new lambda.AssetCode('build/src'),
             handler: 'timestream-insert.handler',

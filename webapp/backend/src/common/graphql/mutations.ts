@@ -253,3 +253,10 @@ export const publishUsersDetailUpdates = /* GraphQL */ `
     }
   }
 `;
+export const publishMetrics = /* GraphQL */ `
+  mutation PublishMetrics($input: InsertRequest) {
+    publishMetrics(input: $input) {
+      status
+    }
+  }
+`;

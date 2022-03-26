@@ -19,7 +19,7 @@ import ReactApexChart from "react-apexcharts";
 import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 
-const DEFAULT_HOURS_AGO = 3;
+const DEFAULT_HOURS_AGO = 12;
 
 interface Module {
     "sensor_type": string;
@@ -62,7 +62,7 @@ const initialEventsOptions: any = {
         width: 1,
     },
     tooltip: {
-        enabled: false
+        enabled: true
     }
 };
 

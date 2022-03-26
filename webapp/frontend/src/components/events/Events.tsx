@@ -38,7 +38,7 @@ const rows = [
     createData("Episode 3", 262, 16.0, "Happy", "None"),
 ];
 
-const DEFAULT_HOURS_AGO = 3;
+const DEFAULT_HOURS_AGO = 12;
 
 export const Events = (props: {
     userName: any,

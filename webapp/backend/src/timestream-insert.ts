@@ -5,16 +5,17 @@ var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 /**
  * Input event:
- * {
+ * [{
  *     "patient_id": "6789",
  *     "sensor_id": "777",
- *     "num_datapoints": 10,
- *     "type": "heartrate",
- *     "start": "2021-04-07T13:58:10.104Z"
- * }
+ *     "timestamp": "2021-04-07T13:58:10.104Z",
+ *     "measure_type": "heartrate",
+ *     "measure_value": 89.3
+ * }]
  */
-exports.handler = async (event: any = {},) => {
-    console.log('Querying data...');
+exports.handler = async (event: any = {}) => {
+    console.log(`Inserting data with event ${JSON.stringify(event)}`);
+    const events = event.arguments.input.events;
 
     const region = "us-west-2";
     const endpointsWriteClient = new AWS.TimestreamWrite({ region });
@@ -28,9 +29,10 @@ exports.handler = async (event: any = {},) => {
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
-    await timestreamClient.writeRecords()
+    await timestreamClient.writeRecords(events);
 
     const response = {
+        status: "ok",
         statusCode: 200,
         body: JSON.stringify('Done')
     };
