@@ -63,7 +63,7 @@ export class HealthPlatformTimestreamQueryClient {
                 patient_id,
                 measurement_type,
                 ROUND(${statisticQueryVal}, 2) AS measure_val
-            FROM HealthDatabase.HealthMetricsDataTable
+            FROM HealthDatabase.HealthMetricsData
             WHERE patient_id IN ('${patientIds.join("', '")}')
             AND time BETWEEN from_iso8601_timestamp('${start}') AND from_iso8601_timestamp('${end}')
             GROUP BY BIN(time, ${period}), patient_id, measurement_type

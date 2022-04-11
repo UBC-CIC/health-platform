@@ -56,12 +56,14 @@ export type PatientsDetailInput = {
   patient_id: string,
   name?: string | null,
   sensor_types?: Array< string | null > | null,
+  user_ids?: Array< string | null > | null,
 };
 
 export type ModelPatientsDetailConditionInput = {
   patient_id: string,
   name?: string | null,
   sensor_types?: Array< string | null > | null,
+  user_ids?: Array< string | null > | null,
   and?: Array< ModelPatientsDetailConditionInput | null > | null,
   or?: Array< ModelPatientsDetailConditionInput | null > | null,
   not?: ModelPatientsDetailConditionInput | null,
@@ -122,6 +124,22 @@ export type UsersDetail = {
   patient_ids?: Array< string | null > | null,
 };
 
+export type SimulateRequest = {
+  patient_id?: string | null,
+  sensor_id?: string | null,
+  timestamp_start?: string | null,
+  timestamp_end?: string | null,
+  measure_type?: string | null,
+  measure_value_low?: number | null,
+  measure_value_high?: number | null,
+  measure_step_seconds?: number | null,
+};
+
+export type SimulateResponse = {
+  __typename: "SimulateResponse",
+  status?: string | null,
+};
+
 export type QueryRequest = {
   patient_ids?: Array< string | null > | null,
   period?: string | null,
@@ -169,6 +187,7 @@ export type ModelPatientsDetailFilterInput = {
   patient_id: string,
   name?: string | null,
   sensor_types?: Array< string | null > | null,
+  user_ids?: Array< string | null > | null,
   and?: Array< ModelPatientsDetailFilterInput | null > | null,
   or?: Array< ModelPatientsDetailFilterInput | null > | null,
   not?: ModelPatientsDetailFilterInput | null,
@@ -515,6 +534,17 @@ export type PublishUsersDetailUpdatesMutation = {
     email?: string | null,
     user_type?: string | null,
     patient_ids?: Array< string | null > | null,
+  } | null,
+};
+
+export type SimulateMutationVariables = {
+  input?: SimulateRequest | null,
+};
+
+export type SimulateMutation = {
+  simulate?:  {
+    __typename: "SimulateResponse",
+    status?: string | null,
   } | null,
 };
 

@@ -182,7 +182,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
             encryption: BucketEncryption.S3_MANAGED,
         });
 
-        const dataTable = new cdk.CfnResource(this, 'HealthMetricsDataTable', {
+        const dataTable = new cdk.CfnResource(this, 'HealthMetricsData', {
             type: 'AWS::Timestream::Table',
             properties: {
                 DatabaseName: healthDatabase.ref,
@@ -196,13 +196,13 @@ export class HealthPlatformIotStack extends cdk.Stack {
                     }
                 },
                 RetentionProperties: {
-                    MemoryStoreRetentionPeriodInHours : "24",
+                    MemoryStoreRetentionPeriodInHours : "2160",
                     MagneticStoreRetentionPeriodInDays : "365"
                 },
-                TableName: 'HealthMetricsDataTable',
+                TableName: 'HealthMetricsData',
             },
-          });
-          
+        });
+
         let kinesisLogGroup = new LogGroup(this, "HealthPlatformKinesisLogGroup", {
             retention: RetentionDays.ONE_MONTH,
         });

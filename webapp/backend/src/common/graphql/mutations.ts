@@ -253,9 +253,9 @@ export const publishUsersDetailUpdates = /* GraphQL */ `
     }
   }
 `;
-export const publishMetrics = /* GraphQL */ `
-  mutation PublishMetrics($input: InsertRequest) {
-    publishMetrics(input: $input) {
+export const simulate = /* GraphQL */ `
+  mutation Simulate($input: SimulateRequest) {
+    simulate(input: $input) {
       status
     }
   }

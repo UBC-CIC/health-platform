@@ -4,6 +4,7 @@ import { AppAuthStateProps } from "../../types/propTypes";
 import { Dashboard } from "../dashboard/Dashboard";
 import { Events } from "../events/Events";
 import Patients from "../patients/Patients";
+import Simulate from "../simulate/Simulate";
 import Users from "../users/Users";
 import ResponsiveAppBar from "./ResponsiveAppBar";
 
@@ -24,6 +25,7 @@ export const Navigation = (props: AppAuthStateProps) => {
                             {
                                 (props.userDetail.user_type === "ADMIN") && <Route path="/users" component={() => <Users userName={props.userName} userId={props.userId} userDetail={props.userDetail}  />} />
                             }
+                            <Route path="/simulate" component={() => <Simulate userName={props.userName} userId={props.userId} userDetail={props.userDetail} patients={props.patients} />} />
                         </>
                     )}
                 </Switch>

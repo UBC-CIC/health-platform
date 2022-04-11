@@ -253,3 +253,10 @@ export const publishUsersDetailUpdates = /* GraphQL */ `
     }
   }
 `;
+export const simulate = /* GraphQL */ `
+  mutation Simulate($input: SimulateRequest) {
+    simulate(input: $input) {
+      status
+    }
+  }
+`;

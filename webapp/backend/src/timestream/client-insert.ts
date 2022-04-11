@@ -15,9 +15,10 @@ export class HealthPlatformTimestreamInsertClient {
         this.client = client;
     }
 
-    async writeRecords(events: MetricsData[] = []): Promise<boolean> {
+    async writeRecords(patientId: string, sensorId: string, events: MetricsData[] = []): Promise<boolean> {
         const dimensions = [
-            { 'Name': 'region', 'Value': 'us-west-2' }
+            { 'Name': 'patient_id', 'Value': patientId },
+            { 'Name': 'sensor_id', 'Value': sensorId },
         ];
 
         // Break the metrics data into chunks of 100 (max size of each timestream insert)
@@ -26,16 +27,6 @@ export class HealthPlatformTimestreamInsertClient {
         for (const event of events) {
             const recordTime = new Date(event.timestamp).getTime().toString() // Unix time in milliseconds
             const measureValues = [
-                {
-                    'Name': 'patient_id',
-                    'Value': event.patient_id,
-                    'Type': 'VARCHAR'
-                },
-                {
-                    'Name': 'sensor_id',
-                    'Value': event.sensor_id,
-                    'Type': 'VARCHAR'
-                },
                 {
                     'Name': 'measurement_type',
                     'Value': event.measure_type,
@@ -70,7 +61,7 @@ export class HealthPlatformTimestreamInsertClient {
         for (const batch of batches) {
             const params = {
                 DatabaseName: "HealthDatabase",
-                TableName: "HealthMetricsDataTable",
+                TableName: "HealthMetricsData",
                 Records: batch
             };
     
@@ -82,7 +73,9 @@ export class HealthPlatformTimestreamInsertClient {
                 (err) => {
                     console.log("Error writing records:", err);
                     if (err.code === 'RejectedRecordsException') {
-                        console.log("RejectedRecords: ", batch);
+                        // @ts-ignore
+                        const responsePayload = JSON.parse(request.response.httpResponse.body.toString());
+                        console.log("RejectedRecords: ", JSON.stringify(responsePayload));
                     }
                 }
             );

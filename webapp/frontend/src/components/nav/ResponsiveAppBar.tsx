@@ -90,6 +90,12 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                                     <Typography textAlign="center">Users</Typography>
                                 </MenuItem>
                             }
+
+                            {(props.userDetail.user_type === "ADMIN") && 
+                                <MenuItem key={`collapse-Users`} onClick={handleCloseNavMenu} component={Link} to={`/simulate`}>
+                                    <Typography textAlign="center">Simulate</Typography>
+                                </MenuItem>
+                            }
                     </Menu>
                 </Box>
     
@@ -122,6 +128,18 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 Users
+                            </Button>
+                        </Link>
+                    }
+
+                    {(props.userDetail.user_type === "ADMIN") && 
+                        <Link key="Simulate" to={`/simulate`} style={{textDecoration: "none"}}>
+                            <Button
+                                key="Simulate"
+                                onClick={handleCloseNavMenu}
+                                sx={{ my: 2, color: 'white', display: 'block' }}
+                            >
+                                Simulate
                             </Button>
                         </Link>
                     }

@@ -27,7 +27,7 @@ const MenuProps = {
   },
 };
 
-const SENSORS = [
+export const SENSORS = [
     {"name": "Heart Rate", "id": "HeartRate"},
     {"name": "Temperature", "id": "Temperature"},
     {"name": "Heart Beat", "id": "HeartBeat"},

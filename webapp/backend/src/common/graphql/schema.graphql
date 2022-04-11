@@ -249,19 +249,18 @@ type QueryResponse {
 # 
 # Insert Data Lambda function
 #
-input MetricsData {
+input SimulateRequest {
     patient_id: String
     sensor_id: String
-    timestamp: String
+    timestamp_start: String
+    timestamp_end: String
     measure_type: String
-    measure_value: String
+    measure_value_low: Int
+    measure_value_high: Int
+    measure_step_seconds: Int
 }
 
-input InsertRequest {
-    events: [MetricsData]
-}
-
-type InsertResponse {
+type SimulateResponse {
 	status: String
 }
 
@@ -336,7 +335,7 @@ type Mutation @aws_cognito_user_pools
 	publishNewUsersDetail(input: UsersDetailInput!): UsersDetail
 	publishUsersDetailUpdates(input: UsersDetailInput!): UsersDetail
 
-    insertMetrics(input: InsertRequest): InsertResponse
+    simulate(input: SimulateRequest): SimulateResponse
 }
 
 #

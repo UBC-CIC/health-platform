@@ -406,7 +406,7 @@ export const Dashboard = (props: {
                                             >
                                                 <CircularProgress size={12} color='inherit' />{' '}Loading...
                                             </Box>
-                                        ) : (modulesData[module.sensor_type]![0].data.length === 0) ? (
+                                        ) : (modulesData[module.sensor_type]!.reduce((sum: number, current: any) => sum + current.data.length, 0) === 0) ? (
                                             <Box
                                                 style={{ height: '120px', margin: 'auto', textAlign: 'center', paddingTop: '36px', color: ThemeColor.MediumContrast }}
                                             >
