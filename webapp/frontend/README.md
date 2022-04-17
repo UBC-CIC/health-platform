@@ -37,6 +37,11 @@ Add the AWS configuration for cognito and appsync end point so that frontend web
 
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/UBC-CIC/health-platform/tree/main)
 
+- You will need to set up an Amplify rewrite condition with the following settings:
+    - Source address: </^((?!\.(css|gif|ico|jpg|js|png|txt|svg|woff|ttf)$).)*$/>
+    - Target address: /index.html
+    - Type: 200
+
 ## Development Setup
 ### Prerequisites
 
