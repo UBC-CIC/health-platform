@@ -68,12 +68,15 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
 
     const handleSave = async () => {
         try {
+            const user = {
+                ...props.user,
+                user_type: userType,
+            }
+
             const response: any = await API.graphql({
                 query: updateUsersDetail,
-                variables: { 
-                    input: {
-                        ...props.user,
-                    }
+                variables: {
+                    input: user,
                 },
             });
             console.log("updateUsersDetail response:", response);

@@ -31,7 +31,6 @@ export const Users = (props: { userName: any, userId: any, userDetail: any }) =>
                     query: listUsersDetails,
                     variables: {}
                 });
-                console.log(userDetailObj);
                 const itemsReturned: Array<UsersDetail> = userDetailObj['data']['listUsersDetails']['items'];
                 updateItems(itemsReturned);
 

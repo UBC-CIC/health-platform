@@ -36,7 +36,7 @@ const initialEventsOptions: any = {
         type: 'area',
         height: 160,
         animations: {
-            enabled: true,
+            enabled: false,
         },
     },
     fill: {
@@ -164,6 +164,7 @@ export const Dashboard = (props: {
 
     async function callListAllEvents(start: any, end: any) {
         try {
+            console.log("callListAllEvents");
             const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
             const eventsData = [];
             if (patientIds) {
@@ -177,7 +178,6 @@ export const Dashboard = (props: {
                             limit: 100,
                         }
                     });
-                    console.log("callListAllEvents");
                     console.log(events);
 
                     const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUserAndCreateTime']['items'];
@@ -329,12 +329,15 @@ export const Dashboard = (props: {
                 group: 'metrics',
                 type: 'scatter',
                 animations: {
-                    enabled: true,
+                    enabled: false,
                 },
             },
             stroke: {
                 curve: 'straight',
-                width: 1,
+                width: 0,
+            },
+            markers: {
+                size: 4,
             },
             xaxis: {
                 type: 'datetime',

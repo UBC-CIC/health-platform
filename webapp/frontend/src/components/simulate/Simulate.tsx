@@ -4,7 +4,7 @@ import { Alert, Button, FormControl, FormHelperText, InputLabel, MenuItem, Outli
 import Box from '@mui/material/Box';
 import { API } from 'aws-amplify';
 import queryString from 'query-string';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { simulate } from '../../common/graphql/mutations';
 import { PatientsDetail, UsersDetail } from '../../common/types/API';

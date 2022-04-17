@@ -32,7 +32,7 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     const datapoints: MetricsData[] = [];
     var measurementString = event.measurement
     var measurementTimestamps = event.timestamp
-     while (measurementString !== "") {
+    while (measurementString !== "") {
         var measurementIndex = measurementString.indexOf(",")
         var timestampIndex = measurementTimestamps.indexOf(",")
         if (measurementIndex != -1) {

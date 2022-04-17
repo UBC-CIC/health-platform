@@ -14,7 +14,7 @@ export const Navigation = (props: AppAuthStateProps) => {
         <BrowserRouter>
             {/* <Header userName={props.userName} authState={props.authState} /> */}
             <ResponsiveAppBar {...props} />
-            {props.authState === AuthState.SignedIn ? (
+            {(props.authState === AuthState.SignedIn && !props.isLoading) ? (
                 <Switch>
                     {props.userDetail && (
                         <>

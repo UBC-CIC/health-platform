@@ -61,6 +61,8 @@ function App() {
                 }
             }
             setPatients(patientDetails);
+
+            setIsLoading(false);
         } catch (e) {
             console.log('getUsersDetail errors:', e);
         }
@@ -86,7 +88,6 @@ function App() {
     React.useEffect(() => {
         return onAuthUIStateChange((nextAuthState: any, authData: any) => {
             // Initial splash screen
-            setIsLoading(false);
             console.log("onAuthUIStateChange");
 
             // Called when user logs in
@@ -130,7 +131,7 @@ function App() {
         <ThemeProvider theme={theme}>
             <UserContext.Provider value={user}>
                 <div className="App">
-                    <Navigation userName={user.username} userId={user.userId} userDetail={userDetail} patients={patients} authState={authState} />
+                    <Navigation isLoading={isLoading} userName={user.username} userId={user.userId} userDetail={userDetail} patients={patients} authState={authState} />
                 </div>
             </UserContext.Provider>
         </ThemeProvider>

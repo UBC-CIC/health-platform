@@ -92,7 +92,7 @@ const ResponsiveAppBar = (props: AppAuthStateProps) => {
                             }
 
                             {(props.userDetail.user_type === "ADMIN") && 
-                                <MenuItem key={`collapse-Users`} onClick={handleCloseNavMenu} component={Link} to={`/simulate`}>
+                                <MenuItem key={`collapse-Simulate`} onClick={handleCloseNavMenu} component={Link} to={`/simulate`}>
                                     <Typography textAlign="center">Simulate</Typography>
                                 </MenuItem>
                             }
