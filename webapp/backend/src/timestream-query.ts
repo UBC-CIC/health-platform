@@ -19,11 +19,16 @@ exports.handler = async (event: any = {},) => {
     const region = "us-west-2";
     const endpointsQueryClient = new AWS.TimestreamQuery({ region });
 
-    const qClientResponse = await endpointsQueryClient.describeEndpoints({}).promise();
-    console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
+    // const qClientResponse = await endpointsQueryClient.describeEndpoints({}).promise();
+    // console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
+    // const queryClient = new AWS.TimestreamQuery({
+    //     region,
+    //     endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+    // });
+
     const queryClient = new AWS.TimestreamQuery({
         region,
-        endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+        endpoint: `https://query-cell1.timestream.us-west-2.amazonaws.com`,
     });
 
     console.log("Created timestream query client");

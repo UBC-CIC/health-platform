@@ -41,12 +41,18 @@ exports.handler = async (event: any = {}) => {
         curr.setSeconds(curr.getSeconds() + input["measure_step_seconds"]);
     }
 
-    const qClientResponse = await endpointsWriteClient.describeEndpoints({}).promise();
-    console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
+    // const qClientResponse = await endpointsWriteClient.describeEndpoints({}).promise();
+    // console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
+    // const client = new AWS.TimestreamWrite({
+    //     region,
+    //     endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+    // });
+
     const client = new AWS.TimestreamWrite({
         region,
-        endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+        endpoint: `https://ingest-cell1.timestream.us-west-2.amazonaws.com`,
     });
+
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamInsertClient(client);

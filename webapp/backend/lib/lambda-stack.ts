@@ -1,12 +1,12 @@
 import cdk = require('@aws-cdk/core');
-import { Runtime, DockerImageCode, DockerImageFunction, Function } from '@aws-cdk/aws-lambda';
+import * as ec2 from '@aws-cdk/aws-ec2';
+// import { PythonFunction } from "@aws-cdk/aws-lambda-python";
+import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import * as lambda from "@aws-cdk/aws-lambda";
+import { Function } from '@aws-cdk/aws-lambda';
+import { HealthPlatformVpcStack } from './vpc-stack';
 import alp = require('@aws-cdk/aws-lambda-python');
 import exec = require("child_process");
-import * as path from 'path';
-import * as lambda from "@aws-cdk/aws-lambda";
-import { RetentionDays } from '@aws-cdk/aws-logs';
-// import { PythonFunction } from "@aws-cdk/aws-lambda-python";
-import { Role, ServicePrincipal, PolicyDocument, PolicyStatement, Effect } from '@aws-cdk/aws-iam';
 
 // The Lambda stack contains all the Lambda functions that are not directly related to PSTN. 
 // These Lambda functions can be created safely in ca-central-1.
@@ -17,7 +17,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly queryFunction: Function;
     public readonly simulateFunction: Function;
 
-    constructor(app: cdk.App, id: string) {
+    constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack) {
         super(app, id, {
             env: {
                 region: 'us-west-2'
@@ -75,6 +75,10 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                                 'timestream:ListTables',
                                 'timestream:Select',
                                 'timestream:SelectValues',
+                                // VPC
+                                'ec2:CreateNetworkInterface',
+                                'ec2:Describe*',
+                                'ec2:DeleteNetworkInterface',
                             ],
                             resources: ['*']
                         })
@@ -102,7 +106,12 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             memorySize: 512,
-            timeout: cdk.Duration.seconds(300), 
+            timeout: cdk.Duration.seconds(300),
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            vpc: vpcStack.vpc,
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 
         this.simulateFunction = new lambda.Function(this, 'SimulateFunction', {
@@ -112,7 +121,11 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             memorySize: 512,
-            timeout: cdk.Duration.seconds(300), 
+            timeout: cdk.Duration.seconds(300),
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
     }
 }
