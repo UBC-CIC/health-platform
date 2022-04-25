@@ -149,6 +149,9 @@ export const createSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -161,6 +164,9 @@ export const updateSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -173,6 +179,9 @@ export const deleteSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -182,6 +191,9 @@ export const publishNewSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -191,6 +203,9 @@ export const publishSensorsDetailUpdates = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;

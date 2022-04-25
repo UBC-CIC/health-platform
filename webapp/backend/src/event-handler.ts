@@ -28,74 +28,19 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     console.log('sensorInfo: ', sensor);
     const patientId = sensor.patient_id;
 
-    //Create event data for Timestream Write
-    const datapoints: MetricsData[] = [];
-    var measurementString = event.measurement
-    var measurementTimestamps = event.timestamp
-    while (measurementString !== "") {
-        var measurementIndex = measurementString.indexOf(",")
-        var timestampIndex = measurementTimestamps.indexOf(",")
-        if (measurementIndex != -1) {
-            var dataTimestamp = new Date(measurementTimestamps.substring(0, timestampIndex))
-            const modifiedData = {
-                patient_id: patientId,
-                sensor_id: event.sensorId,
-                timestamp: dataTimestamp.toISOString(),
-                measure_type: event.measurementType,
-                measure_value: measurementString.substring(0, measurementIndex),
-            };
-            datapoints.push(modifiedData);
-            measurementString = measurementString.substring(measurementIndex + 2)
-            measurementTimestamps = measurementTimestamps.substring(timestampIndex + 2)
-        } else {
-            var dataTimestamp = new Date(measurementTimestamps)
-            const modifiedData = {
-                patient_id: patientId,
-                sensor_id: event.sensorId,
-                timestamp: dataTimestamp.toISOString(),
-                measure_type: event.measurementType,
-                measure_value: measurementString,
-            };
-            datapoints.push(modifiedData);
-            measurementString = ""
-            measurementTimestamps = ""
-        }     
-    }
-    
-   
-
-    //Write to Timestream Database
-    const region = "us-west-2";
-    const endpointsWriteClient = new AWS.TimestreamWrite({ region });
-
-    const qClientResponse = await endpointsWriteClient.describeEndpoints({}).promise();
-    console.log(`Endpoint: ${qClientResponse.Endpoints[0].Address}`);
     const client = new AWS.TimestreamWrite({
-        region,
-        endpoint: `https://${qClientResponse.Endpoints[0].Address}`,
+        region: "us-west-2",
+        endpoint: `https://ingest-cell1.timestream.us-west-2.amazonaws.com`,
     });
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
-    await timestreamClient.writeRecords(patientId, sensor.sensor_id, datapoints)
+    timestreamClient.writeEvent(patientId, sensor, event);
 
     const response = {
         statusCode: 200,
         body: JSON.stringify('Done')
     };
-
-    // Write to Firehose -> S3 data lake
-    const firehoseData = { ...event, patientId };
-    const firehoseRes = await firehose
-        .putRecord({
-            DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
-            Record: {
-                Data: JSON.stringify(firehoseData),
-            },
-        })
-        .promise();
-
-    console.log('firehoseRes: ', firehoseRes);
 
     return response
 };

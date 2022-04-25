@@ -1,4 +1,5 @@
 import cdk = require('@aws-cdk/core');
+import * as ec2 from '@aws-cdk/aws-ec2';
 import { CfnTable, Database } from '@aws-cdk/aws-glue';
 import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal, ManagedPolicy, FederatedPrincipal } from '@aws-cdk/aws-iam';
 import { IotSql, TopicRule } from '@aws-cdk/aws-iot';
@@ -11,6 +12,10 @@ import { HealthPlatformDynamoStack } from './dynamodb-stack';
 import { CfnIdentityPool, CfnIdentityPoolRoleAttachment } from '@aws-cdk/aws-cognito';
 import * as timestream from '@aws-cdk/aws-timestream';
 import * as iot from '@aws-cdk/aws-iot';
+import { Duration } from '@aws-cdk/core';
+import { Rule, Schedule } from '@aws-cdk/aws-events';
+import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { HealthPlatformVpcStack } from './vpc-stack';
 
 // This stack contains resources used by the IoT data flow.
 
@@ -22,7 +27,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
     public readonly lambdaRole: Role;
 
-    constructor(app: cdk.App, id: string) {
+    constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack) {
         super(app, id, {
             env: {
                 region: 'us-west-2'
@@ -68,6 +73,10 @@ export class HealthPlatformIotStack extends cdk.Stack {
                                 // CloudWatch
                                 'cloudwatch:*',
                                 'logs:*',
+                                // VPC
+                                'ec2:CreateNetworkInterface',
+                                'ec2:Describe*',
+                                'ec2:DeleteNetworkInterface',
                             ],
                             resources: ['*']
                         })
@@ -363,7 +372,12 @@ export class HealthPlatformIotStack extends cdk.Stack {
             },
             memorySize: 512,
             timeout: cdk.Duration.seconds(300),
-            layers: [layer] 
+            layers: [layer],
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            vpc: vpcStack.vpc,
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 
         new lambda.Function(this, 'GenerateDataFunction', {
@@ -378,7 +392,42 @@ export class HealthPlatformIotStack extends cdk.Stack {
                 "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
             },
             memorySize: 512,
-            timeout: cdk.Duration.seconds(300), 
+            timeout: cdk.Duration.seconds(300),
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            vpc: vpcStack.vpc,
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
+        });
+
+        const externalSensorLambdaFunction = new lambda.Function(this, 'ExternalSensorFunction', {
+            functionName: "External-Sensor-Function",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'external-sensor-handler.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            environment: {
+                "SENSOR_MAPPING_TABLE_NAME": HealthPlatformDynamoStack.SENSOR_TABLE,
+                "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
+            },
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300),
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            // TODO: To enable VPC, we must add an Internet Gateway which can be expensive
+            // vpc: vpcStack.vpc,
+            // vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PUBLIC }),
+        });
+
+        // Scheduled CloudWatch jobs
+        var dailyLambdaSchedule = Schedule.rate(Duration.minutes(5));
+        const externalSensorLambdaTarget = new LambdaFunction(externalSensorLambdaFunction);
+        new Rule(this, 'ScheduledRules', {
+            schedule: dailyLambdaSchedule,
+            targets: [
+                externalSensorLambdaTarget,
+            ]
         });
         
         let iotTopicRule = new TopicRule(this, 'IoTTopicRule', {

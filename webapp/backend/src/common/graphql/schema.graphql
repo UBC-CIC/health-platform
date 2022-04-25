@@ -139,6 +139,9 @@ type SensorsDetail @aws_cognito_user_pools
 	sensor_id: String!
 	patient_id: String
 	sensor_types: [String]
+    watermark: String
+    client_key: String
+    secret_key: String
 }
 
 type SensorsDetailConnection @aws_cognito_user_pools
@@ -153,12 +156,18 @@ input SensorsDetailInput {
 	sensor_id: String!
 	patient_id: String
 	sensor_types: [String]
+    watermark: String
+    client_key: String
+    secret_key: String
 }
 
 input ModelSensorsDetailConditionInput {
 	sensor_id: String!
 	patient_id: String
 	sensor_types: [String]
+    watermark: String
+    client_key: String
+    secret_key: String
 	and: [ModelSensorsDetailConditionInput]
 	or: [ModelSensorsDetailConditionInput]
 	not: ModelSensorsDetailConditionInput
@@ -168,6 +177,9 @@ input ModelSensorsDetailFilterInput {
 	sensor_id: String!
 	patient_id: String
 	sensor_types: [String]
+    watermark: String
+    client_key: String
+    secret_key: String
 	and: [ModelSensorsDetailFilterInput]
 	or: [ModelSensorsDetailFilterInput]
 	not: ModelSensorsDetailFilterInput

@@ -80,6 +80,9 @@ export const onCreateSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -89,6 +92,9 @@ export const onUpdateSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -98,6 +104,9 @@ export const onDeleteSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;

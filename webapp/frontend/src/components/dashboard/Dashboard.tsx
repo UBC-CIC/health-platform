@@ -18,6 +18,7 @@ import { EventDetail, PatientsDetail, UsersDetail } from '../../common/types/API
 import ReactApexChart from "react-apexcharts";
 import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
+import { WAVEPLUS } from './sensor_config/airthings';
 
 const DEFAULT_HOURS_AGO = 12;
 
@@ -133,21 +134,29 @@ export const Dashboard = (props: {
 
             const sensorTypes = Array.from(new Set(sensorTypesArr));
             sensorTypes.sort();
-            const modules = sensorTypes.map((st: string) => {
-                let sensorName = "";
-                if (st === "HeartRate") {
-                    sensorName = "Heart Rate";
-                } else if (st === "HeartRateVariability") {
-                    sensorName = "Heart Rate Variability";
-                } else {
-                    sensorName = st;
-                }
+            const modules: any = [];
+            for (const st of sensorTypes) {
 
-                return {
-                    "sensor_type": st,
-                    "sensor_name": sensorName,
+                if (st === "AIRTHINGS_WAVEPLUS") {
+                    for (const s of WAVEPLUS.sensors) {
+                        modules.push(s);
+                    }
+                } else {
+                    let sensorName = "";
+                    if (st === "HeartRate") {
+                        sensorName = "Heart Rate";
+                    } else if (st === "HeartRateVariability") {
+                        sensorName = "Heart Rate Variability";
+                    } else {
+                        sensorName = st;
+                    }
+    
+                    modules.push({
+                        "sensor_type": st,
+                        "sensor_name": sensorName,
+                    });
                 }
-            });
+            }
 
             const newModulesLoading: any = {};
             sensorTypes.forEach((st: string) => {
@@ -307,7 +316,7 @@ export const Dashboard = (props: {
             const timestamp = moment(`${t}Z`).valueOf(); // Get epoch milliseconds
             const measureName = row[columnToIndex.get("measurement_type")!]
             const val = row[columnToIndex.get("measure_val")!]
-            if (val !== "" && Number(val) && measureName in measureNameToVals) {
+            if (val !== "" && isNumeric(val) && measureName in measureNameToVals) {
                 if (searchProperties.patient === "all") {
                     measureNameToVals[measureName]![patientToIndex[patientId]].data.push([timestamp, +val]);
                 } else {
@@ -320,6 +329,12 @@ export const Dashboard = (props: {
         setModulesData(measureNameToVals);
 
         return false;
+    }
+
+    function isNumeric(str: any): boolean {
+        if (typeof str != "string") return false
+        // @ts-ignore
+        return !isNaN(str) && !isNaN(parseFloat(str))
     }
 
     function getChartOptions(sensorType: string, min: number, max: number, useUTC: boolean): any {

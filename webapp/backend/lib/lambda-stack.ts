@@ -16,6 +16,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
     // public readonly queryFunction: DockerImageFunction;
     public readonly queryFunction: Function;
     public readonly simulateFunction: Function;
+    public readonly externalSensorFunction: Function;
 
     constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack) {
         super(app, id, {
@@ -125,6 +126,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
+            vpc: vpcStack.vpc,
             vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
     }

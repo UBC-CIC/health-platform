@@ -139,6 +139,9 @@ export const getSensorsDetail = /* GraphQL */ `
       sensor_id
       patient_id
       sensor_types
+      watermark
+      client_key
+      secret_key
     }
   }
 `;
@@ -157,6 +160,9 @@ export const getSensorsDetailByUser = /* GraphQL */ `
         sensor_id
         patient_id
         sensor_types
+        watermark
+        client_key
+        secret_key
       }
       nextToken
     }
@@ -173,6 +179,9 @@ export const listSensorsDetails = /* GraphQL */ `
         sensor_id
         patient_id
         sensor_types
+        watermark
+        client_key
+        secret_key
       }
       nextToken
     }

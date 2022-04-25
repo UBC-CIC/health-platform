@@ -81,12 +81,18 @@ export type SensorsDetailInput = {
   sensor_id: string,
   patient_id?: string | null,
   sensor_types?: Array< string | null > | null,
+  watermark?: string | null,
+  client_key?: string | null,
+  secret_key?: string | null,
 };
 
 export type ModelSensorsDetailConditionInput = {
   sensor_id: string,
   patient_id?: string | null,
   sensor_types?: Array< string | null > | null,
+  watermark?: string | null,
+  client_key?: string | null,
+  secret_key?: string | null,
   and?: Array< ModelSensorsDetailConditionInput | null > | null,
   or?: Array< ModelSensorsDetailConditionInput | null > | null,
   not?: ModelSensorsDetailConditionInput | null,
@@ -97,6 +103,9 @@ export type SensorsDetail = {
   sensor_id?: string,
   patient_id?: string | null,
   sensor_types?: Array< string | null > | null,
+  watermark?: string | null,
+  client_key?: string | null,
+  secret_key?: string | null,
 };
 
 export type UsersDetailInput = {
@@ -209,6 +218,9 @@ export type ModelSensorsDetailFilterInput = {
   sensor_id: string,
   patient_id?: string | null,
   sensor_types?: Array< string | null > | null,
+  watermark?: string | null,
+  client_key?: string | null,
+  secret_key?: string | null,
   and?: Array< ModelSensorsDetailFilterInput | null > | null,
   or?: Array< ModelSensorsDetailFilterInput | null > | null,
   not?: ModelSensorsDetailFilterInput | null,
@@ -407,6 +419,8 @@ export type CreateSensorsDetailMutation = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -421,6 +435,8 @@ export type UpdateSensorsDetailMutation = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -435,6 +451,8 @@ export type DeleteSensorsDetailMutation = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -448,6 +466,8 @@ export type PublishNewSensorsDetailMutation = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -461,6 +481,8 @@ export type PublishSensorsDetailUpdatesMutation = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -707,6 +729,8 @@ export type GetSensorsDetailQuery = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -724,6 +748,8 @@ export type GetSensorsDetailByUserQuery = {
       sensor_id: string,
       patient_id?: string | null,
       sensor_types?: Array< string | null > | null,
+      watermark?: string | null,
+      secret_key?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
@@ -743,6 +769,8 @@ export type ListSensorsDetailsQuery = {
       sensor_id: string,
       patient_id?: string | null,
       sensor_types?: Array< string | null > | null,
+      watermark?: string | null,
+      secret_key?: string | null,
     } | null > | null,
     nextToken?: string | null,
   } | null,
@@ -860,6 +888,8 @@ export type OnCreateSensorsDetailSubscription = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -869,6 +899,8 @@ export type OnUpdateSensorsDetailSubscription = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 
@@ -878,6 +910,8 @@ export type OnDeleteSensorsDetailSubscription = {
     sensor_id: string,
     patient_id?: string | null,
     sensor_types?: Array< string | null > | null,
+    watermark?: string | null,
+    secret_key?: string | null,
   } | null,
 };
 

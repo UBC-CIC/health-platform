@@ -27,11 +27,13 @@ const MenuProps = {
   },
 };
 
+export const AIRTHINGS_WAVEPLUS = "AIRTHINGS_WAVEPLUS";
 export const SENSORS = [
     {"name": "Heart Rate", "id": "HeartRate"},
     {"name": "Temperature", "id": "Temperature"},
     {"name": "Heart Beat", "id": "HeartBeat"},
     {"name": "Steps", "id": "Steps"},
+    {"name": "Airthings Wave Plus", "id": AIRTHINGS_WAVEPLUS},
 ];
 
 function getStyles(name: any, personName: any, theme: any) {
@@ -52,15 +54,21 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
     const [sensorsToAdd, setSensorsToAdd] = useState<Array<SensorsDetail>>(new Array<SensorsDetail>());
     const [loading, setLoading] = useState<boolean>(true);
     const [open, setOpen] = useState(false);
-    const handleClose = () => setOpen(false);
+    const [showCreate, setShowCreate] = useState(false);
+    const [sensorId, setSensorId] = useState("");
+    const [sensorTypes, setSensorTypes] = useState<Array<string>>(new Array<string>());
+    const [clientKey, setClientKey] = useState("");
+    const [clientSecretKey, setClientSecretKey] = useState("");
+
+    const handleClose = () => {
+        setOpen(false);
+        setShowCreate(false);
+    }
+
     const handleOpen = () => {
         callListAllSensors();
         setOpen(true);
     };
-
-    const [showCreate, setShowCreate] = useState(false);
-    const [sensorId, setSensorId] = useState("");
-    const [sensorTypes, setSensorTypes] = useState<Array<string>>(new Array<string>());
 
     async function callListAllSensors() {
         try {
@@ -100,6 +108,12 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                 patient_id: props.patientId,
                 sensor_types: sensorTypes,
             };
+            if (sensorTypes.includes(AIRTHINGS_WAVEPLUS)) {
+                newSensor.watermark = new Date(0).toISOString();
+                newSensor.client_key = clientKey;
+                newSensor.secret_key = clientSecretKey;
+            }
+
             setSensorsToAdd([
                 ...sensorsToAdd,
                 newSensor,
@@ -164,6 +178,9 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                                 sensor_id: sensorToAdd.sensor_id,
                                 patient_id: sensorToAdd.patient_id,
                                 sensor_types: sensorToAdd.sensor_types,
+                                watermark: sensorToAdd.watermark,
+                                client_key: sensorToAdd.client_key,
+                                secret_key: sensorToAdd.secret_key,
                             }
                         },
                     });
@@ -254,6 +271,7 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                     {showCreate ? (
                         <Box
                             sx={{
+                                mt: 1,
                                 "& .MuiTextField-root": { marginBottom: 1, width: "100%" },
                             }}
                         >
@@ -288,6 +306,34 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                                 </Select>
                                 <FormHelperText>What does this sensor monitor?</FormHelperText>
                             </FormControl>
+                            {
+                                sensorTypes.includes(AIRTHINGS_WAVEPLUS) && (
+                                    <Box sx={{ mt: 3}}>
+                                        <hr />
+                                        <Box sx={{ mt: 1}}>
+                                            <Box sx={{ fontSize: 14, mb: 1 }}>
+                                                Create a <a href="https://developer.airthings.com/docs/api-getting-started/index.html" target="_blank" rel="noreferrer">new API client</a> following the Airthings documentation and provide the following fields for the Health Platform to automatically begin retrieving data.
+                                            </Box>
+                                            <TextField
+                                                required
+                                                label="Client ID"
+                                                value={clientKey}
+                                                onChange={(e) => {
+                                                    setClientKey(e.target.value);
+                                                }}
+                                            />
+                                            <TextField
+                                                required
+                                                label="Secret Key"
+                                                value={clientSecretKey}
+                                                onChange={(e) => {
+                                                    setClientSecretKey(e.target.value);
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                )
+                            }
                         </Box>
                     ) : (
                         <TableContainer component={Paper}>
