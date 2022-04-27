@@ -117,11 +117,11 @@ export class HealthPlatformTimestreamInsertClient {
                 TableName: "HealthMetricsData",
                 Records: batch
             };
-    
             const request = this.client.writeRecords(params);
     
             await request.promise().then(
                 (data) => {
+                    console.log("Write records successful")
                 },
                 (err) => {
                     console.log("Error writing records:", err);

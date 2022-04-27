@@ -35,7 +35,7 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
 
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
-    timestreamClient.writeEvent(patientId, sensor, event);
+    await timestreamClient.writeEvent(patientId, sensor, event);
 
     const response = {
         statusCode: 200,
