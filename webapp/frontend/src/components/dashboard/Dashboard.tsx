@@ -147,6 +147,8 @@ export const Dashboard = (props: {
                         sensorName = "Heart Rate";
                     } else if (st === "HeartRateVariability") {
                         sensorName = "Heart Rate Variability";
+                    } else if (st === "Steps") {
+                        sensorName = "Steps";
                     } else {
                         sensorName = st;
                     }

@@ -30,8 +30,7 @@ const MenuProps = {
 export const AIRTHINGS_WAVEPLUS = "AIRTHINGS_WAVEPLUS";
 export const SENSORS = [
     {"name": "Heart Rate", "id": "HeartRate"},
-    {"name": "Temperature", "id": "Temperature"},
-    {"name": "Heart Beat", "id": "HeartBeat"},
+    {"name": "Heart Rate Variability", "id": "HeartRateVariability"},
     {"name": "Steps", "id": "Steps"},
     {"name": "Airthings Wave Plus", "id": AIRTHINGS_WAVEPLUS},
 ];
