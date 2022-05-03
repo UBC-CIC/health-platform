@@ -29,9 +29,8 @@ const MenuProps = {
 
 export const AIRTHINGS_WAVEPLUS = "AIRTHINGS_WAVEPLUS";
 export const SENSORS = [
-    {"name": "Heart Rate", "id": "HeartRate"},
-    {"name": "Heart Rate Variability", "id": "HeartRateVariability"},
-    {"name": "Steps", "id": "Steps"},
+    {"name": "Apple Watch", "id": "AppleWatch"},
+    {"name": "Gas Sensor", "id": "GasSensor"},
     {"name": "Airthings Wave Plus", "id": AIRTHINGS_WAVEPLUS},
 ];
 
@@ -105,14 +104,18 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                 __typename: "SensorsDetail",
                 sensor_id: sensorId,
                 patient_id: props.patientId,
-                sensor_types: sensorTypes,
+                sensor_types: [],
             };
-            if (sensorTypes.includes(AIRTHINGS_WAVEPLUS)) {
+            if (sensorTypes.includes("AppleWatch")) {
+                newSensor.sensor_types = ["HeartRate", "HeartRateVariability", "Steps"]
+            } else if (sensorTypes.includes("GasSensor")) {
+                newSensor.sensor_types = ["CO2", "TVOC"]
+            } else if (sensorTypes.includes(AIRTHINGS_WAVEPLUS)) {
+                newSensor.sensor_types = [AIRTHINGS_WAVEPLUS]
                 newSensor.watermark = new Date(0).toISOString();
                 newSensor.client_key = clientKey;
                 newSensor.secret_key = clientSecretKey;
             }
-
             setSensorsToAdd([
                 ...sensorsToAdd,
                 newSensor,
