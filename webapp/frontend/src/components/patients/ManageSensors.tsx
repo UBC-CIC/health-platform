@@ -290,7 +290,6 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                                 <Select
                                     labelId="sensor-type-label"
                                     id="sensor-type-label"
-                                    multiple
                                     value={sensorTypes}
                                     onChange={handleSensorTypeChange}
                                     input={<OutlinedInput label="Name" />}
