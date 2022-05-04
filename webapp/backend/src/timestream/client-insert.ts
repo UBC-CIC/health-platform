@@ -17,55 +17,57 @@ export class HealthPlatformTimestreamInsertClient {
         this.client = client;
     }
 
-    async writeEvent(patientId: string, sensor: Sensor, event: any) {
+    async writeEvent(patientId: string, sensor: Sensor, events: any) {
         //Create event data for Timestream Write
-        const datapoints: MetricsData[] = [];
-        var measurementString = event.measurement
-        var measurementTimestamps = event.timestamp
-        while (measurementString !== "") {
-            var measurementIndex = measurementString.indexOf(",")
-            var timestampIndex = measurementTimestamps.indexOf(",")
-            if (measurementIndex != -1) {
-                var dataTimestamp = new Date(measurementTimestamps.substring(0, timestampIndex))
-                const modifiedData = {
-                    patient_id: patientId,
-                    sensor_id: event.sensorId,
-                    timestamp: dataTimestamp.toISOString(),
-                    measure_type: event.measurementType,
-                    measure_value: measurementString.substring(0, measurementIndex),
-                };
-                datapoints.push(modifiedData);
-                measurementString = measurementString.substring(measurementIndex + 2)
-                measurementTimestamps = measurementTimestamps.substring(timestampIndex + 2)
-            } else {
-                var dataTimestamp = new Date(measurementTimestamps)
-                const modifiedData = {
-                    patient_id: patientId,
-                    sensor_id: event.sensorId,
-                    timestamp: dataTimestamp.toISOString(),
-                    measure_type: event.measurementType,
-                    measure_value: measurementString,
-                };
-                datapoints.push(modifiedData);
-                measurementString = ""
-                measurementTimestamps = ""
-            }     
+        for (const event of events.data) {
+            const datapoints: MetricsData[] = [];
+            var measurementString = event.measurement
+            var measurementTimestamps = event.timestamp
+            while (measurementString !== "") {
+                var measurementIndex = measurementString.indexOf(",")
+                var timestampIndex = measurementTimestamps.indexOf(",")
+                if (measurementIndex != -1) {
+                    var dataTimestamp = new Date(measurementTimestamps.substring(0, timestampIndex))
+                    const modifiedData = {
+                        patient_id: patientId,
+                        sensor_id: event.sensorId,
+                        timestamp: dataTimestamp.toISOString(),
+                        measure_type: event.measurementType,
+                        measure_value: measurementString.substring(0, measurementIndex),
+                    };
+                    datapoints.push(modifiedData);
+                    measurementString = measurementString.substring(measurementIndex + 2)
+                    measurementTimestamps = measurementTimestamps.substring(timestampIndex + 2)
+                } else {
+                    var dataTimestamp = new Date(measurementTimestamps)
+                    const modifiedData = {
+                        patient_id: patientId,
+                        sensor_id: event.sensorId,
+                        timestamp: dataTimestamp.toISOString(),
+                        measure_type: event.measurementType,
+                        measure_value: measurementString,
+                    };
+                    datapoints.push(modifiedData);
+                    measurementString = ""
+                    measurementTimestamps = ""
+                }     
+            }
+
+            await this.writeRecords(patientId, sensor.sensor_id, datapoints)
+
+            // Write to Firehose -> S3 data lake
+            const firehoseData = { ...event, patientId };
+            const firehoseRes = await firehose
+                .putRecord({
+                    DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
+                    Record: {
+                        Data: JSON.stringify(firehoseData),
+                    },
+                })
+                .promise();
+
+            console.log('firehoseRes: ', firehoseRes);
         }
-
-        await this.writeRecords(patientId, sensor.sensor_id, datapoints)
-
-        // Write to Firehose -> S3 data lake
-        const firehoseData = { ...event, patientId };
-        const firehoseRes = await firehose
-            .putRecord({
-                DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
-                Record: {
-                    Data: JSON.stringify(firehoseData),
-                },
-            })
-            .promise();
-
-        console.log('firehoseRes: ', firehoseRes);
     }
 
     async writeRecords(patientId: string, sensorId: string, events: MetricsData[] = []): Promise<boolean> {
