@@ -79,29 +79,37 @@ export const ManageUsers = (props: { patient: PatientsDetail }) => {
         }
     }
 
+    function addAndDedupeCaregiverList(origList: UsersDetail[], newItem: UsersDetail): UsersDetail[] {
+        const found = origList.find(i => i.user_id === newItem.user_id);
+        if (!found) {
+            return [
+                ...origList,
+                newItem,
+            ];
+        } else {
+            return [
+                ...origList,
+            ];
+        }
+    }
+
     const handleAddCaregiver = () => {
-        if (userId !== "" && caregiversForPatient.filter(user => user.user_id === userId).length == 0 && caregivers.filter(user => user.user_id === userId).length > 0) {
-            const newUser = caregivers.filter(user => user.user_id === userId)[0];
-            setUsersToAdd([
-                ...usersToAdd,
-                newUser,
+        if (userId !== "") {
+            const caregiverToAdd = caregivers.filter(user => user.user_id === userId)[0];
+            setUsersToRemove([
+                ...usersToRemove.filter(i => i.user_id !== userId),
             ]);
-            updateCaregiversForPatient([
-                ...caregiversForPatient,
-                newUser,
-            ]);
+            setUsersToAdd(addAndDedupeCaregiverList(usersToAdd, caregiverToAdd));
+            updateCaregiversForPatient(addAndDedupeCaregiverList(caregiversForPatient, caregiverToAdd));
         }
         setShowCreate(false);
     };
 
     const handleRemoveCaregiver = (userId: string) => {
         if (userId !== "") {
-            const found = caregiversForPatient.find(i => i.user_id === userId);
-            if (found) {
-                setUsersToRemove([
-                    ...usersToRemove,
-                    found,
-                ]);
+            const existingCaregiver = caregiversForPatient.find(i => i.user_id === userId);
+            if (existingCaregiver) {
+                setUsersToRemove(addAndDedupeCaregiverList(usersToRemove, existingCaregiver));
                 setUsersToAdd([
                     ...usersToAdd.filter(i => i.user_id !== userId),
                 ]);
@@ -115,17 +123,21 @@ export const ManageUsers = (props: { patient: PatientsDetail }) => {
 
     const handleSave = async () => {
         let newCaregiverIds = [...props.patient.user_ids!];
+        
+        // Note: A single caregiver is either in usersToRemove or usersToAdd
+        //
         if (usersToRemove.length > 0) {
             for (const userToRemove of usersToRemove) {
                 console.log("Dissociating user " + JSON.stringify(userToRemove));
                 newCaregiverIds = newCaregiverIds.filter(id => id !== userToRemove.user_id)
 
+                const updatedPatientListForCaregiver = userToRemove.patient_ids ? [...userToRemove.patient_ids.filter(v => v !== props.patient.patient_id)] : [];
                 await API.graphql({
                     query: updateUsersDetail,
                     variables: { 
                         input: {
                             ...userToRemove,
-                            patient_ids: userToRemove.patient_ids ? [...userToRemove.patient_ids.filter(v => v !== props.patient.patient_id)] : [],
+                            patient_ids: updatedPatientListForCaregiver,
                         }
                     },
                 });
@@ -139,12 +151,15 @@ export const ManageUsers = (props: { patient: PatientsDetail }) => {
                 newCaregiverIds = newCaregiverIds.filter(id => id !== userToAdd.user_id)
                 newCaregiverIds.push(userToAdd.user_id!)
 
+                let updatedPatientListForCaregiver = userToAdd.patient_ids ? [...userToAdd.patient_ids] : [];
+                updatedPatientListForCaregiver = updatedPatientListForCaregiver.filter(id => id !== props.patient.patient_id);
+                updatedPatientListForCaregiver.push(props.patient.patient_id!);
                 await API.graphql({
                     query: updateUsersDetail,
                     variables: { 
                         input: {
                             ...userToAdd,
-                            patient_ids: userToAdd.patient_ids ? [...userToAdd.patient_ids, props.patient.patient_id] : [],
+                            patient_ids: updatedPatientListForCaregiver,
                         }
                     },
                 });

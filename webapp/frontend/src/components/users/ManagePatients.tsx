@@ -10,6 +10,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { Box, useTheme } from "@mui/system";
 import { API } from "aws-amplify";
+import { pt } from "date-fns/locale";
 import { useState } from "react";
 import { createPatientsDetail, deletePatientsDetail, updatePatientsDetail, updateUsersDetail } from "../../common/graphql/mutations";
 import { getPatientsDetail, getUsersDetail } from "../../common/graphql/queries";
@@ -62,6 +63,20 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
         }
     }
 
+    function addAndDedupePatientList(origList: PatientsDetail[], newItem: PatientsDetail): PatientsDetail[] {
+        const found = origList.find(i => i.patient_id === newItem.patient_id);
+        if (!found) {
+            return [
+                ...origList,
+                newItem,
+            ];
+        } else {
+            return [
+                ...origList,
+            ];
+        }
+    }
+
     const handleAddPatient = () => {
         if (patientName !== "") {
             const newPatientDetail: PatientsDetail = {
@@ -69,26 +84,17 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                 patient_id: uuidv4(),
                 name: patientName,
             };
-            setPatientsToAdd([
-                ...patientsToAdd,
-                newPatientDetail,
-            ]);
-            updateItems([
-                ...items,
-                newPatientDetail,
-            ]);
+            setPatientsToAdd(addAndDedupePatientList(patientsToAdd, newPatientDetail));
+            updateItems(addAndDedupePatientList(items, newPatientDetail));
             setShowCreate(false);
         }
     };
 
     const handleRemovePatient = (patientId: string) => {
         if (patientId !== "") {
-            const found = items.find(i => i.patient_id === patientId);
-            if (found) {
-                setPatientsToRemove([
-                    ...patientsToRemove,
-                    found,
-                ]);
+            const patientToRemove = items.find(i => i.patient_id === patientId);
+            if (patientToRemove) {
+                setPatientsToRemove(addAndDedupePatientList(patientsToRemove, patientToRemove));
                 setPatientsToAdd([
                     ...patientsToAdd.filter(i => i.patient_id !== patientId),
                 ]);
@@ -114,23 +120,24 @@ export const ManagePatients = (props: { user: UsersDetail }) => {
                             }
                         },
                     });
-
-                    const userResponse: any = await API.graphql({
-                        query: updateUsersDetail,
-                        variables: { 
-                            input: {
-                                ...props.user,
-                                patient_ids: props.user.patient_ids ? [...props.user.patient_ids.filter(v => v !== patientToRemove.patient_id)] : [],
-                            }
-                        },
-                    });
-                    console.log("userResponse response:", userResponse);
                     
                     console.log("deletePatientsDetail response:", response);
                 } catch (e) {
                     console.log("deletePatientsDetail errors:", e);
                 }
             }
+
+            const patientIdsToRemove = new Set(patientsToRemove.map(pt => pt.patient_id));
+            const userResponse: any = await API.graphql({
+                query: updateUsersDetail,
+                variables: { 
+                    input: {
+                        ...props.user,
+                        patient_ids: props.user.patient_ids ? [...props.user.patient_ids.filter(v => !patientIdsToRemove.has(v!))] : [],
+                    }
+                },
+            });
+            console.log("userResponse response:", userResponse);
         }
         if (patientsToAdd.length > 0) {
             for (const patientToAdd of patientsToAdd) {
