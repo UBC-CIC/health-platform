@@ -55,8 +55,10 @@ export class HealthPlatformTimestreamInsertClient {
 
             await this.writeRecords(patientId, sensor.sensor_id, datapoints)
 
+            const sensorId = sensor.sensor_id
+
             // Write to Firehose -> S3 data lake
-            const firehoseData = { ...event, patientId };
+            const firehoseData = { ...event, patientId, sensorId};
             const firehoseRes = await firehose
                 .putRecord({
                     DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,

@@ -281,8 +281,6 @@ export class HealthPlatformIotStack extends cdk.Stack {
                     columns: [
                         {'name': 'patientId', 'type': 'string'},
                         {'name': 'sensorId', 'type': 'string'},
-                        {'name': 'deviceOS', 'type': 'string'},
-                        {'name': 'measurementDuration', 'type': 'string'},
                         {'name': 'measurementType', 'type': 'string'},
                         {'name': 'measurement', 'type': 'string'},
                         {'name': 'timestamp', 'type': 'string'},
