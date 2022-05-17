@@ -175,8 +175,12 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
 const getEvent = (sensor: Sensor, type: string, val: number, time: string) => {
     return {
         "sensorId": sensor.sensor_id,
-        "measurementType": type,
-        "measurement": val.toString(),
-        "timestamp": time
+        "data": [
+            {
+                "measurementType": type,
+                "measurement": val.toString(),
+                "timestamp": time
+            }
+        ]   
     }
 }
