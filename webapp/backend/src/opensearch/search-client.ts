@@ -6,8 +6,6 @@ const { SignatureV4 } = require("@aws-sdk/signature-v4");
 const { NodeHttpHandler } = require("@aws-sdk/node-http-handler");
 const { Sha256 } = require("@aws-crypto/sha256-browser");
 
-const { Client } = require("@opensearch-project/opensearch");
-
 var region = 'us-west-2';
 var index = 'events';
 var type = '_doc';
@@ -59,6 +57,7 @@ export class HealthPlatformEventOpenSearchClient {
 
         var signedRequest = await signer.sign(request);
         console.log("Request signed")
+        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
 
         // Send the request
         var client = new NodeHttpHandler();
@@ -81,14 +80,14 @@ export class HealthPlatformEventOpenSearchClient {
             },
             hostname: this.endpoint,
             method: 'GET',
-            path: '_search',
+            path: 'events/_search',
             index: 'events',
         });
 
         console.log("request: ", JSON.stringify(request, null))
 
         var signedRequest = await this.signRequestV4(request);
-        console.log("Request signed")
+        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
 
         // Send the request
         var client = new NodeHttpHandler();
@@ -110,12 +109,3 @@ export class HealthPlatformEventOpenSearchClient {
     }
 
 }
-
-
-
-
-
-
-
-
-

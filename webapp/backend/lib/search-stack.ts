@@ -1,13 +1,11 @@
 import cdk = require('@aws-cdk/core');
 import { ITable } from '@aws-cdk/aws-dynamodb';
-import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
+import { ArnPrincipal, Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import * as lambda from "@aws-cdk/aws-lambda";
 import { StartingPosition } from '@aws-cdk/aws-lambda';
 import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as opensearch from '@aws-cdk/aws-opensearchservice';
-import { Domain } from '@aws-cdk/aws-opensearchservice';
+import { Domain, EngineVersion } from '@aws-cdk/aws-opensearchservice';
 import { Bucket } from '@aws-cdk/aws-s3';
-import dynamodb = require('aws-sdk/clients/dynamodb');
 
 export class HealthPlatformSearchStack extends cdk.Stack {
     public readonly deliveryFunction: lambda.Function;
@@ -23,23 +21,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             },
         });
 
-        // configuration for prototyping, not suitable for production
-        this.devDomain = new opensearch.Domain(this, 'HealthPlatformDomain', {
-            version: opensearch.EngineVersion.OPENSEARCH_1_1,
-            enableVersionUpgrade: true,
-            capacity: {
-                dataNodes: 1,
-                dataNodeInstanceType: "t2.small.search"
-            },
-            //   ebs: {
-            //     volumeSize: 2,
-            //   },
-            // logging: {
-            // slowSearchLogEnabled: true,
-            // appLogEnabled: true,
-            // slowIndexLogEnabled: true,
-            // },
-        });
+        const domainName = 'health-platform-dev-domain'
 
         const lambdaRole = new Role(this, 'HealthPlatformSearchLambdaRole', {
             roleName: 'HealthPlatformSearchLambdaRole',
@@ -50,9 +32,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                         new PolicyStatement({
                             effect: Effect.ALLOW,
                             actions: [
-                                "es:ESHttpPost",
-                                "es:ESHttpPut",
-                                "es:ESHttpGet",
+                                "es:*",
                                 "dynamodb:DescribeStream",
                                 "dynamodb:GetRecords",
                                 "dynamodb:GetShardIterator",
@@ -68,6 +48,36 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                     ]
                 }),
             },
+        });
+
+        const openSearchPolicyStatement = new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['es:ESHttp*'],
+            principals: [
+                new ArnPrincipal(lambdaRole.roleArn),
+            ],
+            resources: [
+                `arn:aws:es:us-west-2:022810127093:domain/${domainName}`,
+            ],
+        });
+
+        // configuration for prototyping, not suitable for production
+        this.devDomain = new Domain(this, 'HealthPlatformDomain', {
+            version: EngineVersion.OPENSEARCH_1_1,
+            enableVersionUpgrade: true,
+            capacity: {
+                dataNodes: 1,
+                dataNodeInstanceType: "t2.small.search"
+            },
+            //   ebs: {
+            //     volumeSize: 2,
+            //   },
+            // logging: {
+            // slowSearchLogEnabled: true,
+            // appLogEnabled: true,
+            // slowIndexLogEnabled: true,
+            // },
+            accessPolicies: [openSearchPolicyStatement],
         });
 
         this.deliveryFunction = new lambda.Function(this, 'HealthPlatformIndexerLambda', {
@@ -100,6 +110,9 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                 "OPENSEARCH_ENDPOINT": this.devDomain.domainEndpoint,
             }
         });
+
+        this.devDomain.grantRead(new ArnPrincipal(lambdaRole.roleArn))
+        this.devDomain.node.addDependency(lambdaRole);
 
     }
 }
