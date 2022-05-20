@@ -57,6 +57,7 @@ export class HealthPlatformEventOpenSearchClient {
 
         var signedRequest = await signer.sign(request);
         console.log("Request signed")
+        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
 
         // Send the request
         var client = new NodeHttpHandler();
@@ -75,17 +76,18 @@ export class HealthPlatformEventOpenSearchClient {
             },
             headers: {
                 'Content-Type': 'application/json',
-                'host': this.endpoint
+                'host': this.endpoint + ":443"
             },
             hostname: this.endpoint,
             method: 'GET',
-            path: '_search',
+            path: 'events/_search',
+            index: 'events',
         });
 
         console.log("request: ", JSON.stringify(request, null))
 
         var signedRequest = await this.signRequestV4(request);
-        console.log("Request signed")
+        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
 
         // Send the request
         var client = new NodeHttpHandler();
@@ -107,7 +109,3 @@ export class HealthPlatformEventOpenSearchClient {
     }
 
 }
-
-
-
-

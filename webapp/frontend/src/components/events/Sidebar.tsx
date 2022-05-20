@@ -1,12 +1,13 @@
 import { DateTimePicker, LoadingButton, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { Button, FormControl, FormControlLabel, FormGroup, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Select, Switch, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
+import { API } from 'aws-amplify';
 import React from 'react';
-import { propTypes } from 'react-notification-system';
-import { PatientsDetail } from '../../common/types/API';
+import { searchEvents } from '../../common/graphql/queries';
+import { PatientsDetail, SearchRequest } from '../../common/types/API';
 import { getRelativeScale, getRelativeValue } from '../../utils/time';
 import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
@@ -27,6 +28,7 @@ export const Sidebar = ({
     searchProperties, setSearchProperties, isLoading, update, patients, userName
 }: SidebarProps) => {
     const [relativeShortCut, setRelativeShortCut] = React.useState("3h"); // e.g. quicklinks to 3h, 12h, etc.
+    const [keyword, setKeyword] = React.useState(""); 
 
     const toggleTimeTypeChange = (event: any) => {
         if (searchProperties.type === "absolute") {
@@ -77,6 +79,34 @@ export const Sidebar = ({
         });
     }
 
+    const handleSearch = async () => {
+        console.log(`Keyword is ${keyword}`);
+    
+        const searchRequest: SearchRequest = {
+          patient_ids: ["yuanbian@amazon.com"],
+          keyword: "Sushi",
+          //   event_id: uuidv4(),
+          //   user_id: props.userName,
+          //   start_date_time: start,
+          //   end_date_time: end,
+          //   medication: medication,
+          //   mood: mood,
+          //   food: food,
+          //   notes: notes,
+        };
+        console.log("searchRequest:", searchRequest);
+        try {
+          const request = {
+            query: searchEvents,
+            variables: { input: searchRequest },
+          };
+          const response: any = await API.graphql(request);
+          console.log("searchEvents response:", response);
+        } catch (e) {
+          console.log("searchEvents errors:", e);
+        }
+      };
+    
     return (
         <Drawer
             className="sidebar"
@@ -225,6 +255,9 @@ export const Sidebar = ({
                         <TextField fullWidth label="Event Search" id="eventSearch" />
                     </FormControl>
                 </Box>
+                <Button variant="outlined" onClick={handleSearch} value={keyword}>
+                     Search
+                </Button>
                 <hr />
                 <Box sx={{ mb: 3 }}>
                     <FormControl fullWidth>
