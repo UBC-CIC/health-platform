@@ -132,6 +132,8 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
                     const radonShortTermAvg = tokenObj["radonShortTermAvg"];
                     const temp = tokenObj["temp"];
                     const voc = tokenObj["voc"];
+                    const pm1 = tokenObj["pm1"];
+                    const pm25 = tokenObj["pm25"];
                     const time = new Date(tokenObj["time"] * 1000).toISOString();
 
                     if (time > sensor.watermark) {
@@ -148,6 +150,8 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "Radon", radonShortTermAvg, time));
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "Temperature", temp, time));
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "VOC", voc, time));
+                        await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM1", pm1, time));
+                        await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM2.5", pm25, time));
 
                         console.log("Updating high watermark");
                         sensor.watermark = time;

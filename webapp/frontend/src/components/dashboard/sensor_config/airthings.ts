@@ -24,5 +24,13 @@ export const WAVEPLUS = {
             "sensor_type": "VOC",
             "sensor_name": "VOC",
         },
+        {
+            "sensor_type": "PM1",
+            "sensor_name": "PM1",
+        },
+        {
+            "sensor_type": "PM2.5",
+            "sensor_name": "PM2.5",
+        },
     ],
 }
