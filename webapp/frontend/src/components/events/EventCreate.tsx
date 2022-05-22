@@ -129,8 +129,7 @@ export const EventCreate = (props: { userName: string; patients: PatientsDetail[
                             }}
                         >
                             <TextField
-                                required
-                                id="filled-required"
+                                id="filled"
                                 label="Medication"
                                 variant="filled"
                                 value={medication}

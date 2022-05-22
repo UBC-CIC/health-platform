@@ -65,37 +65,73 @@ export class HealthPlatformEventOpenSearchClient {
 
     };
 
-    async searchDocument(keyword: String): Promise<any> {
-        // Create the HTTP request
+    async searchDocument(keyword: string, start: string, end: string, name: string): Promise<any> {
+        let query;
+        if (name === "" || name === "all") {
+            query = {
+                'query': {
+                    'bool': {
+                        'must': [
+                            {
+                                'query_string': {
+                                    'query': keyword
+                                }
+                            }
+                        ],
+                        'filter': {
+                            'range': {
+                                'start_date_time': {
+                                    'gte': start,
+                                    'lte': end
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        } else {
+            query = {
+                'query': {
+                    'bool': {
+                        'must': [
+                            {
+                                'query_string': {
+                                    'query': keyword
+                                }
+                            },
+                            {
+                                'match': {
+                                    'user_id': name
+                                }
+                            }
+                        ],
+                        'filter': {
+                            'range': {
+                                'start_date_time': {
+                                    'gte': start,
+                                    'lte': end
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
+
         console.log(`Creating search request with keyword ${keyword}`)
         var request = new HttpRequest({
-            query: {
-                'query_string': {
-                    'query': keyword
-                }
-            },
+            body: JSON.stringify(query),
             headers: {
                 'Content-Type': 'application/json',
-                'host': this.endpoint + ":443"
+                'host': this.endpoint
             },
             hostname: this.endpoint,
-            method: 'GET',
+            method: 'POST',
             path: 'events/_search',
-            index: 'events',
         });
 
         console.log("request: ", JSON.stringify(request, null))
 
-        var signedRequest = await this.signRequestV4(request);
-        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
-
-        // Send the request
-        var client = new NodeHttpHandler();
-        return client.handle(signedRequest);
-
-    };
-
-    private async signRequestV4(request: any): Promise<any> {
         // Sign the request
         console.log("Signing request")
         var signer = new SignatureV4({
@@ -105,7 +141,13 @@ export class HealthPlatformEventOpenSearchClient {
             sha256: Sha256
         });
 
-        return signer.sign(request);
-    }
+        var signedRequest = await signer.sign(request);
+        console.log("Request signed")
+        console.log(`Request signed ${JSON.stringify(signedRequest, null)}`)
 
+        // Send the request
+        var client = new NodeHttpHandler();
+        return client.handle(signedRequest);
+
+    };
 }

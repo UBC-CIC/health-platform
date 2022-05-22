@@ -280,12 +280,14 @@ type SimulateResponse {
 # Event Search Lambda function
 # 
 input SearchRequest {
-    patient_ids: [String]
+    patient_name: String
     keyword: String!
+    start: String
+    end: String
 }
 
 type SearchResponse {
-	events: [[String]]
+	events: [EventDetail]
 }
 
 #

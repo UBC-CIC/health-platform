@@ -13,7 +13,16 @@ export const query = /* GraphQL */ `
 export const searchEvents = /* GraphQL */ `
   query SearchEvents($input: SearchRequest) {
     searchEvents(input: $input) {
-      events
+      events {
+        event_id
+        user_id
+        start_date_time
+        end_date_time
+        medication
+        mood
+        food
+        notes
+      }
     }
   }
 `;

@@ -21,6 +21,7 @@ import queryString from 'query-string';
 import { WAVEPLUS } from './sensor_config/airthings';
 
 const DEFAULT_HOURS_AGO = 12;
+const DEFAULT_RELATIVE_SHORTCUT = '12h';
 
 interface Module {
     "sensor_type": string;

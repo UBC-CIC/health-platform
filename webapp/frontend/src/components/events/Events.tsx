@@ -12,15 +12,16 @@ import Toolbar from "@mui/material/Toolbar";
 import { API } from "aws-amplify";
 import React from "react";
 import { useEffect, useRef, useState } from "react";
-import { getEventDetailsByUser, getEventDetailsByUserAndCreateTime } from "../../common/graphql/queries";
+import { getEventDetailsByUser, getEventDetailsByUserAndCreateTime, searchEvents } from "../../common/graphql/queries";
 import { onCreateEventDetail } from "../../common/graphql/subscriptions";
-import { EventDetail, PatientsDetail, UsersDetail } from "../../common/types/API";
+import { EventDetail, PatientsDetail, SearchRequest, UsersDetail } from "../../common/types/API";
 import { getAbsoluteTimeFromRelativeTime, subtractHours } from "../../utils/time";
 import queryString from 'query-string';
 
 import "./events.css";
 import { Sidebar } from "./Sidebar";
 import { useHistory, useLocation } from "react-router-dom";
+import EventCreate from "./EventCreate";
 
 function createData(
     name: string,
@@ -58,9 +59,10 @@ export const Events = (props: {
         startRelative: queryModel["startRelative"] ? queryModel["startRelative"] : `${DEFAULT_HOURS_AGO}h`,
         endRelative: queryModel["endRelative"] ? queryModel["endRelative"] : "0h",
         type: queryModel["type"] ? queryModel["type"] : "relative",
-        period: queryModel["period"] ? queryModel["period"] : "5m",
+        period: queryModel["period"] ? queryModel["period"] : '5m',
         statistic: queryModel["statistic"] ? queryModel["statistic"] : "avg",
-        patient: queryModel["patient"] ? queryModel["patient"] : "all"
+        patient: queryModel["patient"] ? queryModel["patient"] : "all",
+        keyword: queryModel["keyword"] ? queryModel["keyword"] : "",
     });
 
     const [isLoading, setIsLoading] = useState<any>(false);
@@ -70,7 +72,7 @@ export const Events = (props: {
     stateRef.current = items;
 
 
-    async function callListAllEvents() {
+    async function search() {
 
         // Update the time (in case we are using relative times) before handling the update
         //
@@ -87,31 +89,61 @@ export const Events = (props: {
             });
         }
 
-        history.push(`/events?start=${start.getTime()}&end=${end.getTime()}&startRelative=${searchProperties.startRelative}&endRelative=${searchProperties.endRelative}&type=${searchProperties.type}&period=${searchProperties.period}&statistic=${searchProperties.statistic}&patient=${searchProperties.patient}&showOverlay=${searchProperties.showOverlay}&useLocalTimezone=${searchProperties.useLocalTimezone}`);
+        history.push(`/events?start=${start.getTime()}&end=${end.getTime()}&keyword=${searchProperties.keyword}&startRelative=${searchProperties.startRelative}&endRelative=${searchProperties.endRelative}&type=${searchProperties.type}&period=${searchProperties.period}&statistic=${searchProperties.statistic}&patient=${searchProperties.patient}&showOverlay=${searchProperties.showOverlay}&useLocalTimezone=${searchProperties.useLocalTimezone}`);
 
-        const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
-        console.log("patientIds: ")
-        console.log(patientIds)
-        const items = [];
-        if (patientIds) {
-            for (const patientId of patientIds) {
-                console.log("looking for patient ", patientId, start.toISOString(), end.toISOString())
-                const events: any = await API.graphql({
-                    query: getEventDetailsByUserAndCreateTime,
-                    variables: {
-                        userId: patientId,
-                        startTime: start.toISOString(),
-                        endTime: end.toISOString(),
-                        limit: 100,
-                    }
+        let items = [];
+
+        if (searchProperties.keyword !== "") {
+            // Elastic Search version (when keyword search is not needed)
+            //
+            const searchRequest: SearchRequest = {
+                keyword: searchProperties.keyword,
+                start: start,
+                end: end,
+                patient_name: searchProperties.patient
+            };
+            console.log("searchRequest:", searchRequest);
+
+            try {
+                const request = {
+                    query: searchEvents,
+                    variables: { input: searchRequest },
+                };
+                const response: any = await API.graphql(request);
+                items = response["data"]["searchEvents"]["events"].map((event: any) => {
+                    return event as EventDetail;
                 });
+                console.log("searchEvents response:", response);
+            } catch (e) {
+                console.log("searchEvents errors:", e);
+            }
+        } else {
+            // DynamoDB version (when keyword search is not needed)
+            //
+            const patientIds = searchProperties.patient === "all" ? props.userDetail.patient_ids : [searchProperties.patient];
+            console.log("patientIds: ")
+            console.log(patientIds)
+            if (patientIds) {
+                for (const patientId of patientIds) {
+                    console.log("looking for patient ", patientId, start.toISOString(), end.toISOString())
+                    const events: any = await API.graphql({
+                        query: getEventDetailsByUserAndCreateTime,
+                        variables: {
+                            userId: patientId,
+                            startTime: start.toISOString(),
+                            endTime: end.toISOString(),
+                            limit: 100,
+                        }
+                    });
 
-                const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUserAndCreateTime']['items'];
-                for (var event of itemsReturned) {
-                    items.push(event);
+                    const itemsReturned: Array<EventDetail> = events['data']['getEventDetailsByUserAndCreateTime']['items'];
+                    for (var event of itemsReturned) {
+                        items.push(event);
+                    }
                 }
             }
         }
+
         console.log("found items: ", items.length)
         updateItems(items);
         setIsLoading(false);
@@ -176,15 +208,11 @@ export const Events = (props: {
 
     useEffect(() => {
         if (Object.keys(props.userDetail).length > 0 && props.patients.length > 0) {
-            callListAllEvents()
+            search()
             // subscribeCreateEvents()
             // subscribeUpdateMeetings()
         }
     }, []);
-
-    async function update() {
-        callListAllEvents()
-    }
 
     function getPatientName(patientId: string) {
         let patientName = "";
@@ -204,17 +232,29 @@ export const Events = (props: {
                 searchProperties={searchProperties}
                 setSearchProperties={setSearchProperties}
                 isLoading={isLoading}
-                update={update}
+                search={search}
                 patients={props.patients}
-                userName={props.userName}
             />
 
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
+                <Box
+                    m={1}
+                    display="flex"
+                    justifyContent="flex-end"
+                    alignItems="flex-end"
+                >
+                    <EventCreate
+                        patients={props.patients} 
+                        userName={props.userName}
+                        disabled="true"
+                    />
+                </Box>
+
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="caption table">
                         {
-                            items.length == 0 && <caption>No events found</caption>
+                            items.length == 0 && <caption>No events found - try expanding the search range.</caption>
                         }
                         <TableHead>
                             <TableRow>

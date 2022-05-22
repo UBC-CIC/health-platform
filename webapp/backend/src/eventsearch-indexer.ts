@@ -43,7 +43,7 @@ export const handler = (event: any = {}, context: any, callback: any) => {
 
 
         Promise.all(promises).then((res) => {
-            console.log(JSON.stringify(res, null));
+            console.log("All promises successfully returned");
         }).catch(error => {
             console.error(error.message)
         });;

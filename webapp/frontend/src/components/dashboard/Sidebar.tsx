@@ -4,11 +4,8 @@ import { Button, FormControl, FormControlLabel, FormGroup, IconButton, InputAdor
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import React from 'react';
-import { propTypes } from 'react-notification-system';
 import { PatientsDetail } from '../../common/types/API';
 import { getRelativeScale, getRelativeValue } from '../../utils/time';
-import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
 
 
@@ -25,42 +22,43 @@ type SidebarProps = {
 export const Sidebar = ({
     searchProperties, setSearchProperties, isLoading, update, patients,
 }: SidebarProps) => {
-    const [relativeShortCut, setRelativeShortCut] = React.useState("3h"); // e.g. quicklinks to 3h, 12h, etc.
-
     const toggleTimeTypeChange = (event: any) => {
         if (searchProperties.type === "absolute") {
-            handleSearchPropertyChange("type", "relative");
+            handleSingleSearchPropertyChange("type", "relative");
         } else {
-            handleSearchPropertyChange("type", "absolute");
+            handleSingleSearchPropertyChange("type", "absolute");
         }
     };
+
+    const getRelativeShortCut = () => {
+        if (searchProperties.endRelative.startsWith("0")) {
+            return searchProperties.startRelative;
+        } else {
+            return "";
+        }
+    }
 
     const handleRelativeTimeValue = (event: any, type: string) => {
         const val = event.target.value;
 
         if (type === "start") {
-            setRelativeShortCut(`${val}${getRelativeScale(searchProperties.startRelative)}`);
-            handleSearchPropertyChange("startRelative", `${val}${getRelativeScale(searchProperties.startRelative)}`);
+            handleSingleSearchPropertyChange("startRelative", `${val}${getRelativeScale(searchProperties.startRelative)}`);
         } else {
-            setRelativeShortCut(`${val}${getRelativeScale(searchProperties.endRelative)}`);
-            handleSearchPropertyChange("endRelative", `${val}${getRelativeScale(searchProperties.endRelative)}`);
+            handleSingleSearchPropertyChange("endRelative", `${val}${getRelativeScale(searchProperties.endRelative)}`);
         }
     }
 
     const handleRelativeTimeScale = (event: any, type: string) => {
         const scale = event.target.value;
         if (type === "start") {
-            setRelativeShortCut(`${getRelativeValue(searchProperties.startRelative)}${scale}`);
-            handleSearchPropertyChange("startRelative", `${getRelativeValue(searchProperties.startRelative)}${scale}`);
+            handleSingleSearchPropertyChange("startRelative", `${getRelativeValue(searchProperties.startRelative)}${scale}`);
         } else {
-            setRelativeShortCut(`${getRelativeValue(searchProperties.endRelative)}${scale}`);
-            handleSearchPropertyChange("endRelative", `${getRelativeValue(searchProperties.endRelative)}${scale}`);
+            handleSingleSearchPropertyChange("endRelative", `${getRelativeValue(searchProperties.endRelative)}${scale}`);
         }
     }
 
     const handleRelativeShortCut = (event: any) => {
         const shortCut = event.target.value;
-        setRelativeShortCut(shortCut);
         setSearchProperties({
             ...searchProperties,
             "startRelative": shortCut,
@@ -68,10 +66,18 @@ export const Sidebar = ({
         });
     };
 
-    const handleSearchPropertyChange = (field: string, newVal: string) => {
+    const handleSingleSearchPropertyChange = (field1: string, newVal1: string) => {
         setSearchProperties({
             ...searchProperties,
-            [field]: newVal,
+            [field1]: newVal1
+        });
+    }
+
+    const handleSearchPropertyChange = (field1: string, newVal1: string, field2: string, newVal2: string) => {
+        setSearchProperties({
+            ...searchProperties,
+            [field1]: newVal1,
+            [field2]: newVal2
         });
     }
 
@@ -105,7 +111,7 @@ export const Sidebar = ({
                 {
                     !isLoading ? 
                     <Button variant={"contained"} color={"primary"} onClick={update} fullWidth>
-                        Update Dashboard
+                        Search
                     </Button> : 
                     <LoadingButton loading variant={"contained"} color={"primary"} fullWidth>
                         Loading...
@@ -121,7 +127,7 @@ export const Sidebar = ({
                             id="patient-select"
                             value={searchProperties.patient}
                             label="Patient"
-                            onChange={(event: any) => handleSearchPropertyChange("patient", event.target.value)}
+                            onChange={(event: any) => handleSingleSearchPropertyChange("patient", event.target.value)}
                         >
                             <MenuItem value="all">All Patients</MenuItem>
                             {patients.map((patient: PatientsDetail) => (
@@ -149,7 +155,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="Start Time"
                                 value={searchProperties.start}
-                                onChange={(value: any) => handleSearchPropertyChange("start", value)}
+                                onChange={(value: any) => handleSingleSearchPropertyChange("start", value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -157,7 +163,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="End Time"
                                 value={searchProperties.end}
-                                onChange={(value: any) => handleSearchPropertyChange("end", value)}
+                                onChange={(value: any) => handleSingleSearchPropertyChange("end", value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -166,7 +172,7 @@ export const Sidebar = ({
                     <>
                         <ToggleButtonGroup
                             color="primary"
-                            value={relativeShortCut}
+                            value={getRelativeShortCut()}
                             size="small"
                             exclusive
                             fullWidth
@@ -240,7 +246,7 @@ export const Sidebar = ({
                             id="period-select"
                             value={searchProperties.period}
                             label="Period"
-                            onChange={(event: any) => handleSearchPropertyChange("period", event.target.value)}
+                            onChange={(event: any) => handleSingleSearchPropertyChange("period", event.target.value)}
                         >
                             <MenuItem value="1s">1 Second</MenuItem>
                             <MenuItem value="1m">1 Minute</MenuItem>
@@ -258,7 +264,7 @@ export const Sidebar = ({
                             id="statistic-select"
                             value={searchProperties.statistic}
                             label="Statistic"
-                            onChange={(event: any) => handleSearchPropertyChange("statistic", event.target.value)}
+                            onChange={(event: any) => handleSingleSearchPropertyChange("statistic", event.target.value)}
                         >
                             <MenuItem value="avg">Average</MenuItem>
                             <MenuItem value="min">Min</MenuItem>

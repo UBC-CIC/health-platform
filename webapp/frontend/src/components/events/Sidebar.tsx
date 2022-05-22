@@ -1,15 +1,12 @@
+import { Search } from '@mui/icons-material';
 import { DateTimePicker, LoadingButton, LocalizationProvider } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { Button, FormControl, InputAdornment, InputLabel, MenuItem, Select, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import { API } from 'aws-amplify';
-import React from 'react';
-import { searchEvents } from '../../common/graphql/queries';
-import { PatientsDetail, SearchRequest } from '../../common/types/API';
+import { PatientsDetail } from '../../common/types/API';
 import { getRelativeScale, getRelativeValue } from '../../utils/time';
-import { EventCreate } from '../events/EventCreate';
 import "./sidebar.css";
 
 
@@ -19,52 +16,51 @@ type SidebarProps = {
     searchProperties: any;
     setSearchProperties: any;
     isLoading: boolean;
-    update: any;
+    search: any;
     patients: PatientsDetail[];
-    userName: string;
 };
 
 export const Sidebar = ({
-    searchProperties, setSearchProperties, isLoading, update, patients, userName
+    searchProperties, setSearchProperties, isLoading, search, patients
 }: SidebarProps) => {
-    const [relativeShortCut, setRelativeShortCut] = React.useState("3h"); // e.g. quicklinks to 3h, 12h, etc.
-    const [keyword, setKeyword] = React.useState(""); 
-
     const toggleTimeTypeChange = (event: any) => {
         if (searchProperties.type === "absolute") {
-            handleSearchPropertyChange("type", "relative");
+            handleSingleSearchPropertyChange("type", "relative");
         } else {
-            handleSearchPropertyChange("type", "absolute");
+            handleSingleSearchPropertyChange("type", "absolute");
         }
     };
 
+    const getRelativeShortCut = () => {
+        if (searchProperties.endRelative.startsWith("0")) {
+            return searchProperties.startRelative;
+        } else {
+            return "";
+        }
+    }
+    
     const handleRelativeTimeValue = (event: any, type: string) => {
-        console.log("handleRelativeTimeValue: ", type)
         const val = event.target.value;
 
         if (type === "start") {
-            setRelativeShortCut(`${val}${getRelativeScale(searchProperties.startRelative)}`);
-            handleSearchPropertyChange("startRelative", `${val}${getRelativeScale(searchProperties.startRelative)}`);
+            if (type )
+            handleSingleSearchPropertyChange("startRelative", `${val}${getRelativeScale(searchProperties.startRelative)}`);
         } else {
-            setRelativeShortCut(`${val}${getRelativeScale(searchProperties.endRelative)}`);
-            handleSearchPropertyChange("endRelative", `${val}${getRelativeScale(searchProperties.endRelative)}`);
+            handleSingleSearchPropertyChange("endRelative", `${val}${getRelativeScale(searchProperties.endRelative)}`);
         }
     }
 
     const handleRelativeTimeScale = (event: any, type: string) => {
         const scale = event.target.value;
         if (type === "start") {
-            setRelativeShortCut(`${getRelativeValue(searchProperties.startRelative)}${scale}`);
-            handleSearchPropertyChange("startRelative", `${getRelativeValue(searchProperties.startRelative)}${scale}`);
+            handleSingleSearchPropertyChange("startRelative", `${getRelativeValue(searchProperties.startRelative)}${scale}`);
         } else {
-            setRelativeShortCut(`${getRelativeValue(searchProperties.endRelative)}${scale}`);
-            handleSearchPropertyChange("endRelative", `${getRelativeValue(searchProperties.endRelative)}${scale}`);
+            handleSingleSearchPropertyChange("endRelative", `${getRelativeValue(searchProperties.endRelative)}${scale}`);
         }
     }
 
     const handleRelativeShortCut = (event: any) => {
         const shortCut = event.target.value;
-        setRelativeShortCut(shortCut);
         setSearchProperties({
             ...searchProperties,
             "startRelative": shortCut,
@@ -72,40 +68,20 @@ export const Sidebar = ({
         });
     };
 
-    const handleSearchPropertyChange = (field: string, newVal: string) => {
+    const handleSingleSearchPropertyChange = (field1: string, newVal1: string) => {
         setSearchProperties({
             ...searchProperties,
-            [field]: newVal,
+            [field1]: newVal1
         });
     }
 
-    const handleSearch = async () => {
-        console.log(`Keyword is ${keyword}`);
-    
-        const searchRequest: SearchRequest = {
-          patient_ids: ["yuanbian@amazon.com"],
-          keyword: "Sushi",
-          //   event_id: uuidv4(),
-          //   user_id: props.userName,
-          //   start_date_time: start,
-          //   end_date_time: end,
-          //   medication: medication,
-          //   mood: mood,
-          //   food: food,
-          //   notes: notes,
-        };
-        console.log("searchRequest:", searchRequest);
-        try {
-          const request = {
-            query: searchEvents,
-            variables: { input: searchRequest },
-          };
-          const response: any = await API.graphql(request);
-          console.log("searchEvents response:", response);
-        } catch (e) {
-          console.log("searchEvents errors:", e);
-        }
-      };
+    const handleSearchPropertyChange = (field1: string, newVal1: string, field2: string, newVal2: string) => {
+        setSearchProperties({
+            ...searchProperties,
+            [field1]: newVal1,
+            [field2]: newVal2
+        });
+    }
     
     return (
         <Drawer
@@ -122,8 +98,8 @@ export const Sidebar = ({
             <Box sx={{ overflow: 'auto', pl: 2, pr: 2, pt: 4 }}>
                 {
                     !isLoading ? 
-                    <Button variant={"contained"} color={"primary"} onClick={update} fullWidth>
-                        Update Events
+                    <Button variant={"contained"} color={"primary"} onClick={search} fullWidth>
+                        Search Events
                     </Button> : 
                     <LoadingButton loading variant={"contained"} color={"primary"} fullWidth>
                         Loading...
@@ -139,11 +115,11 @@ export const Sidebar = ({
                             id="patient-select"
                             value={searchProperties.patient}
                             label="Patient"
-                            onChange={(event: any) => handleSearchPropertyChange("patient", event.target.value)}
+                            onChange={(event: any) => handleSingleSearchPropertyChange("patient", event.target.value)}
                         >
                             <MenuItem value="all">All Patients</MenuItem>
                             {patients.map((patient: PatientsDetail) => (
-                                <MenuItem key={patient.patient_id} value={patient.patient_id}>{patient.name}</MenuItem>
+                                <MenuItem key={patient.patient_id} value={patient.patient_id!}>{patient.name}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -167,7 +143,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="Start Time"
                                 value={searchProperties.start}
-                                onChange={(value: any) => handleSearchPropertyChange("start", value)}
+                                onChange={(value: any) => handleSingleSearchPropertyChange("start", value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -175,7 +151,7 @@ export const Sidebar = ({
                             <DateTimePicker
                                 label="End Time"
                                 value={searchProperties.end}
-                                onChange={(value: any) => handleSearchPropertyChange("end", value)}
+                                onChange={(value: any) => handleSingleSearchPropertyChange("end", value)}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Box>
@@ -184,7 +160,7 @@ export const Sidebar = ({
                     <>
                         <ToggleButtonGroup
                             color="primary"
-                            value={relativeShortCut}
+                            value={getRelativeShortCut()}
                             size="small"
                             exclusive
                             fullWidth
@@ -249,26 +225,26 @@ export const Sidebar = ({
                     </>
                 }
 
-                <hr />
                 <Box sx={{ mb: 3 }}>
-                    <FormControl fullWidth>
-                        <TextField fullWidth label="Event Search" id="eventSearch" />
+                    <FormControl sx={{ marginTop: 2, marginBottom: 1 }} fullWidth>
+                        <TextField 
+                            fullWidth 
+                            label="Text Search" 
+                            id="eventSearch" 
+                            value={searchProperties.keyword}
+                            onChange={(e) => {
+                                handleSingleSearchPropertyChange("keyword", e.target.value);
+                            }}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                    <Search />
+                                </InputAdornment>
+                              ),
+                            }}
+                        />
                     </FormControl>
                 </Box>
-                <Button variant="outlined" onClick={handleSearch} value={keyword}>
-                     Search
-                </Button>
-                <hr />
-                <Box sx={{ mb: 3 }}>
-                    <FormControl fullWidth>
-                        <div>
-                            <EventCreate userName={userName} patients={patients} disabled="true" />
-                        </div>
-                    </FormControl>
-                </Box>
-                {/* <FormGroup>
-                    <FormControlLabel control={<Switch defaultChecked onChange={(event: any) => toggleUseLocalTimezone()} />} label="Use Local Timezone" />
-                </FormGroup> */}
             </Box>
         </Drawer>
     )
