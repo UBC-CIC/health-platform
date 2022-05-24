@@ -5,7 +5,7 @@
 
 2. You should now have an Airthings Device that is connected to the internet, paired to your phone and an Airthings account. 
 3. Make note of the device serial number that appears when pairing, it is also visible near the battery compartment.
-<img src="../images/airthings_bluetooth_serialnumber.png">
+<img src="../images/airthings_bluetoothsn.png">
 <img src="../images/airthings_battery_compartment.png">
 
 ## Step 2: API Register and Setup
