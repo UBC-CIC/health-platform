@@ -1,12 +1,12 @@
 ## Step 1: Device Setup
 1. Unbox your Airthings Device and follow the steps in the setup guide provided in the box
-<img src="../images/airthings_images/airthings_unbox.png">
-<img src="../images/airthings_images/setup_guide_airthings_2.png">
+<img src="../images/airthings_images/airthings_unbox.png" width=80%>
+<img src="../images/airthings_images/setup_guide_airthings_2.png" width=80%>
 
 2. You should now have an Airthings Device that is connected to the internet, paired to your phone and an Airthings account. 
 3. Make note of the device serial number that appears when pairing, it is also visible near the battery compartment.
-<img src="../images/airthings_images/airthings_bluetoothsn.png">
-<img src="../images/airthings_images/airthings_battery_compartment.png">
+<img src="../images/airthings_images/airthings_bluetoothsn.png" width=80%>
+<img src="../images/airthings_images/airthings_battery_compartment.png" width=80%>
 
 ## Step 2: API Register and Setup
 1. Login to your [Airthings Dashboard](https://accounts.airthings.com/login?client_id=dashboard&redirect_uri=https://dashboard.airthings.com)
