@@ -410,9 +410,11 @@ export class HealthPlatformIotStack extends cdk.Stack {
             },
             memorySize: 512,
             timeout: cdk.Duration.seconds(300),
+            deadLetterQueueEnabled: true,
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
+            // Vpc Interupts Airthings api calls, API Gateway needed
             // vpc: vpcStack.vpc,
             // vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
