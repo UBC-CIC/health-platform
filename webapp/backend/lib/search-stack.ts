@@ -8,6 +8,7 @@ import { Domain, EngineVersion } from '@aws-cdk/aws-opensearchservice';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { HealthPlatformVpcStack } from './vpc-stack';
 import * as ec2 from '@aws-cdk/aws-ec2';
+import * as iam from '@aws-cdk/aws-iam'
 
 export class HealthPlatformSearchStack extends cdk.Stack {
     public readonly deliveryFunction: lambda.Function;
@@ -56,6 +57,10 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             },
         });
 
+        const openSearchVPCPermissions = new iam.CfnServiceLinkedRole(this, 'OpenSearchVPC', {
+            awsServiceName: 'opensearchservice.amazonaws.com'
+        });
+
         const openSearchPolicyStatement = new PolicyStatement({
             effect: Effect.ALLOW,
             actions: ['es:ESHttp*'],
@@ -72,7 +77,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             version: EngineVersion.OPENSEARCH_1_1,
             enableVersionUpgrade: true,
             capacity: {
-                dataNodes: 1,
+                dataNodes: 2,
                 dataNodeInstanceType: "t2.small.search"
             },
             //   ebs: {
@@ -84,9 +89,16 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             // slowIndexLogEnabled: true,
             // },
             accessPolicies: [openSearchPolicyStatement],
-            // vpc: vpcStack.vpc, 
-            // vpcSubnets: "Isolated"
+            vpc: vpcStack.vpc, 
+            vpcSubnets: [vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED })],
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            zoneAwareness: {availabilityZoneCount : 2}
         });
+
+        //Attach vpc service linked role to opensearch domain
+        this.devDomain.node.addDependency(openSearchVPCPermissions)
 
         this.deliveryFunction = new lambda.Function(this, 'HealthPlatformIndexerLambda', {
             functionName: "EventOpenSearch-Indexer",
@@ -103,7 +115,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
-            // vpc: vpcStack.vpc, 
+            vpc: vpcStack.vpc, 
             vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
         this.deliveryFunction.addEventSource(new DynamoEventSource(sourceTable, {
@@ -125,7 +137,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
-            // vpc: vpcStack.vpc, 
+            vpc: vpcStack.vpc, 
             vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 

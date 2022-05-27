@@ -65,7 +65,11 @@ export class HealthPlatformVpcStack extends cdk.Stack {
                         'dynamodb:BatchWriteItem', 
                         'dynamodb:BatchGetItem', 
                         'dynamodb:DescribeTable', 
-                        'dynamodb:ConditionCheckItem'],
+                        'dynamodb:ConditionCheckItem',
+                        "dynamodb:GetShardIterator",
+                        "dynamodb:DescribeStream",
+                        "dynamodb:GetRecords",
+                        "dynamodb:ListStreams"],
               resources: ['*'],
         }))
         this.vpc.addInterfaceEndpoint("KinesisFirehoseEndpoint", {
