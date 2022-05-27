@@ -1,8 +1,9 @@
 import AWS = require('aws-sdk');
-import { HealthPlatformTimestreamInsertClient, MetricsData } from './timestream/client-insert';
+// import { HealthPlatformTimestreamInsertClient, MetricsData } from './timestream/client-insert';
 import { SensorDao } from './ddb/sensor-dao';
 var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
+import timestreamInsert = require('./timestream/client-insert')
 
 /**
  * {
@@ -34,7 +35,7 @@ export const handler = async (event: any = {}, context: any, callback: any): Pro
     });
 
     console.log("Created timestream query client");
-    const timestreamClient = new HealthPlatformTimestreamInsertClient(client);
+    const timestreamClient = new timestreamInsert.HealthPlatformTimestreamInsertClient(client);
     await timestreamClient.writeEvent(patientId, sensor, event);
 
     const response = {

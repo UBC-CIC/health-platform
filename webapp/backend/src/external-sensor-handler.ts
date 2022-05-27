@@ -119,12 +119,15 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
             res.on('data', function (chunk: any) {
                 body = body + chunk;
             });
-        
             res.on('end', async function() {
                 console.log("Body :" + body);
+                if (Object.keys(JSON.parse(body)["data"]).length === 0) {
+                    console.log("Error: Empty body, request aborted")
+                    resolve(true)
+                    return
+                }
                 if (res.statusCode === 200) {
                     const tokenObj = JSON.parse(body)["data"];
-
                     // TODO: This is dependent on the sensor type
                     const co2 = tokenObj["co2"];
                     const humidity = tokenObj["humidity"];
@@ -132,8 +135,6 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
                     const radonShortTermAvg = tokenObj["radonShortTermAvg"];
                     const temp = tokenObj["temp"];
                     const voc = tokenObj["voc"];
-                    const pm1 = tokenObj["pm1"];
-                    const pm25 = tokenObj["pm25"];
                     const time = new Date(tokenObj["time"] * 1000).toISOString();
 
                     if (time > sensor.watermark) {
@@ -150,9 +151,13 @@ const processAirthingsData = async (sensor: Sensor, accessToken: string, tokenTy
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "Radon", radonShortTermAvg, time));
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "Temperature", temp, time));
                         await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "VOC", voc, time));
-                        await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM1", pm1, time));
-                        await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM2.5", pm25, time));
-
+                        if (tokenObj.hasOwnProperty('pm1') && tokenObj.hasOwnProperty('pm25')) {
+                            console.log("PM1 and PM25 included")
+                            const pm1 = tokenObj["pm1"];
+                            const pm25 = tokenObj["pm25"];
+                            await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM1", pm1, time));
+                            await timestreamClient.writeEvent(sensor.patient_id, sensor, getEvent(sensor, "PM2.5", pm25, time));
+                        }
                         console.log("Updating high watermark");
                         sensor.watermark = time;
                         const sensorDao = new SensorDao(ddb);

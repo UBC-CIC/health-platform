@@ -374,7 +374,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
-            // vpc: vpcStack.vpc, //Internet Gateway required for DynamoDB query, can be expensive
+            vpc: vpcStack.vpc, 
             vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 
@@ -413,9 +413,8 @@ export class HealthPlatformIotStack extends cdk.Stack {
             securityGroups: [
                 vpcStack.lambdaSecurityGroup
             ],
-            // TODO: To enable VPC, we must add an Internet Gateway which can be expensive
             // vpc: vpcStack.vpc,
-            // vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PUBLIC }),
+            // vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 
         // Scheduled CloudWatch jobs

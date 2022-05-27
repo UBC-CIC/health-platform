@@ -6,6 +6,8 @@ import { StartingPosition } from '@aws-cdk/aws-lambda';
 import { DynamoEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { Domain, EngineVersion } from '@aws-cdk/aws-opensearchservice';
 import { Bucket } from '@aws-cdk/aws-s3';
+import { HealthPlatformVpcStack } from './vpc-stack';
+import * as ec2 from '@aws-cdk/aws-ec2';
 
 export class HealthPlatformSearchStack extends cdk.Stack {
     public readonly deliveryFunction: lambda.Function;
@@ -14,7 +16,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
     public readonly devDomain: Domain;
 
 
-    constructor(app: cdk.App, id: string, sourceTable: ITable) {
+    constructor(app: cdk.App, id: string, sourceTable: ITable, vpcStack: HealthPlatformVpcStack) {
         super(app, id, {
             env: {
                 region: 'us-west-2'
@@ -42,6 +44,10 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                                 "logs:PutLogEvents",
                                 // STS
                                 'sts:AssumeRole',
+                                // VPC
+                                'ec2:CreateNetworkInterface',
+                                'ec2:Describe*',
+                                'ec2:DeleteNetworkInterface',
                             ],
                             resources: ['*']
                         })
@@ -78,6 +84,8 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             // slowIndexLogEnabled: true,
             // },
             accessPolicies: [openSearchPolicyStatement],
+            // vpc: vpcStack.vpc, 
+            // vpcSubnets: "Isolated"
         });
 
         this.deliveryFunction = new lambda.Function(this, 'HealthPlatformIndexerLambda', {
@@ -91,7 +99,12 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             environment: {
                 "ROLE_ARN": lambdaRole.roleArn,
                 "OPENSEARCH_ENDPOINT": this.devDomain.domainEndpoint,
-            }
+            },
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            // vpc: vpcStack.vpc, 
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
         this.deliveryFunction.addEventSource(new DynamoEventSource(sourceTable, {
             startingPosition: StartingPosition.LATEST
@@ -108,7 +121,12 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             environment: {
                 "ROLE_ARN": lambdaRole.roleArn,
                 "OPENSEARCH_ENDPOINT": this.devDomain.domainEndpoint,
-            }
+            },
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            // vpc: vpcStack.vpc, 
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
 
         this.devDomain.grantRead(new ArnPrincipal(lambdaRole.roleArn))
