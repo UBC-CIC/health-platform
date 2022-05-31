@@ -14,7 +14,3 @@
 
 ### Option 2: [DIY deployment with Arduino/NodeMCU Microcontroller Sensor](https://github.com/UBC-CIC/health-platform-arduino)
 
-# License
-
-### This project is distributed under the [MIT License](../LICENSE).
-
