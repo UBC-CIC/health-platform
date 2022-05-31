@@ -25,18 +25,6 @@ npm install
 cd ..
 ```
 
-### Create an IoT Certificate
-Download OpenSSL [here](https://wiki.openssl.org/index.php/Binaries). Select the correct download link for your operating system and install OpenSSL. 
-
-Open the OpenSSL console and run the following commands. Ensure that you have navigated to the to the backend folder of this project. Replace the "/C=CA/ST=BC/L=Vancouver/O=UBCCIC/CN=AWS IoT Certificate" portion of the command with your own values.
-
-```
-mkdir cert
-cd cert
-openssl genrsa -out privatekey.pem 2048
-openssl req -new -subj "/C=CA/ST=BC/L=Vancouver/O=UBCCIC/CN=AWS IoT Certificate" -key privatekey.pem -out cert.csr
-```
-
 ### CDK Deployment
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `us-west-2`, except for the PSTN stack which must be created in `us-east-1` due to region restrictions in the AWS Chime SDK:
 ```
