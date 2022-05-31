@@ -2,11 +2,11 @@
 
 # Health Platform Monitoring Website Deployment
 
-[Health Platform Dashboard for monitoring sensor data](../webapp/README.md)
+### [Health Platform Dashboard for monitoring sensor data](../webapp/README.md)
 
 # iOS/WatchOS Deployment Guide
 
-[iOS and Apple Watch application to monitor vitals](https://github.com/UBC-CIC/health-platform-iOS-watchOS)
+### [iOS and Apple Watch application to monitor vitals](https://github.com/UBC-CIC/health-platform-iOS-watchOS)
 
 # Environmental Sensors Deployment Guides
 
@@ -14,4 +14,7 @@
 
 ### Option 2: [DIY deployment with Arduino/NodeMCU Microcontroller Sensor](https://github.com/UBC-CIC/health-platform-arduino)
 
+# License
+
+### This project is distributed under the [MIT License](../LICENSE).
 
