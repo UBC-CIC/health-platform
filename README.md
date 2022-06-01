@@ -127,4 +127,4 @@ N/A
 
 # License
 
-This project is distributed under the [MIT License](../LICENSE).
+This project is distributed under the [MIT License](./LICENSE).
