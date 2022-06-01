@@ -1,6 +1,6 @@
 # Integrated Monitoring Health Platform
 
-A platform designed to collect and integrate data from wearables and environmental sensors into a single UI. 
+Pacific Autism Family Network (PAFN) is a centre of excellence and network of supports for individuals with Autism Spectrum Disorder and their families. Individuals on the autism spectrum are often at risk of experiencing unpredictable epileptic seizures. Therefore, in collaboration with the UBC Cloud Innovation Centre (CIC), a solution has been developed to monitor an individual using wearable and environmental sensors. This platform collects and integrates data from wearable and environmental sensors into a single UI.
 
 | Index                                                 | Description                                               |
 |:------------------------------------------------------|:----------------------------------------------------------| 
@@ -31,6 +31,7 @@ To deploy this solution, please follow our [Deployment Guides](docs/DeploymentGu
 | [Add Events](#Add-Events)                                                                    | Adding any events                                         |
 | [Add Patients, Assign Caregivers and Sensors](#Add-Patients,-Assign-Caregivers-and-Sensors)  | Setting up patients for monitoring                        |
 | [Manage Account User Types](#Manage-Account-User-Types)                                      | Manage account types                                      |
+| [Simulate Data](#Simulate-Data)                                                              | Simulate sensor data                                      |
 
 ### Creating an Account and Account Options
 
@@ -111,6 +112,14 @@ Clicking the manage patients button allows the user to see all patients a user i
 ![alt text](docs/images/dashboard_user_guide/edit_user_details.PNG)
 
 Use the edit user button to assign new accounts a role or change the role of a pre-existing account. Any newly created users are given the unclassified role, and any admin is able to assign either the caregiver or admin role to to an unclassified user. Admins can also change the role of an existing user. It is NOT possible to alter the User ID or email. It is also possible to delete a user by clicking the delete user button. **Make sure to click save after making any changes to a user's role.**
+
+### Simulate Data
+
+![alt text](docs/images/dashboard_user_guide/simulate_data.PNG)
+
+This page requires ADMIN permissions to access.
+
+It may be inconvenient to populate data so, for development purposes, this page allows administrators to add simulated data for the provided sensor ID and patient.
 
 # Changelog
 
