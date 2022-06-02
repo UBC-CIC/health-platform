@@ -89,6 +89,20 @@ Click the manage button next to a patient's caregivers will pull up this window.
 
 Add a caregiver by selecting a caregiver from the dropdown menu and clicking add. Make sure to click save on the manage caregivers page after.
 
+![alt text](docs/images/dashboard_user_guide/manage_sensors.PNG)
+
+Clicking the manage button next to a patient's sensors will bring up a window with all their assigned sensors and what datatypes each sensor monitors. Sensors can be removed using the remove sensor button, or added using the add sensor button at the top right corner. **Make sure to click save after making any changes to a patient's sensors.**
+
+![alt text](docs/images/dashboard_user_guide/add_sensors.PNG)
+
+There are 3 types of sensors that are currently supported by the dashboard. The Apple Watch and Arduino gas sensor will provide a sensor ID for registration. An Airthings divice will also require a client ID and secret key.
+
+- Apple Watch: The sensor ID can be found in the iOS app under the name "Device ID". More instructions can be found [here](https://github.com/UBC-CIC/health-platform-iOS-watchOS#ios-app-overview).
+
+- Arduino Gas Sensor: The sensor ID can be found after connecting your Arduino sensor to an AWS IoT Thing. More instructions can be found [here](https://github.com/UBC-CIC/health-platform-arduino/blob/main/docs/arduino_sensor_setup.md).
+
+- Airthings Wave Plus: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/AirthingsDeployment.md).
+
 ### Manage Account User Types
 
 ![alt text](docs/images//dashboard_user_guide/users_dashboard.PNG)
