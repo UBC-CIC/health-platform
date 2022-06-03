@@ -4,12 +4,12 @@ Contains React code that runs the webapp.
 
 ## Deployment
 
-#### Prerequisites
+### Prerequisites
 
 * Ensure graphql dependencies are available.
 Follow the instructions [here](../backend/src/common/README.md) to do so.
 * Make sure backend infrastructure and code is deployed. If its not deployed follow these [instructions](../backend/README.md) to do so.
-#### Step 1
+### Step 1
 
 Add the AWS configuration for cognito and appsync end point so that frontend website can call backend APIS. Commit below configuration at `frontend/src/aws-exports.json`:-
 
@@ -33,7 +33,7 @@ Add the AWS configuration for cognito and appsync end point so that frontend web
 }
 ```
 `Note`: Login to AWS console to get the AppSync GraphQL API endpoint and Cognito configuration.
-#### Step 2
+### Step 2
 
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/UBC-CIC/health-platform/tree/main)
 

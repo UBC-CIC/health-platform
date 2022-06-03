@@ -18,11 +18,11 @@ The following architecture diagram illustrates the various AWS components utliiz
 
 # Deployment Guides
 
-To deploy this solution, please follow our [Deployment Guides](docs/DeploymentGuide.md)
+To deploy this solution, please follow our [Deployment Guides](docs/DeploymentGuide.md).
 
 # User Guide
 
-For instructions on how to use the web app interface, refer to the [User Guide](docs/UserGuide.md)
+For instructions on how to use the web app interface, refer to the [User Guide](docs/UserGuide.md).
 
 # Changelog
 
