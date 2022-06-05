@@ -19,6 +19,7 @@ import ReactApexChart from "react-apexcharts";
 import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { WAVEPLUS } from './sensor_config/airthings';
+import { pt } from 'date-fns/locale';
 
 const DEFAULT_HOURS_AGO = 12;
 const DEFAULT_RELATIVE_SHORTCUT = '12h';
@@ -64,7 +65,12 @@ const initialEventsOptions: any = {
         width: 1,
     },
     tooltip: {
-        enabled: true
+        enabled: true,
+        x: {
+            show: true,
+            format: 'dd MMM HH:MM',
+            formatter: undefined,
+        },
     }
 };
 
@@ -268,7 +274,7 @@ export const Dashboard = (props: {
         console.log(`callQueryRequest request with ${JSON.stringify(input)}`);
     
         modules.forEach((module: any) => {
-            const newOptions = getChartOptions(module, start.getTime(), end.getTime(), !searchProperties.useLocalTimezone);
+            const newOptions = getChartOptions(module.sensor_type, start.getTime(), end.getTime(), !searchProperties.useLocalTimezone);
             initialModulesOptions[module.sensor_type] = newOptions;
         });
         setUpdatedModulesOptionsFlag(true);
@@ -307,6 +313,7 @@ export const Dashboard = (props: {
                 }
             } else {
                 measureNameToVals[module.sensor_type] = [{
+                    name: module.sensor_type,
                     data: [],
                 }];
             }
@@ -369,7 +376,12 @@ export const Dashboard = (props: {
                 toggleDataSeries: false
             },
             tooltip: {
-                enabled: false
+                enabled: true,
+                x: {
+                    show: true,
+                    format: 'dd MMM HH:MM',
+                    formatter: undefined,
+                },
             }
         };
     }
@@ -386,8 +398,7 @@ export const Dashboard = (props: {
                 patients={props.patients}
             />
 
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Toolbar />
+            <Box component="main" sx={{ flexGrow: 1, p: 3, marginTop: 2 }}>
                 <Box sx={{ mb: 3 }}>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
@@ -405,7 +416,7 @@ export const Dashboard = (props: {
 
                             {!updatedEventsOptionsFlag && (
                                 <>
-                                    <ReactApexChart options={initialEventsOptions} series={eventsData} type="area" height={160} />
+                                    <ReactApexChart options={initialEventsOptions} series={eventsData} type="area" height={120} />
                                 </>
                             )}
                         </CardContent>
@@ -415,7 +426,7 @@ export const Dashboard = (props: {
                     modules.map((module: any) => (
                         <Box sx={{ mb: 3 }} key={module.sensor_type}>
                             <Card sx={{ minWidth: 275 }}>
-                                <CardContent>
+                                <CardContent sx={{ paddingBottom: '0px !important' as any }}>
                                     <Typography variant="h6" gutterBottom component="div">
                                         {module.sensor_name}
                                     </Typography>
@@ -437,7 +448,7 @@ export const Dashboard = (props: {
                                             <>
                                                 {!updatedModulesOptionsFlag && (
                                                     <>
-                                                        <ReactApexChart options={initialModulesOptions[module.sensor_type]} series={modulesData[module.sensor_type]} type="scatter" height={350} />
+                                                        <ReactApexChart options={initialModulesOptions[module.sensor_type]} series={modulesData[module.sensor_type]} type="scatter" height={180} />
                                                     </>
                                                 )}
                                             </>

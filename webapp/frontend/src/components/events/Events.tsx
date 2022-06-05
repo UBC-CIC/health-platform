@@ -20,8 +20,9 @@ import queryString from 'query-string';
 
 import "./events.css";
 import { Sidebar } from "./Sidebar";
-import { useHistory, useLocation } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import EventCreate from "./EventCreate";
+import { Button } from "@mui/material";
 
 function createData(
     name: string,
@@ -40,6 +41,8 @@ const rows = [
 ];
 
 const DEFAULT_HOURS_AGO = 12;
+const LINK_TO_DASHBOARD_START_BUFFER_MILLISEC = 60 * 60 * 1000;
+const LINK_TO_DASHBOARD_END_BUFFER_MILLISEC = 10 * 60 * 1000;
 
 export const Events = (props: {
     userName: any,
@@ -224,6 +227,12 @@ export const Events = (props: {
         return patientName;
     }
 
+    function getLinkToDashboardLink(eventStart: string, eventEnd: string, patientId: string) {
+        const start = new Date(eventStart).getTime() - LINK_TO_DASHBOARD_START_BUFFER_MILLISEC
+        const end = new Date(eventEnd).getTime() + LINK_TO_DASHBOARD_END_BUFFER_MILLISEC
+        return `/dashboard?start=${start}&end=${end}&type=absolute&patient=${patientId}`
+    }
+
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
@@ -260,11 +269,12 @@ export const Events = (props: {
                             <TableRow>
                                 <TableCell>Start</TableCell>
                                 <TableCell>Finish</TableCell>
-                                <TableCell align="right">Name</TableCell>
-                                <TableCell align="right">Food</TableCell>
-                                <TableCell align="right">Mood</TableCell>
-                                <TableCell align="right">Medication</TableCell>
-                                <TableCell align="right">Notes</TableCell>
+                                <TableCell>Name</TableCell>
+                                <TableCell>Food</TableCell>
+                                <TableCell>Mood</TableCell>
+                                <TableCell>Medication</TableCell>
+                                <TableCell>Notes</TableCell>
+                                <TableCell></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -274,11 +284,18 @@ export const Events = (props: {
                                         {row.start_date_time}
                                     </TableCell>
                                     <TableCell>{row.end_date_time}</TableCell>
-                                    <TableCell align="right">{getPatientName(row.user_id!)}</TableCell>
-                                    <TableCell align="right">{row.food}</TableCell>
-                                    <TableCell align="right">{row.mood}</TableCell>
-                                    <TableCell align="right">{row.medication}</TableCell>
-                                    <TableCell align="right">{row.notes}</TableCell>
+                                    <TableCell>{getPatientName(row.user_id!)}</TableCell>
+                                    <TableCell>{row.food}</TableCell>
+                                    <TableCell>{row.mood}</TableCell>
+                                    <TableCell>{row.medication}</TableCell>
+                                    <TableCell>{row.notes}</TableCell>
+                                    <TableCell>
+                                        <Link to={getLinkToDashboardLink(row.start_date_time!, row.end_date_time!, row.user_id!)} style={{textDecoration: "none"}}>
+                                            <Button variant={"outlined"} color={"primary"} size={"small"}>
+                                                Show on Dashboard
+                                            </Button>
+                                        </Link>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
