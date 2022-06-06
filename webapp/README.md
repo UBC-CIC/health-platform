@@ -1,9 +1,12 @@
 # Health Platform Webapp
 
-## Table of Contents
-- [Dependencies](#Dependencies)
-- [Clone The Repository](#clone-the-repository)
-- [Deployment](#Deployment)
+This page contains some prerequisites before you can start deploying the backend and frontend stacks. Be sure to complete these steps before moving onto deployment.
+
+| Index                                                      | Description                                               |
+|:-----------------------------------------------------------|:----------------------------------------------------------| 
+| [Dependencies](#Dependencies)                              | Prerequisite dependencies                                 |
+| [Clone the Repository](#clone-the-repository)              | How to clone this repository                              |
+| [Deployment](#Deployment)                                  | Deploy the frontend and backend stacks                    |
 
 ## Dependencies
 Before you start deploying, you must have the following dependencies:
