@@ -4,7 +4,7 @@ The `backend` folder contains AWS CDK stacks and AWS Lambda function code that w
 
 | Index                                                      | Description                                               |
 |:-----------------------------------------------------------|:----------------------------------------------------------| 
-| [Install](#step-1-install-dependencies)                    | Install required npm core dependencies                    |
+| [Install Dependencies](#step-1-install-dependencies)       | Install required npm core dependencies                    |
 | [CDK Deployment](#step-2-cdk-deployment)                   | How to deploy the backend cdk stacks                      |
 | [Updating GraphQL Schema](#step-3-updating-graphql-schema) | Updating GraphQL Schema for frontend and backend stacks   |
 | [Frontend Deployment](#step-4-frontend-deployment)         | Proceed to frontend deployment                            |
