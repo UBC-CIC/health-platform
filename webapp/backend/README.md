@@ -2,16 +2,14 @@
 
 The `backend` folder contains AWS CDK stacks and AWS Lambda function code that will handle the ingestion of IoT data as well as user intiated events from the frontend dashboard.
 
-## Table of Contents
-- [Deployment](#deployment)
-    - [Install](#install)
-    - [CDK Deployment](#cdk-deployment)
-    - [Updating GraphQL Schema](#updating-graphql-schema)
-    - [Frontend Deployment](#frontend-deployment)
+| Index                                                      | Description                                               |
+|:-----------------------------------------------------------|:----------------------------------------------------------| 
+| [Install](#step-1-install-dependencies)                    | Install required npm core dependencies                    |
+| [CDK Deployment](#step-2-cdk-deployment)                   | How to deploy the backend cdk stacks                      |
+| [Updating GraphQL Schema](#step-3-updating-graphql-schema) | Updating GraphQL Schema for frontend and backend stacks   |
+| [Frontend Deployment](#step-4-frontend-deployment)         | Proceed to frontend deployment                            |
 
-## Deployment
-
-### Install
+## Step 1: Install Dependencies
 Install the core dependencies:
 ```
 npm install
@@ -24,7 +22,7 @@ npm install
 cd ..
 ```
 
-### CDK Deployment
+## Step 2: CDK Deployment
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `us-west-2` due to region restrictions for Amazon Timestream.
 ```
 cdk synth --profile health-platform
@@ -57,7 +55,7 @@ cdk deploy HealthPlatformSearchStack --profile health-platform
 
 These stacks are deployed using the account you configured under the [dependencies](../README.md#dependencies) step. If you encounter an AWS account error while deploying the stack, check that you have configured your account correctly.
 
-### Updating GraphQL Schema
+## Step 3: Updating GraphQL Schema
 
 The `backend/src/common` folder contains the GraphQL schema that is used by both the backend and frontend website.
 
@@ -74,7 +72,7 @@ Double check that the `*.ts` and `*.graphql` files have been properly updated.
 
 More detailed instructions in [here](src/common/README.md).
 
-### Frontend Deployment
+## Step 4: Frontend Deployment
 Run the following command and proceed with the [frontend deployment](../frontend/README.md)
 ```
 cd ../frontend

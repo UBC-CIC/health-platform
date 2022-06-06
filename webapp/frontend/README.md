@@ -2,15 +2,20 @@
 
 Contains React code that runs the webapp.
 
-## Deployment
+| Index                                                                     | Description                                               |
+|:--------------------------------------------------------------------------|:----------------------------------------------------------| 
+| [Prerequisites](#prerequisites)                                           | Check that previous instructions have been followed       |
+| [Update AWS Constants](#step-1-update-aws-constants)                      | Update Cognito and Appsync constants                      |
+| [Deploy Amplify Website](#step-2-deploy-amplify-website)                  | Deploy Amplify website                                    |
+| [Frontend Development Setup](#step-3-frontend-development-setup-optional) | (Optional) Setup frontend environment for development     |
 
-### Prerequisites
+## Prerequisites
 
 * Ensure graphql dependencies are available.
 Follow the instructions [here](../backend/src/common/README.md) to do so.
 * Make sure backend infrastructure and code is deployed. If its not deployed follow these [instructions](../backend/README.md) to do so.
-### Step 1
 
+## Step 1: Update AWS Constants
 Add the AWS configuration for cognito and appsync end point so that frontend website can call backend APIS. Commit below configuration at `frontend/src/aws-exports.json`:-
 
 ```
@@ -34,7 +39,7 @@ Add the AWS configuration for cognito and appsync end point so that frontend web
 ```
 `Note`: Login to AWS console to get the AppSync GraphQL API endpoint and Cognito configuration. **Ensure your console is in the us-west-2 region to find these constants**.
 
-#### GraphQLEndpoint
+### GraphQLEndpoint
 
 Navigate to the AppSync page in the AWS console and click on healthPlatformAdminsGraphQLAPI.
 
@@ -44,7 +49,9 @@ Select settings from the sidebar, and copy the API URL which will be your GraphQ
 
 ![alt text](/docs/images/deployment_guide/appsync_endpoint.PNG)
 
-#### Cognito Constants
+### Cognito Constants
+
+#### UserPoolId and UserClientId
 
 Navigate to the Cognito Page in the AWS console and select Manage User Pools from the main page.
 
@@ -60,6 +67,8 @@ Under App Clients you will find the UserPoolClientId.
 
 ![alt text](/docs/images/deployment_guide/user_pool_client_id.PNG)
 
+#### IdentityPoolId
+
 Next, navigate back to the Cognito Page in the AWS console and select Manage Identitiy Pools from the main page.
 
 Select HealthPlatformIdentityPool_XXXXXXXXXXXX. Be careful not to select HealthPlatformIdentityPool.
@@ -74,6 +83,8 @@ Here you will find the IdentityPoolId
 
 ![alt text](/docs/images/deployment_guide/cognito_identity_pool_id.PNG)
 
+#### AuthenticatedRole and UnauthenticatedRole
+
 Next, head to the IAM page in the AWS console. Select Roles from the sidebar and search for HealthPlatform_Website. 2 Roles should appear from the search.
 
 ![alt text](/docs/images/deployment_guide/iam.PNG)
@@ -85,7 +96,7 @@ Find the AuthenticatedRole and UnauthenticatedRole by copying the respective ARN
 
 Commit your updated file before continuing onto the next step.
 
-### Step 2
+## Step 2: Deploy Amplify Website
 
 Ensure you are logged into your AWS account and click the Deploy To Amplify Console button to begin the website deployment.
 
@@ -120,7 +131,11 @@ Your webapp is now deployed! Click on the generated Amplify link to open the web
 
 ![alt text](/docs/images/deployment_guide/amplify_5.png)
 
-## Development Setup
+Proceeed with [Frontend Development Setup](#step-3-frontend-development-setup-optional) if you would like to further develop the webapp. Otherwise, head to our [User Guide](/docs/UserGuide.md) to learn how to use the webapp.
+
+## Step 3: Frontend Development Setup (Optional)
+This step is only required if you would like to further develop the frontend website and be able to run a localhost. If you would like to just deploy the Amplify website, only follow the instructions up to [Step 2](#step-2-deploy-amplify-website) and ignore this section.
+
 ### Prerequisites
 
 * Ensure graphql dependencies are available.
@@ -164,8 +179,3 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-## TODOs
-- Register each new sensor as a Partner Cognito:
-    - Store returned client ID and client key in parameter store
-    - IoT to access client ID and client key from parameter store
-    - See: https://github.com/aws-samples/aws-serverless-security-workshop/tree/master/docs/01-add-authentication
