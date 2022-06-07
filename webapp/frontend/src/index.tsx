@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Amplify from "aws-amplify";
-import stack from './aws-exports.json';
 import { UserProvider } from './context/UserContext';
 
 // const Cognito = stack['HealthPlatformCognito']
