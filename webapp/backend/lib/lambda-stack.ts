@@ -8,9 +8,6 @@ import { HealthPlatformVpcStack } from './vpc-stack';
 import alp = require('@aws-cdk/aws-lambda-python');
 import exec = require("child_process");
 
-// The Lambda stack contains all the Lambda functions that are not directly related to PSTN. 
-// These Lambda functions can be created safely in ca-central-1.
-//
 export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly lambdaRole: Role;
     // public readonly queryFunction: DockerImageFunction;
