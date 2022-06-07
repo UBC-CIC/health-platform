@@ -19,6 +19,7 @@ import {
 } from '@aws-cdk/aws-iam';
 import lambda = require('@aws-cdk/aws-lambda');
 import cdk = require('@aws-cdk/core');
+import * as ssm from '@aws-cdk/aws-ssm';
 
 /**
  * HealthPlatformCognitoStack defines a Cognito User and Identity Pool. The user pool will be used for authenticating
@@ -178,7 +179,7 @@ export class HealthPlatformCognitoStack extends Stack {
                 }
             }
         );
-
+        
         // outputs
         new CfnOutput(this, 'UserPoolId', {
             value: userPool.userPoolId
@@ -199,5 +200,35 @@ export class HealthPlatformCognitoStack extends Stack {
         new CfnOutput(this, "UnauthenticatedRole", {
             value: unauthenticatedRole.roleArn,
         });
+
+        new ssm.StringParameter(this, 'CognitoUserPoolId', {
+            description: 'Cognito User Pool Id',
+            parameterName: 'CognitoUserPoolId',
+            stringValue: this.UserPoolId
+        }); 
+
+        new ssm.StringParameter(this, 'CognitoUserPoolClientId', {
+            description: 'User Pool Client Id',
+            parameterName: 'UserPoolClientId',
+            stringValue: userPoolClient.ref
+        }); 
+
+        new ssm.StringParameter(this, 'CognitoIdentityPoolId', {
+            description: 'Identity Pool Id',
+            parameterName: 'IdentityPoolId',
+            stringValue: identityPool.ref
+        }); 
+
+        new ssm.StringParameter(this, 'CognitoUnauthenticatedRole', {
+            description: 'Unauthenticated Role',
+            parameterName: 'UnauthenticatedRole',
+            stringValue: unauthenticatedRole.roleArn
+        }); 
+
+        new ssm.StringParameter(this, 'CognitoAuthenticatedRole', {
+            description: 'Authenticated Role',
+            parameterName: 'AuthenticatedRole',
+            stringValue: authenticatedRole.roleArn
+        }); 
     }
 }
