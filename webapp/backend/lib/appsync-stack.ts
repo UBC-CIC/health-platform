@@ -13,6 +13,7 @@ import { CfnOutput, Construct, Stack } from '@aws-cdk/core';
 import { HealthPlatformDynamoStack } from './dynamodb-stack';
 import { HealthPlatformLambdaStack } from './lambda-stack';
 import { HealthPlatformSearchStack } from './search-stack';
+import * as ssm from '@aws-cdk/aws-ssm';
 
 /**
  * HealthPlatformAppSyncStack defines a GraphQL API for accessing DynamoDB table.
@@ -405,5 +406,11 @@ export class HealthPlatformAppSyncStack extends Stack {
         new CfnOutput(this, "GraphQLAuthorizationType", {
             value: authorizationType
         });
+
+        new ssm.StringParameter(this, 'AppSyncGraphQLEndpoint', {
+            description: 'GraphQL Endpoint',
+            parameterName: 'GraphQLEndpoint',
+            stringValue: api.graphqlUrl
+        }); 
     }
 }
