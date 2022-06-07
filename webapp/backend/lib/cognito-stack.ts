@@ -58,6 +58,9 @@ export class HealthPlatformCognitoStack extends Stack {
                                 // CloudWatch
                                 'cloudwatch:*',
                                 'logs:*',
+                                // SSM
+                                'ssm:GetParameter',
+                                'ssm:GetParameters'
                             ],
                             resources: ['*']
                         })
@@ -179,7 +182,7 @@ export class HealthPlatformCognitoStack extends Stack {
                 }
             }
         );
-        
+
         // outputs
         new CfnOutput(this, 'UserPoolId', {
             value: userPool.userPoolId
