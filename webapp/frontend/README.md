@@ -5,7 +5,6 @@ Contains React code that runs the webapp.
 | Index                                                                     | Description                                               |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------| 
 | [Prerequisites](#prerequisites)                                           | Check that previous instructions have been followed       |
-| [Update AWS Constants](#step-1-update-aws-constants)                      | Update Cognito and Appsync constants                      |
 | [Deploy Amplify Website](#step-2-deploy-amplify-website)                  | Deploy Amplify website                                    |
 | [Frontend Development Setup](#step-3-frontend-development-setup-optional) | (Optional) Setup frontend environment for development     |
 
@@ -15,86 +14,15 @@ Contains React code that runs the webapp.
 Follow the instructions [here](../backend/src/common/README.md) to do so.
 * Make sure backend infrastructure and code is deployed. If its not deployed follow these [instructions](../backend/README.md) to do so.
 
-## Step 1: Update AWS Constants
-Add the AWS configuration for cognito and appsync end point so that frontend website can call backend APIS. Commit below configuration at `frontend/src/aws-exports.json`:-
+## Step 1: Create Amplify IAM Role
+
+Before deploying the Amplify Website we need to create the IAM Role that associate the policies needed to implement this solution. Ensure you have navigated to the frontend directory and run the following command.
 
 ```
-{
-    "HealthPlatformAppSync": {
-      "GraphQLEndpoint": "",
-      "Region": "us-west-2",
-      "GraphQLAuthorizationType": "AMAZON_COGNITO_USER_POOLS",
-      "DangerouslyConnectToHTTPEndpointForTesting": false
-    },
-    "HealthPlatformCognito": {
-      "UserPoolClientId": "",
-      "Region": "us-west-2",
-      "UserPoolId": "",
-      "AuthenticatedRole": "",
-      "IdentityPoolId": "",
-      "UserPoolDomainPrefix": "health-platform-admin",
-      "UnauthenticatedRole": ""
-    }
-}
+aws cloudformation deploy --template-file cfn-amplifyRole.yaml --stack-name amplifyconsole-healthplatform-backend-role --capabilities CAPABILITY_NAMED_IAM --profile health-platform
 ```
-`Note`: Login to AWS console to get the AppSync GraphQL API endpoint and Cognito configuration. **Ensure your console is in the us-west-2 region to find these constants**.
 
-### GraphQLEndpoint
-
-Navigate to the AppSync page in the AWS console and click on healthPlatformAdminsGraphQLAPI.
-
-![alt text](/docs/images/deployment_guide/appsync.PNG)
-
-Select settings from the sidebar, and copy the API URL which will be your GraphQLEndpoint.
-
-![alt text](/docs/images/deployment_guide/appsync_endpoint.PNG)
-
-### Cognito Constants
-
-#### UserPoolId and UserClientId
-
-Navigate to the Cognito Page in the AWS console and select Manage User Pools from the main page.
-
-Select the health-platform-admin-user-pool.
-
-![alt text](/docs/images/deployment_guide/cognito_user_pool.PNG)
-
-Under General Settings you will find the UserPoolId.
-
-![alt text](/docs/images/deployment_guide/user_pool_id.PNG)
-
-Under App Clients you will find the UserPoolClientId.
-
-![alt text](/docs/images/deployment_guide/user_pool_client_id.PNG)
-
-#### IdentityPoolId
-
-Next, navigate back to the Cognito Page in the AWS console and select Manage Identitiy Pools from the main page.
-
-Select HealthPlatformIdentityPool_XXXXXXXXXXXX. Be careful not to select HealthPlatformIdentityPool.
-
-![alt text](/docs/images/deployment_guide/cognito_identity_pool.PNG)
-
-Select Edit Identity Pool in the top right corner.
-
-![alt text](/docs/images/deployment_guide/cognito_identity_pool_2.PNG)
-
-Here you will find the IdentityPoolId
-
-![alt text](/docs/images/deployment_guide/cognito_identity_pool_id.PNG)
-
-#### AuthenticatedRole and UnauthenticatedRole
-
-Next, head to the IAM page in the AWS console. Select Roles from the sidebar and search for HealthPlatform_Website. 2 Roles should appear from the search.
-
-![alt text](/docs/images/deployment_guide/iam.PNG)
-
-Find the AuthenticatedRole and UnauthenticatedRole by copying the respective ARNs.
-
-![alt text](/docs/images/deployment_guide/iam_authenticated.PNG)
-![alt text](/docs/images/deployment_guide/iam_unauthenticated.PNG)
-
-Commit your updated file before continuing onto the next step.
+The command creates the role name **amplifyconsole-healthplatform-backend-role** that will be used on the next step.
 
 ## Step 2: Deploy Amplify Website
 
@@ -109,6 +37,10 @@ The following page will appear after clicking the button. Ensure the correct reg
 After connecting your Github account this window should appear. Click save and deploy to begin the deployment.
 
 ![alt text](/docs/images/deployment_guide/amplify_2.PNG)
+
+Next, click general in the sidebar and click edit in the top right corner. Open the Service Role dropdown menu and select the **amplifyconsole-healthplatform-backend-role** that aws created in [Step 1](#step-1-create-amplify-iam-role). Finish by clicking save.
+
+![alt text](/docs/images/deployment_guide/amplify_6.PNG)
 
 The deployment will take a few minutes. Wait until the status of Verify is green.
 

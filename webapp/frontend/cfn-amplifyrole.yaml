@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+
+  AmplifyRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: amplifyconsole-healthplatform-backend-role
+      Description: IAM Role to deploy amplify Health Platform
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - amplify.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess-Amplify
+        - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
