@@ -24,7 +24,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             },
         });
 
-        const domainName = 'health-platform-dev-domain'
+        const domainName = 'health-platform-domain'
 
         const lambdaRole = new Role(this, 'HealthPlatformSearchLambdaRole', {
             roleName: 'HealthPlatformSearchLambdaRole',
@@ -68,11 +68,10 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                 new ArnPrincipal(lambdaRole.roleArn),
             ],
             resources: [
-                `arn:aws:es:us-west-2:022810127093:domain/${domainName}`,
+                `arn:aws:es:us-west-2:${this.account}:domain/${domainName}`,
             ],
         });
 
-        // configuration for prototyping, not suitable for production
         this.devDomain = new Domain(this, 'HealthPlatformDomain', {
             version: EngineVersion.OPENSEARCH_1_1,
             enableVersionUpgrade: true,
@@ -80,14 +79,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                 dataNodes: 2,
                 dataNodeInstanceType: "t2.small.search"
             },
-            //   ebs: {
-            //     volumeSize: 2,
-            //   },
-            // logging: {
-            // slowSearchLogEnabled: true,
-            // appLogEnabled: true,
-            // slowIndexLogEnabled: true,
-            // },
+            domainName: domainName,
             accessPolicies: [openSearchPolicyStatement],
             vpc: vpcStack.vpc, 
             vpcSubnets: [vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED })],
