@@ -51,9 +51,27 @@ cdk deploy HealthPlatformCognitoStack --profile health-platform
 cdk deploy HealthPlatformAppSyncStack --profile health-platform
 cdk deploy HealthPlatformIotStack --profile health-platform
 cdk deploy HealthPlatformSearchStack --profile health-platform
+cdk deploy HealthPlatformVpcStack --profile health-platform
 ```
+### TroubleShooting
+
+#### AWS Account error
 
 These stacks are deployed using the account you configured under the [dependencies](../README.md#dependencies) step. If you encounter an AWS account error while deploying the stack, check that you have configured your account correctly.
+
+#### VPC Endpoint service does not exist
+
+If you run into an error that says **The Vpc Endpoint Service 'com.amazonaws.us-west-2.timestream.ingest-cell1' does not exist** while deploying the HealthPlatformVpcStack, visit the [Amazon Timestream](https://us-west-2.console.aws.amazon.com/timestream/home?region=us-west-2#databases) page in the console and rerun the cdk deploy command.
+```
+cdk deploy HealthPlatformVpcStack --profile health-platform
+```
+
+#### Failed to assume service linked role AppSync
+
+If your run into an error that says **Failed to assume service-linked role arn:aws:iam::YOUR_ACCOUNT_ID:role/aws-service-role/appsync.amazonaws.com/AWSServiceRoleForAppSync, please retry** while deploying the AppSync stack, simply rerun the cdk deploy command.
+```
+cdk deploy HealthPlatformAppSyncStack --profile health-platform
+```
 
 ## Step 3: Updating GraphQL Schema
 
