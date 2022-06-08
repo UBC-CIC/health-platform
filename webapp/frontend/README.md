@@ -5,6 +5,7 @@ Contains React code that runs the webapp.
 | Index                                                                     | Description                                               |
 |:--------------------------------------------------------------------------|:----------------------------------------------------------| 
 | [Prerequisites](#prerequisites)                                           | Check that previous instructions have been followed       |
+| [Create Amplify IAM Role](#step-1-create-amplify-iam-role)                | Create the required Amplify IAM Role                      |
 | [Deploy Amplify Website](#step-2-deploy-amplify-website)                  | Deploy Amplify website                                    |
 | [Frontend Development Setup](#step-3-frontend-development-setup-optional) | (Optional) Setup frontend environment for development     |
 
