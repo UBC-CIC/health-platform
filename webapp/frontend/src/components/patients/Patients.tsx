@@ -119,13 +119,10 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Toolbar />
                 <TableContainer component={Paper}>
-                    {
-                        loading ? (
-                            <>Loading...</>
-                        ) : items.length === 0 ? (
-                            <>No patients found</>
-                        ) : (
                             <Table sx={{ minWidth: 650 }} aria-label="caption table">
+                                {
+                                    items.length == 0 && <caption>No patients found - create a patient.</caption>
+                                }
                                 <TableHead>
                                     <TableRow>
                                         <TableCell>Patient Name</TableCell>
@@ -154,8 +151,6 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
                                     ))}
                                 </TableBody>
                             </Table>
-                        )
-                    }
                 </TableContainer>
             </Box>
         </Box>
