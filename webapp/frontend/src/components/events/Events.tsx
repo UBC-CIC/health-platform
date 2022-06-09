@@ -268,7 +268,6 @@ export const Events = (props: {
                         <TableHead>
                             <TableRow>
                                 <TableCell>Start</TableCell>
-                                <TableCell>Finish</TableCell>
                                 <TableCell>Name</TableCell>
                                 <TableCell>Food</TableCell>
                                 <TableCell>Mood</TableCell>
@@ -283,7 +282,6 @@ export const Events = (props: {
                                     <TableCell component="th" scope="row">
                                         {row.start_date_time}
                                     </TableCell>
-                                    <TableCell>{row.end_date_time}</TableCell>
                                     <TableCell>{getPatientName(row.user_id!)}</TableCell>
                                     <TableCell>{row.food}</TableCell>
                                     <TableCell>{row.mood}</TableCell>

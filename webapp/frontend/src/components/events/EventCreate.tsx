@@ -36,13 +36,16 @@ export const EventCreate = (props: { userName: string; patients: PatientsDetail[
     const handleCreateRequest = async () => {
         setOpen(true);
 
-        console.log(start, end, medication, mood, food, notes);
+        console.log(start, medication, mood, food, notes);
+
+        var endDate = new Date(start)
+        endDate.setMinutes(endDate.getMinutes() + 1)
 
         const eventDetail: EventDetailInput = {
             event_id: uuidv4(),
             user_id: patientId,
             start_date_time: start,
-            end_date_time: end,
+            end_date_time: endDate as any,
             medication: medication,
             mood: mood,
             food: food,
@@ -96,14 +99,6 @@ export const EventCreate = (props: { userName: string; patients: PatientsDetail[
                                     label="Start Time"
                                     value={start}
                                     onChange={(value: any) => setStart(value)}
-                                    renderInput={(params) => <TextField {...params} />}
-                                />
-                            </LocalizationProvider>
-                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                <DateTimePicker
-                                    label="End Time"
-                                    value={end}
-                                    onChange={(value: any) => setEnd(value)}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
                             </LocalizationProvider>
