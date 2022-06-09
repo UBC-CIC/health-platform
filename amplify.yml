@@ -4,10 +4,12 @@ backend:
     preBuild:
       commands:
         - cd ../backend
+        - npm install aws-cdk@2.27.0 -g
+        - npm install typescript -g
+        - npm install
     build:
       commands:
-        - '# Execute Amplify CLI with the helper script'
-        - amplifyPush --simple
+        - npm run build
 
 frontend:
   phases:
