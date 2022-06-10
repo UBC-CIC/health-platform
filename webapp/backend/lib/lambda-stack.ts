@@ -14,6 +14,7 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly queryFunction: Function;
     public readonly simulateFunction: Function;
     public readonly externalSensorFunction: Function;
+    public readonly athenaS3QueryFunction: Function;
 
     constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack) {
         super(app, id, {
@@ -49,6 +50,10 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                                 's3:GetObject',
                                 's3:PutObject',
                                 's3:ListBucket',
+                                's3:GetBucketLocation',
+                                "s3:ListBucketMultipartUploads",
+                                "s3:AbortMultipartUpload",
+                                "s3:ListMultipartUploadParts",
                                 'kms:Decrypt',
                                 'kms:Encrypt',
                                 'kms:GenerateDataKey',
@@ -77,6 +82,11 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                                 'ec2:CreateNetworkInterface',
                                 'ec2:Describe*',
                                 'ec2:DeleteNetworkInterface',
+                                //Athena
+                                'athena:*',
+                                //Glue 
+                                'glue:*',
+
                             ],
                             resources: ['*']
                         })
@@ -126,5 +136,16 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             vpc: vpcStack.vpc,
             vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
         });
+
+        this.athenaS3QueryFunction = new lambda.Function(this, 'AthenaS3QueryFunction', {
+            functionName: "AthenaS3Query",
+            handler: 'athena-patient-S3query.handler',
+            code: new lambda.AssetCode('build/src'),
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300)
+        });
+
     }
 }

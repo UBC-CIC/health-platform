@@ -398,6 +398,11 @@ export class HealthPlatformAppSyncStack extends Stack {
             fieldName: 'searchEvents'
         });
 
+        api.addLambdaDataSource('AthenaS3QueryDataSource', lambdaStack.athenaS3QueryFunction).createResolver({
+            typeName: 'Query',
+            fieldName: 'getMessage'
+        });
+
         // Cloudformation Output
         new CfnOutput(this, "GraphQLEndpoint", {
             value: api.graphqlUrl

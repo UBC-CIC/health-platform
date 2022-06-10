@@ -26,6 +26,13 @@ export const searchEvents = /* GraphQL */ `
     }
   }
 `;
+export const getMessage = /* GraphQL */ `
+  query GetMessage($patientId: String!) {
+    getMessage(patientId: $patientId) {
+      data
+    }
+  }
+`;
 export const getEventDetail = /* GraphQL */ `
   query GetEventDetail($eventId: String!) {
     getEventDetail(eventId: $eventId) {
