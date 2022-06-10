@@ -1,23 +1,24 @@
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm install
-    build:
-      commands:
-        - export REACT_APP_GRAPHQLENDPOINT=$(aws ssm get-parameter --name GraphQLEndpoint --query Parameter.Value --output text --region us-west-2)
-        - export REACT_APP_USERPOOLID=$(aws ssm get-parameter --name CognitoUserPoolId --query Parameter.Value --output text --region us-west-2)
-        - export REACT_APP_USERPOOLCLIENTID=$(aws ssm get-parameter --name UserPoolClientId --query Parameter.Value --output text --region us-west-2)
-        - export REACT_APP_IDENTITYPOOLID=$(aws ssm get-parameter --name IdentityPoolId --query Parameter.Value --output text --region us-west-2)
-        - export REACT_APP_AUTHENTICATEDROLE=$(aws ssm get-parameter --name AuthenticatedRole --query Parameter.Value --output text --region us-west-2)
-        - export REACT_APP_UNAUTHENTICATEDROLE=$(aws ssm get-parameter --name UnauthenticatedRole --query Parameter.Value --output text --region us-west-2)
-        - npm run build
-  artifacts:
-    baseDirectory: build
-    files:
-    - '**/*'
-  cache:
-    paths:
-    - node_modules/**/*
-appRoot: webapp/frontend
+applications:
+  - frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install
+        build:
+          commands:
+            - export REACT_APP_GRAPHQLENDPOINT=$(aws ssm get-parameter --name GraphQLEndpoint --query Parameter.Value --output text --region us-west-2)
+            - export REACT_APP_USERPOOLID=$(aws ssm get-parameter --name CognitoUserPoolId --query Parameter.Value --output text --region us-west-2)
+            - export REACT_APP_USERPOOLCLIENTID=$(aws ssm get-parameter --name UserPoolClientId --query Parameter.Value --output text --region us-west-2)
+            - export REACT_APP_IDENTITYPOOLID=$(aws ssm get-parameter --name IdentityPoolId --query Parameter.Value --output text --region us-west-2)
+            - export REACT_APP_AUTHENTICATEDROLE=$(aws ssm get-parameter --name AuthenticatedRole --query Parameter.Value --output text --region us-west-2)
+            - export REACT_APP_UNAUTHENTICATEDROLE=$(aws ssm get-parameter --name UnauthenticatedRole --query Parameter.Value --output text --region us-west-2)
+            - npm run build
+      artifacts:
+        baseDirectory: build
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
+    appRoot: webapp/frontend
