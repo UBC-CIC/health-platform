@@ -29,7 +29,8 @@ cdk synth --profile health-platform
 cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-west-2 --profile health-platform
 ```
 
-Deploy the CDK stacks (this will take ~10 min):
+Deploy the CDK stacks (this will take 30-40 minutes):
+If you run into any issues while deploying, refer do [Troubleshooting](#troubleshooting) for solutions.
 
 For Mac OS
 ```
@@ -58,6 +59,10 @@ cdk deploy HealthPlatformVpcStack --profile health-platform
 #### AWS Account error
 
 These stacks are deployed using the account you configured under the [dependencies](../README.md#dependencies) step. If you encounter an AWS account error while deploying the stack, check that you have configured your account correctly.
+
+#### CDK Deployment stuck while deploying OpenSearch Domain for HealthPlatformSearchStack
+
+If CDK deployment appears to be stuck on the deployment of the OpenSearch Domain for the HealthPlatformSearchStack, please continue waiting as this is not any issue with the deployment. This is due to the nodes for the OpenSearch Domain taking approximately 20 to 30 minutes to intialize.
 
 #### VPC Endpoint service does not exist
 
