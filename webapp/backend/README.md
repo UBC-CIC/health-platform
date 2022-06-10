@@ -10,9 +10,9 @@ The `backend` folder contains AWS CDK stacks and AWS Lambda function code that w
 | [Frontend Deployment](#step-4-frontend-deployment)         | Proceed to frontend deployment                            |
 
 ## Step 1: Install Dependencies
-Install the core dependencies:
+Ensure you are in the backend directory, then install the core dependencies:
 ```
-npm install
+npm install -g npm@6.14.15
 ```
 
 Install dependencies required by the AWS Lambda functions. Note that this generates a separate `node_modules` directory in the `src` folder. This is done because everything under the `src` folder will be uploaded to AWS Lambda and we want to exclude the packages (e.g. `aws-sdk`) that already comes with AWS Lambda:
@@ -79,6 +79,9 @@ The `backend/src/common` folder contains the GraphQL schema that is used by both
 
 After performing any model changes to `schema.graphql`, run the following commands from within the `common` directory:
 ```
+#installs required graphql dependencies
+npm install -g amplify-graphql-docs-generator
+
 # generates backend/src/common/types/API.ts
 amplify codegen types
 

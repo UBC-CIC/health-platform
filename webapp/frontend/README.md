@@ -39,7 +39,7 @@ After connecting your Github account this window should appear. Click save and d
 
 ![alt text](/docs/images/deployment_guide/amplify_2.PNG)
 
-Next, click general in the sidebar and click edit in the top right corner. Open the Service Role dropdown menu and select the **amplifyconsole-healthplatform-backend-role** that aws created in [Step 1](#step-1-create-amplify-iam-role). Finish by clicking save.
+Next, click general in the sidebar and click edit in the top right corner. Open the Service Role dropdown menu and select the **amplifyconsole-healthplatform-backend-role** that aws created in [Step 1](#step-1-create-amplify-iam-role). Finish by clicking save. If you attach the role too slowly, the build will fail the first time. If this happens, ensure the role has been attached, click main, then click redeploy this version.
 
 ![alt text](/docs/images/deployment_guide/amplify_6.PNG)
 
