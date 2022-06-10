@@ -30,7 +30,8 @@ cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-west-2 --profile health-platform
 ```
 
 Deploy the CDK stacks (this will take 30-40 minutes):
-If you run into any issues while deploying, refer do [Troubleshooting](#troubleshooting) for solutions.
+
+If you run into any issues while deploying, refer to [Troubleshooting](#troubleshooting) for solutions.
 
 For Mac OS
 ```
