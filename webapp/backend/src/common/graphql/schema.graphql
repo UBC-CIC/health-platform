@@ -257,6 +257,10 @@ type QueryResponse {
     rows: [[String]]
 }
 
+type Message {
+    data: String
+}
+
 
 # 
 # Insert Data Lambda function
@@ -297,7 +301,7 @@ type Query @aws_cognito_user_pools
 @aws_iam {
     query(input: QueryRequest): QueryResponse
 	searchEvents(input: SearchRequest): SearchResponse
-
+	getMessage(patientId:String!): Message
 	getEventDetail(eventId: String!): EventDetail
 	listEventDetails(filter: ModelEventDetailFilterInput, limit: Int, nextToken: String): EventDetailConnection
 	getEventDetailsByUser(userId: String!, limit: Int, nextToken: String): EventDetailConnection
@@ -309,6 +313,7 @@ type Query @aws_cognito_user_pools
 		nextToken: String
 	): EventDetailConnection
 
+	
 	getPatientsDetail(patientId: String!): PatientsDetail
 	listPatientsDetails(filter: ModelPatientsDetailFilterInput, limit: Int, nextToken: String): PatientsDetailConnection
 

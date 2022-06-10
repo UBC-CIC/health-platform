@@ -42,8 +42,8 @@ export type ModelStringInput = {
 
 export type EventDetail = {
   __typename: "EventDetail",
-  event_id?: string,
-  user_id?: string,
+  event_id: string,
+  user_id: string,
   start_date_time?: string | null,
   end_date_time?: string | null,
   medication?: string | null,
@@ -71,7 +71,7 @@ export type ModelPatientsDetailConditionInput = {
 
 export type PatientsDetail = {
   __typename: "PatientsDetail",
-  patient_id?: string,
+  patient_id: string,
   name?: string | null,
   sensor_types?: Array< string | null > | null,
   user_ids?: Array< string | null > | null,
@@ -100,7 +100,7 @@ export type ModelSensorsDetailConditionInput = {
 
 export type SensorsDetail = {
   __typename: "SensorsDetail",
-  sensor_id?: string,
+  sensor_id: string,
   patient_id?: string | null,
   sensor_types?: Array< string | null > | null,
   watermark?: string | null,
@@ -127,7 +127,7 @@ export type ModelUsersDetailConditionInput = {
 
 export type UsersDetail = {
   __typename: "UsersDetail",
-  user_id?: string,
+  user_id: string,
   email?: string | null,
   user_type?: string | null,
   patient_ids?: Array< string | null > | null,
@@ -192,6 +192,11 @@ export type EventDetailConnection = {
   __typename: "EventDetailConnection",
   items?:  Array<EventDetail | null > | null,
   nextToken?: string | null,
+};
+
+export type Message = {
+  __typename: "Message",
+  data?: string | null,
 };
 
 export type ModelPatientsDetailFilterInput = {
@@ -302,7 +307,7 @@ export type DeleteEventDetailMutation = {
 };
 
 export type PublishNewEventDetailMutationVariables = {
-  input?: EventDetailInput,
+  input: EventDetailInput,
 };
 
 export type PublishNewEventDetailMutation = {
@@ -320,7 +325,7 @@ export type PublishNewEventDetailMutation = {
 };
 
 export type PublishEventDetailUpdatesMutationVariables = {
-  input?: EventDetailInput,
+  input: EventDetailInput,
 };
 
 export type PublishEventDetailUpdatesMutation = {
@@ -383,7 +388,7 @@ export type DeletePatientsDetailMutation = {
 };
 
 export type PublishNewPatientsDetailMutationVariables = {
-  input?: PatientsDetailInput,
+  input: PatientsDetailInput,
 };
 
 export type PublishNewPatientsDetailMutation = {
@@ -397,7 +402,7 @@ export type PublishNewPatientsDetailMutation = {
 };
 
 export type PublishPatientsDetailUpdatesMutationVariables = {
-  input?: PatientsDetailInput,
+  input: PatientsDetailInput,
 };
 
 export type PublishPatientsDetailUpdatesMutation = {
@@ -462,7 +467,7 @@ export type DeleteSensorsDetailMutation = {
 };
 
 export type PublishNewSensorsDetailMutationVariables = {
-  input?: SensorsDetailInput,
+  input: SensorsDetailInput,
 };
 
 export type PublishNewSensorsDetailMutation = {
@@ -478,7 +483,7 @@ export type PublishNewSensorsDetailMutation = {
 };
 
 export type PublishSensorsDetailUpdatesMutationVariables = {
-  input?: SensorsDetailInput,
+  input: SensorsDetailInput,
 };
 
 export type PublishSensorsDetailUpdatesMutation = {
@@ -539,7 +544,7 @@ export type DeleteUsersDetailMutation = {
 };
 
 export type PublishNewUsersDetailMutationVariables = {
-  input?: UsersDetailInput,
+  input: UsersDetailInput,
 };
 
 export type PublishNewUsersDetailMutation = {
@@ -553,7 +558,7 @@ export type PublishNewUsersDetailMutation = {
 };
 
 export type PublishUsersDetailUpdatesMutationVariables = {
-  input?: UsersDetailInput,
+  input: UsersDetailInput,
 };
 
 export type PublishUsersDetailUpdatesMutation = {
@@ -611,7 +616,7 @@ export type SearchEventsQuery = {
 };
 
 export type GetEventDetailQueryVariables = {
-  eventId?: string,
+  eventId: string,
 };
 
 export type GetEventDetailQuery = {
@@ -653,7 +658,7 @@ export type ListEventDetailsQuery = {
 };
 
 export type GetEventDetailsByUserQueryVariables = {
-  userId?: string,
+  userId: string,
   limit?: number | null,
   nextToken?: string | null,
 };
@@ -677,9 +682,9 @@ export type GetEventDetailsByUserQuery = {
 };
 
 export type GetEventDetailsByUserAndCreateTimeQueryVariables = {
-  userId?: string,
-  startTime?: string,
-  endTime?: string,
+  userId: string,
+  startTime: string,
+  endTime: string,
   limit?: number | null,
   nextToken?: string | null,
 };
@@ -702,8 +707,19 @@ export type GetEventDetailsByUserAndCreateTimeQuery = {
   } | null,
 };
 
+export type GetMessageQueryVariables = {
+  patientId: string,
+};
+
+export type GetMessageQuery = {
+  getMessage?:  {
+    __typename: "Message",
+    data?: string | null,
+  } | null,
+};
+
 export type GetPatientsDetailQueryVariables = {
-  patientId?: string,
+  patientId: string,
 };
 
 export type GetPatientsDetailQuery = {
@@ -737,7 +753,7 @@ export type ListPatientsDetailsQuery = {
 };
 
 export type GetSensorsDetailQueryVariables = {
-  patientId?: string,
+  patientId: string,
 };
 
 export type GetSensorsDetailQuery = {
@@ -753,7 +769,7 @@ export type GetSensorsDetailQuery = {
 };
 
 export type GetSensorsDetailByUserQueryVariables = {
-  patientId?: string,
+  patientId: string,
   limit?: number | null,
   nextToken?: string | null,
 };
@@ -797,7 +813,7 @@ export type ListSensorsDetailsQuery = {
 };
 
 export type GetUsersDetailQueryVariables = {
-  userId?: string,
+  userId: string,
 };
 
 export type GetUsersDetailQuery = {

@@ -16,6 +16,7 @@ import { getPatientsDetail, getUsersDetail, listPatientsDetails } from "../../co
 import { onCreatePatientsDetail } from "../../common/graphql/subscriptions";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import CreatePatient from "./CreatePatient";
+import DownloadData from "./DownloadData";
 import EditPatient from "./EditPatient";
 import ManageSensors from "./ManageSensors";
 import ManageUsers from "./ManageUsers";
@@ -132,6 +133,7 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
                                         <TableCell>Patient ID</TableCell>
                                         <TableCell>Caregivers</TableCell>
                                         <TableCell>Sensors</TableCell>
+                                        <TableCell>Download Data</TableCell>
                                         <TableCell align="right">
                                             {(props.userDetail.user_type === "ADMIN") &&
                                             <CreatePatient user={props.userDetail} />}
@@ -147,6 +149,7 @@ export const Patients = (props: { userDetail: UsersDetail, userName: any, userId
                                             <TableCell>{row.patient_id}</TableCell>
                                             <TableCell>{row.user_ids?.length} caregivers <ManageUsers patient={row} /></TableCell>
                                             <TableCell>{row.sensor_types?.length} measures monitored <ManageSensors patientId={row.patient_id!} patient={row} /></TableCell>
+                                           <TableCell><DownloadData user={props.userDetail} patientId={row.patient_id!} patient={row} /></TableCell>
                                             <TableCell align="right">
                                                 <EditPatient user={props.userDetail} patientId={row.patient_id!} patient={row} />
                                             </TableCell>

@@ -398,6 +398,13 @@ export class HealthPlatformAppSyncStack extends Stack {
             fieldName: 'searchEvents'
         });
 
+        // Define Lambda DataSource and Resolver - make sure mutations are defined in schema.graphql
+        
+        api.addLambdaDataSource('AthenaS3QueryDataSource', lambdaStack.athenaS3QueryFunction).createResolver({
+            typeName: 'Query',
+            fieldName: 'getMessage'
+        });
+
         // Cloudformation Output
         new CfnOutput(this, "GraphQLEndpoint", {
             value: api.graphqlUrl

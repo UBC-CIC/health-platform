@@ -16,6 +16,8 @@ import { Duration } from '@aws-cdk/core';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { HealthPlatformVpcStack } from './vpc-stack';
+import * as glue from '@aws-cdk/aws-glue';
+
 
 // This stack contains resources used by the IoT data flow.
 
@@ -24,6 +26,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
     private static GLUE_TABLE_NAME = "health-platform-glue-table"
     private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
     private static TIMESTREAM_REJECTED_DATA_PREFIX = "health-platform-rejected-data-"
+    private static EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
 
     public readonly lambdaRole: Role;
 
@@ -156,6 +159,11 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
         let timestreamRejectedDataBucket = new Bucket(this, 'TimestreamRejectedDataBucket', {
             bucketName: HealthPlatformIotStack.TIMESTREAM_REJECTED_DATA_PREFIX + this.account,
+            encryption: BucketEncryption.S3_MANAGED,
+        });
+
+        let patientExportDataQueryResults = new Bucket(this, 'ExportDataQueryBucket', {
+            bucketName: HealthPlatformIotStack.EXPORT_DATA_PREFIX + this.account,
             encryption: BucketEncryption.S3_MANAGED,
         });
 
@@ -414,5 +422,41 @@ export class HealthPlatformIotStack extends cdk.Stack {
             sourceAccount: this.account,
             functionName: eventHandlerFunction.functionArn,
         });
+
+        const patientDB = new glue.Database(this, "S3-Health-Glue-Table", {
+            databaseName: "patient-export-db",
+          });
+          
+          new glue.Table(this, "PatientDataTable", {
+            database: patientDB,
+            tableName: "patient-export-data",
+            bucket: parquetMetricsBucket,
+            columns: [
+              {
+                name: "patientid",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "sensorid",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "timestamp",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "measurementtype",
+                type: glue.Schema.STRING,
+                
+              },
+              {
+                name: "measurement",
+                type: glue.Schema.STRING,
+              },
+
+            ],
+            dataFormat: glue.DataFormat.PARQUET,
+          });
+
     }
 }
