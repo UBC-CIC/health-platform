@@ -12,6 +12,7 @@
 | [Add Patients, Assign Caregivers and Sensors](#Add-Patients,-Assign-Caregivers-and-Sensors)  | Setting up patients for monitoring                        |
 | [Manage Account User Types](#Manage-Account-User-Types)                                      | Manage account types                                      |
 | [Simulate Data](#Simulate-Data)                                                              | Simulate sensor data                                      |
+| [Download Data](#Download-Data)                                                              | Download patient data                                       |
 
 ## Creating an Account and Account Options
 
@@ -114,3 +115,11 @@ Use the edit user button to assign new accounts a role or change the role of a p
 This page requires ADMIN permissions to access.
 
 It may be inconvenient to populate data so, for development purposes, this page allows administrators to add simulated data for the provided sensor ID and patient.
+
+## Download Data
+![alt text](./images/dashboard_user_guide/download_data_dashboard.PNG)
+
+
+Simply click on Download Data -> Download File for any of the assigned patients. It will fetch the patient data and download the CSV file to your machine.
+
+![alt text](./images/dashboard_user_guide/csv_file_download.PNG)

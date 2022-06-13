@@ -28,4 +28,4 @@ The Architecture diagram gives an insight into two different event flows, how se
 
 10. Indexed events are searched using an OpenSearch Lambda function which will display the search results on the frontend website.
 
-11. Users can download all of a patient’s data via a button on the frontend website. A Lambda function will use Athena to query the Health Platform Metrics S3 bucket for all of the patient’s data. The Lambda function then converts that data into a csv file, which will be returned with a signed link to the S3 file.
+11. Users can download all of a patient’s data via a button on the frontend website. A Glue database points to the data in the Health Platform Metrics S3 bucket. A GraphQL query then triggers a Lambda function which triggers Athena to query the Glue database. The patient data is exported to the Patient Export Data bucket and returned as a CSV file available for download through a presigned S3 url link. 
