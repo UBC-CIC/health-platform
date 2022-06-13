@@ -117,9 +117,9 @@ This page requires ADMIN permissions to access.
 It may be inconvenient to populate data so, for development purposes, this page allows administrators to add simulated data for the provided sensor ID and patient.
 
 ## Download Data
-![alt text](./images/dashboard_user_guide/download_data_dashboard.PNG)
+![alt text](./images/dashboard_user_guide/download_data_dashboard.png)
 
 
 Simply click on Download Data -> Download File for any of the assigned patients. It will fetch the patient data and download the CSV file to your machine.
 
-![alt text](./images/dashboard_user_guide/csv_file_download.PNG)
+![alt text](./images/dashboard_user_guide/csv_file_download.png)
