@@ -31,7 +31,7 @@ export const handler = async (event: any = {}, context: any, callback: any) => {
     let { patientId } = event.arguments;
 
     var params = {
-        QueryString: 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\' LIMIT 10',
+        QueryString: 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\'',
 
         QueryExecutionContext: {
             Database: database,
