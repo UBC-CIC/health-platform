@@ -12,6 +12,11 @@ The `backend` folder contains AWS CDK stacks and AWS Lambda function code that w
 ## Step 1: Install Dependencies
 Ensure you are in the backend directory, then install the core dependencies:
 ```
+npm install
+```
+
+If this command gives you an error, run the following command instead:
+```
 npm install -g npm@6.14.15
 ```
 

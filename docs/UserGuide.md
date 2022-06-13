@@ -9,10 +9,9 @@
 | [Creating an Account and Account Options](#Creating-an-Account-and-Account-Options)          | Create an account for caregiver/admin access              |
 | [Main Dashboard](#Main-Dashboard)                                                            | How the main dashboard works                              |
 | [Add Events](#Add-Events)                                                                    | Adding any events                                         |
-| [Add Patients, Assign Caregivers and Sensors](#Add-Patients,-Assign-Caregivers-and-Sensors)  | Setting up patients for monitoring                        |
+| [Add Patients, Assign Caregivers, Assign Sensors, and Download Data](#Add-Patients,-Assign-Caregivers-and-Sensors)  | Setting up patients for monitoring                        |
 | [Manage Account User Types](#Manage-Account-User-Types)                                      | Manage account types                                      |
 | [Simulate Data](#Simulate-Data)                                                              | Simulate sensor data                                      |
-| [Download Data](#Download-Data)                                                              | Download patient data                                       |
 
 ## Creating an Account and Account Options
 
@@ -52,7 +51,7 @@ The events page displays all logged patient events found for the filters on the 
 
 After selecting the create event the user will see this window. Select the start and end time for the event, the patient for which the event occured, and fill in the remaining applicable information about the event. Finish by clicking the create button at the bottom right corner. Your event will show up in the main events page if you have the correct timeframe selected.
 
-## Add Patients, Assign Caregivers and Sensors
+## Add Patients, Assign Caregivers, Assign Sensors, and Download Data
 
 ![alt text](./images/dashboard_user_guide/patients_dashboard.PNG)
 
@@ -84,9 +83,16 @@ There are 3 types of sensors that are currently supported by the dashboard. The 
 
 - Airthings Wave Plus: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/AirthingsDeployment.md).
 
+![alt text](./images/dashboard_user_guide/download_data_dashboard.png)
+
+
+To download a patient's data, simply click on Download Data -> Download File for any of the assigned patients. It will fetch the patient data and download the CSV file to your machine. Please note that if a patient's dataset is very large, this may take a while.
+
+![alt text](./images/dashboard_user_guide/csv_file_download.png)
+
 ## Manage Account User Types
 
-![alt text](./images//dashboard_user_guide/users_dashboard.PNG)
+![alt text](./images/dashboard_user_guide/users_dashboard.PNG)
 
 This page requires ADMIN permissions to access.
 
@@ -115,11 +121,3 @@ Use the edit user button to assign new accounts a role or change the role of a p
 This page requires ADMIN permissions to access.
 
 It may be inconvenient to populate data so, for development purposes, this page allows administrators to add simulated data for the provided sensor ID and patient.
-
-## Download Data
-![alt text](./images/dashboard_user_guide/download_data_dashboard.png)
-
-
-Simply click on Download Data -> Download File for any of the assigned patients. It will fetch the patient data and download the CSV file to your machine.
-
-![alt text](./images/dashboard_user_guide/csv_file_download.png)

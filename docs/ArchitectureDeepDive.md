@@ -1,12 +1,14 @@
 # Backend and Frontend Stack Deep Dive
 
-### Architecture
+## Architecture
 
 ![alt text](./images/pacific-autism-architecture.jpg)
 
-### Description
+## Description
 
 The Architecture diagram gives an insight into two different event flows, how sensor data is ingested after being receved by IoT, and how user initiated events from the frontend dashboard are processed. Green numbers indicate Event flow from IoT sensors while blue numbers indicate Event flow from user interaction with the frontend Health Platform website.
+
+### IoT Event Flow
 
 1. Sensor data is entered into the AWS cloud via Amazon IoT. If the data is coming from the iOS application, credentials for access to IoT are provided through a Cognito user pool. Permissions to access IoT for the Arduino Gas Sensor and Airthings device are granted through certificates and private keys. If the device connecting to IoT is an Arduino Gas Sensor, it connects to an IoT thing with corresponding certificates and keys before sending the data, which is then selected based on its specified topic. Data coming from the iOS application and Airthings device is directly selected.
 
@@ -17,6 +19,8 @@ The Architecture diagram gives an insight into two different event flows, how se
 4. The data along with the matching patient ID is written into the Timestream database. In the case that the record is rejected, the data will be sent to a rejected records S3 bucket instead.
 
 5. The data along with the matching patient ID is converted to parquet format via Kinesis Firehose and the conversion schema is stored in a Glue table. The parquet file is saved in an S3 bucket with the path data/year/month/day/hour/{filename}.
+
+### UI User Initiated Event Flow
 
 6. The frontend Amplify website is built with React and is the user interface that all users (admins and caregivers) will interact with. Accounts are created and logged into using a Cognito user pool. Data that is displayed and edited with the frontend website is synced to the backend using AppSync.
 
