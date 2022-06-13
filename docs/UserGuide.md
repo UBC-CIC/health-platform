@@ -9,7 +9,7 @@
 | [Creating an Account and Account Options](#Creating-an-Account-and-Account-Options)          | Create an account for caregiver/admin access              |
 | [Main Dashboard](#Main-Dashboard)                                                            | How the main dashboard works                              |
 | [Add Events](#Add-Events)                                                                    | Adding any events                                         |
-| [Add Patients, Assign Caregivers, Assign Sensors, and Download Data](#Add-Patients,-Assign-Caregivers-and-Sensors)  | Setting up patients for monitoring                        |
+| [Add Patients, Assign Caregivers, Assign Sensors, and Download Data](#add-patients-assign-caregivers-assign-sensors-and-download-data)  | Setting up patients for monitoring                        |
 | [Manage Account User Types](#Manage-Account-User-Types)                                      | Manage account types                                      |
 | [Simulate Data](#Simulate-Data)                                                              | Simulate sensor data                                      |
 
@@ -28,6 +28,10 @@ An account can be created or a password can be changed by clicking the respectiv
 ![alt text](./images/dashboard_user_guide/change_password.PNG)
 
 It is also possible to change a password through the dashboard by clicking on the user icon at the top right corner and clicking change password. This same menu is used to logout from an account.
+
+![alt text](./images/dashboard_user_guide/first_user_dynamo.PNG)
+
+The first user created will need to be assigned ADMIN permissions through DynamoDB for the rest of the user permissions to be assigned through the UI. Head to the DynamoDB page in the AWS console, click Explore Items and navigate to the users table. Click on the user_id and change the user_type to ADMIN.
 
 ## Main Dashboard
 
@@ -57,9 +61,13 @@ After selecting the create event the user will see this window. Select the start
 
 The patients page displays all patients along with their assigned patients and sensors. The add patient button at the top right of the dashboard is used to add a patient, a unique patient id is assigned to them at this time. A patient's caregivers and sensors can be managed by clicking the respective manage buttons. The edit patient button allows the user to change the name of a patient.
 
+### Add a Patient
+
 ![alt text](./images/dashboard_user_guide/add_patient.PNG)
 
 By clicking the add patient button, a new patient can be added. Be sure to click save at the bottom right corner after filling in the name.
+
+### Assign Caregivers
 
 ![alt text](./images/dashboard_user_guide/manage_caregivers.PNG)
 
@@ -68,6 +76,8 @@ Click the manage button next to a patient's caregivers will pull up this window.
 ![alt text](./images/dashboard_user_guide/add_caregiver.PNG)
 
 Add a caregiver by selecting a caregiver from the dropdown menu and clicking add. Make sure to click save on the manage caregivers page after.
+
+### Assign Sensors
 
 ![alt text](./images/dashboard_user_guide/manage_sensors.PNG)
 
@@ -82,6 +92,8 @@ There are 3 types of sensors that are currently supported by the dashboard. The 
 - Arduino Gas Sensor: The sensor ID can be found after connecting your Arduino sensor to an AWS IoT Thing. More instructions can be found [here](https://github.com/UBC-CIC/health-platform-arduino/blob/main/docs/arduino_sensor_setup.md).
 
 - Airthings Wave Plus: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/AirthingsDeployment.md).
+
+### Download Data
 
 ![alt text](./images/dashboard_user_guide/download_data_dashboard.png)
 
