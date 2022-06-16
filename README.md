@@ -8,6 +8,7 @@ Pacific Autism Family Network (PAFN) is a centre of excellence and network of su
 | [Deployment](#Deployment-Guides)                      | How to deploy the project                                 |
 | [User Guide](#User-Guide)                             | The working solution                                      |
 | [Changelog](#Changelog)                               | Any changes post publish                                  |
+| [Credits](#credits)                                   | Credits for this project                                  |
 | [License](#License)                                   | License details                                           |
 
 # High Level Architecture
@@ -27,6 +28,10 @@ For instructions on how to use the web app interface, refer to the [User Guide](
 # Changelog
 
 N/A
+
+# Credits
+
+This project was architected and developed by Shrey Thapar, Tom Jin, Godot Bian, and Derrick Cheng, with guidance from the [UBC CIC](https://cic.ubc.ca/) technical and project management teams.
 
 # License
 
