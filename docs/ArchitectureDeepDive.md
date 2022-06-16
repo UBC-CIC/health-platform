@@ -6,30 +6,30 @@
 
 ## Description
 
-The Architecture diagram gives an insight into two different event flows, how sensor data is ingested after being receved by IoT, and how user initiated events from the frontend dashboard are processed. Green numbers indicate Event flow from IoT sensors while blue numbers indicate Event flow from user interaction with the frontend Health Platform website.
+The Architecture diagram gives an insight into two different event flows: 1) IoT sensor data and API-based data, and 2) user-initiated events from the frontend dashboard are processed. Green numbers indicate event flow from IoT sensors and APIs while blue numbers indicate Event flow from user interaction with the frontend Health Platform website
 
 ### IoT Event Flow
 
-1. Sensor data is entered into the AWS cloud via Amazon IoT. If the data is coming from the iOS application, credentials for access to IoT are provided through a Cognito user pool. Permissions to access IoT for the Arduino Gas Sensor and Airthings device are granted through certificates and private keys. If the device connecting to IoT is an Arduino Gas Sensor, it connects to an IoT thing with corresponding certificates and keys before sending the data, which is then selected based on its specified topic. Data coming from the iOS application and Airthings device is directly selected.
+1. Sensor data flows into the AWS cloud via Amazon IoT. The iOS application leverages the Amazon Cognito user pool to authenticate the user while the DIY Arduino Gas Sensor authenticates into the solution using private certificate keys. 
 
-2. The Airthings API is called every 5 minutes by the external sensor Lambda function. The latest sensor data is then sent to the event handler Lambda function for further processing. If the API returns any data in an unexpected JSON format, it will be sent to an SQS Dead Letter Queue.
+2. The Airthings API is called every 5 minutes by a Lambda function. The authentication occurs via a token that is obtained at the Airthings integration APIs. 
 
-3. The incoming data’s sensor id is matched with the corresponding patient ID stored in a DynamoDB table. 
+3. The incoming data’s sensor id is mapped with the corresponding patient ID stored in a DynamoDB table; which is manually populated at the web interface. 
 
-4. The data along with the matching patient ID is written into the Timestream database. In the case that the record is rejected, the data will be sent to a rejected records S3 bucket instead.
+4. The data along with the matching patient ID is written into the Amazon Timestream database.
 
-5. The data along with the matching patient ID is converted to parquet format via Kinesis Firehose and the conversion schema is stored in a Glue table. The parquet file is saved in an S3 bucket with the path data/year/month/day/hour/{filename}.
+5. The data along with the matching patient ID is also converted to parquet format via Kinesis Firehose and the conversion schema is stored in a Glue table. The parquet file is saved in an S3 bucket with the path data/year/month/day/hour/{filename}, to create a data lake with the patient biometric information to later use in the model creation. 
 
 ### UI User Initiated Event Flow
 
-6. The frontend Amplify website is built with React and is the user interface that all users (admins and caregivers) will interact with. Accounts are created and logged into using a Cognito user pool. Data that is displayed and edited with the frontend website is synced to the backend using AppSync.
+6. The frontend website enables managing the user roles: admins and caregivers, who are the ones effectively authenticating into the application that is based on the Amazon Cognito user pool. The caregivers register the patients and their device ID into the system, which is stored in Amazon Timestream and S3. The solution backend API is based on GraphQL leveraging AWS Appsync
 
-7. Whenever the user clicks the search button to update the dashboard, a Lambda function queries Timestream for the data based on the timeframe parameters specified by the caregiver.
+7. Whenever the user clicks the search button to update the dashboard, a Lambda function queries Timestream for the data based on the timeframe parameters specified by the user. This displays the most up-to-date data for the user to see.
 
-8. Users that create an account invoke a Lambda function that will create a Patient and store their information in DynamoDB.
+8. Newly created users are stored in the DynamoDB users table. Existing users and their information such as the patients they manage are also stored in this table.
 
-9. Events created in the frontend website will call an OpenSearch Lambda function that will index the event and store it in DynamoDB.
+9. Indexed events are searched using OpenSearch which will display the search results on the frontend website for the user. 
 
-10. Indexed events are searched using an OpenSearch Lambda function which will display the search results on the frontend website.
+10. Events created using the website are indexed by Amazon OpenSearch so that they can be searched by users later. OpenSearch is a search engine that will allow the user to match search keywords with event data. The event data is also converted to parquet format via Kinesis Firehose and the conversion schema is stored in a Glue table. The parquet file is saved in an S3 bucket with the path data/year/month/day/hour/{filename}, to create a data lake with the patient event data to later use in the model creation. 
 
-11. Users can download all of a patient’s data via a button on the frontend website. A Glue database points to the data in the Health Platform Metrics S3 bucket. A GraphQL query then triggers a Lambda function which triggers Athena to query the Glue database. The patient data is exported to the Patient Export Data bucket and returned as a CSV file available for download through a presigned S3 url link. 
+11. Users can download all of a patient’s sensor readings via a button on the frontend website. A Glue database points to the data in the Health Platform Metrics S3 bucket and Health Platform Events S3 bucket. A GraphQL query then triggers a Lambda function which triggers Athena to query the Glue database. The patient data is exported to the Patient Export Data bucket and returned as a CSV file available for download through a pre-signed S3 URL link that expires after 5 minutes.
