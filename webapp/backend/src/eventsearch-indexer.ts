@@ -1,5 +1,7 @@
 import { EventDetail } from "./common/types/API";
 import { HealthPlatformEventOpenSearchClient } from "./opensearch/search-client";
+import AWS = require('aws-sdk');
+var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
 
 
 export const handler = (event: any = {}, context: any, callback: any) => {
@@ -39,8 +41,27 @@ export const handler = (event: any = {}, context: any, callback: any) => {
             }
 
             promises.push(osClient.indexDocument(doc));
-        }
 
+            const parquetDoc = {
+                patient_id: image["user_id"]["S"],
+                event_id: image["event_id"]["S"],
+                mood: image["mood"]["S"],
+                medication: image["medication"]["S"],
+                food: image["food"]["S"],
+                timestamp: image["start_date_time"]["S"]
+            }
+            console.log(parquetDoc);
+            const firehoseData = { ...parquetDoc };
+            const firehoseRes = firehose
+                .putRecord({
+                    DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
+                    Record: {
+                        Data: JSON.stringify(firehoseData),
+                    },
+                })
+                .promise();        
+            console.log('firehoseRes: ', firehoseRes);  
+        }
 
         Promise.all(promises).then((res) => {
             console.log("All promises successfully returned");
