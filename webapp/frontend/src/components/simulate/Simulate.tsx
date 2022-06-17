@@ -9,7 +9,6 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { simulate } from '../../common/graphql/mutations';
 import { PatientsDetail, UsersDetail } from '../../common/types/API';
 import { subtractHours } from '../../utils/time';
-import { SENSORS } from '../patients/ManageSensors';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -23,6 +22,21 @@ const MenuProps = {
 };
 
 const DEFAULT_HOURS_AGO = 6;
+
+const SIMULATE_TYPES = [
+    {"name": "Heart Rate", "id": "HeartRate"},
+    {"name": "Heart Rate Variability", "id": "HeartRateVariability"},
+    {"name": "Steps", "id": "Steps"},
+    {"name": "CO2", "id": "CO2"},
+    {"name": "TVOC", "id": "TVOC"},
+    {"name": "Humidity", "id": "Humidity"},
+    {"name": "Pressure", "id": "Pressure"},
+    {"name": "Radon", "id": "Radon"},
+    {"name": "Temperature", "id": "Temperature"},
+    {"name": "VOC", "id": "VOC"},
+    {"name": "PM1", "id": "PM1"},
+    {"name": "PM2.5", "id": "PM2.5"},
+];
 
 export const Simulate = (props: { 
     userName: any, 
@@ -166,7 +180,7 @@ export const Simulate = (props: {
                                 onChange={handleSensorTypeChange}
                                 input={<OutlinedInput label="Name" />}
                             >
-                            {SENSORS.map((sensor) => (
+                            {SIMULATE_TYPES.map((sensor) => (
                                 <MenuItem
                                     key={sensor.id}
                                     value={sensor.id}
