@@ -4,15 +4,17 @@ import AWS = require('aws-sdk');
 var firehose = new AWS.Firehose({ apiVersion: '2015-08-04' });
 
 
-export const handler = (event: any = {}, context: any, callback: any) => {
+export const handler = async (event: any = {}, context: any, callback: any) => {
     console.log('Event: ', JSON.stringify(event, null));
     const endpoint = process.env['OPENSEARCH_ENDPOINT'];
 
     const osClient = new HealthPlatformEventOpenSearchClient(endpoint);
     var promises: Promise<any>[] = [];
 
-    event.Records.forEach(function (record: { eventID: any; eventName: any; dynamodb: any; }) {
-        console.log(record.eventID);
+    // for each loop causes async issues, promises wont return
+    // await event.Records.forEach(async function (record: { eventID: any; eventName: any; dynamodb: any; }) {
+        const record = event.Records[0]
+        console.log(record.eventID);    
         console.log(record.eventName);
         console.log('DynamoDB Record: %j', record.dynamodb);
 
@@ -39,9 +41,7 @@ export const handler = (event: any = {}, context: any, callback: any) => {
                 end_date_time: image["end_date_time"]["S"],
                 __typename: "EventDetail"
             }
-
-            promises.push(osClient.indexDocument(doc));
-
+            
             const parquetDoc = {
                 patient_id: image["user_id"]["S"],
                 event_id: image["event_id"]["S"],
@@ -52,7 +52,7 @@ export const handler = (event: any = {}, context: any, callback: any) => {
             }
             console.log(parquetDoc);
             const firehoseData = { ...parquetDoc };
-            const firehoseRes = firehose
+            const firehoseRes = await firehose
                 .putRecord({
                     DeliveryStreamName: process.env.DELIVERY_STREAM_NAME!,
                     Record: {
@@ -60,16 +60,22 @@ export const handler = (event: any = {}, context: any, callback: any) => {
                     },
                 })
                 .promise();        
-            console.log('firehoseRes: ', firehoseRes);  
+            console.log('firehoseRes: ', firehoseRes); 
+
+            promises.push(osClient.indexDocument(doc));
+
+            await Promise.all(promises).then((data) => {
+                console.log("All promises successfully returned");
+            }).catch(error => {
+                console.error(error.message)
+            });;
         }
+    // });
 
-        Promise.all(promises).then((res) => {
-            console.log("All promises successfully returned");
-        }).catch(error => {
-            console.error(error.message)
-        });;
-
-        return { status: 200, res: "successful" }
-
-    });
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify('Done')
+    };
+    
+    return response
 };
