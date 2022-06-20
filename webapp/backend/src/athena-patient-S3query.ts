@@ -23,15 +23,25 @@ function delay(milliseconds: number) {
 }
 
 export const handler = async (event: any = {}, context: any, callback: any) => {
+    let { patientId, eventType } = event.arguments;
+    let EXPORT_DATA_PREFIX = ''
+    let outputBucketName = ''
+    let queryStringInput = ''
 
-    // find output bucket named as health prefix + account number
-    const EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
-    const outputBucketName = EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
-
-    let { patientId } = event.arguments;
-
+    if (eventType === 'sensor-data'){
+        queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\''
+        EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
+        outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
+    }
+    else if (eventType == 'event-data'){
+        queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-event-data" WHERE patient_id = \'' + patientId + '\''
+        EXPORT_DATA_PREFIX = "health-platform-metrics-events-export-"
+        outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
+    }   
+    
+    // Fill Athena query params and bucket name based off GraphQL eventType
     var params = {
-        QueryString: 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\'',
+        QueryString: queryStringInput,
 
         QueryExecutionContext: {
             Database: database,

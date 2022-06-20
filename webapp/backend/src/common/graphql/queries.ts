@@ -27,8 +27,8 @@ export const searchEvents = /* GraphQL */ `
   }
 `;
 export const getMessage = /* GraphQL */ `
-  query GetMessage($patientId: String!) {
-    getMessage(patientId: $patientId) {
+  query GetMessage($patientId: String, $eventType: String) {
+    getMessage(patientId: $patientId, eventType: $eventType) {
       data
     }
   }
