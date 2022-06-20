@@ -17,6 +17,7 @@ import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { HealthPlatformVpcStack } from './vpc-stack';
 import * as glue from '@aws-cdk/aws-glue';
+import { HealthPlatformSearchStack } from './search-stack';
 
 
 // This stack contains resources used by the IoT data flow.
@@ -27,11 +28,12 @@ export class HealthPlatformIotStack extends cdk.Stack {
     private static PARQUET_METRICS_PREFIX = "health-platform-metrics-"
     private static TIMESTREAM_REJECTED_DATA_PREFIX = "health-platform-rejected-data-"
     private static EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
+    private static EXPORT_EVENT_DATA_PREFIX = "health-platform-metrics-events-export-"
 
 
     public readonly lambdaRole: Role;
 
-    constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack) {
+    constructor(app: cdk.App, id: string, vpcStack: HealthPlatformVpcStack, searchStack: HealthPlatformSearchStack) {
         super(app, id, {
             env: {
                 region: 'us-west-2'
@@ -165,6 +167,11 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
         let patientExportDataQueryResults = new Bucket(this, 'ExportDataQueryBucket', {
             bucketName: HealthPlatformIotStack.EXPORT_DATA_PREFIX + this.account,
+            encryption: BucketEncryption.S3_MANAGED,
+        });
+
+        let patientExportEventDataQueryResults = new Bucket(this, 'ExportEventDataQueryBucket', {
+            bucketName: HealthPlatformIotStack.EXPORT_EVENT_DATA_PREFIX + this.account,
             encryption: BucketEncryption.S3_MANAGED,
         });
 
@@ -452,6 +459,41 @@ export class HealthPlatformIotStack extends cdk.Stack {
               },
               {
                 name: "measurement",
+                type: glue.Schema.STRING,
+              },
+
+            ],
+            dataFormat: glue.DataFormat.PARQUET,
+          });
+
+          new glue.Table(this, "PatientEventDataTable", {
+            database: patientDB,
+            tableName: "patient-export-event-data",
+            bucket: searchStack.parquetMetricsBucket,
+            columns: [
+              {
+                name: "patient_id",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "event_id",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "mood",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "medication",
+                type: glue.Schema.STRING,
+
+              },
+              {
+                name: "food",
+                type: glue.Schema.STRING,
+              },
+              {
+                name: "timestamp",
                 type: glue.Schema.STRING,
               },
 

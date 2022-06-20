@@ -13,7 +13,6 @@ const vpcStack = new HealthPlatformVpcStack(app, "HealthPlatformVpcStack");
 const ddb = new HealthPlatformDynamoStack(app, 'HealthPlatformDynamoStack');
 const cognito = new HealthPlatformCognitoStack(app, 'HealthPlatformCognitoStack');
 const lambdaStack = new HealthPlatformLambdaStack(app, 'HealthPlatformLambdaStack', vpcStack);
-new HealthPlatformIotStack(app, 'HealthPlatformIotStack', vpcStack);
 const searchStack = new HealthPlatformSearchStack(app, "HealthPlatformSearchStack", ddb.eventDetailsTable, vpcStack);
-
+new HealthPlatformIotStack(app, 'HealthPlatformIotStack', vpcStack, searchStack);
 new HealthPlatformAppSyncStack(app, 'HealthPlatformAppSyncStack', cognito.UserPoolId, lambdaStack, searchStack);

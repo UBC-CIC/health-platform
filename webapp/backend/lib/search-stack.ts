@@ -16,9 +16,9 @@ import { LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 export class HealthPlatformSearchStack extends cdk.Stack {
     public readonly deliveryFunction: lambda.Function;
     public readonly searchFunction: lambda.Function;
-    public readonly bucket: Bucket;
+    public readonly parquetMetricsBucket: Bucket;
     public readonly devDomain: Domain;
-
+    
     private static PARQUET_EVENTS_PREFIX = "health-platform-events-"
     private static EVENTS_GLUE_TABLE_NAME = "health-platform-events-glue-table"
 
@@ -105,7 +105,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
             retention: RetentionDays.ONE_MONTH,
         });
 
-        let parquetMetricsBucket = new Bucket(this, 'HealthPlatformParquetEventsBucket', {
+        this.parquetMetricsBucket = new Bucket(this, 'HealthPlatformParquetEventsBucket', {
             bucketName: HealthPlatformSearchStack.PARQUET_EVENTS_PREFIX + this.account,
             encryption: BucketEncryption.S3_MANAGED,
         });
@@ -128,9 +128,9 @@ export class HealthPlatformSearchStack extends cdk.Stack {
                                 's3:ListBucketMultipartUploads',
                             ],
                             resources: [
-                                parquetMetricsBucket.bucketArn,
-                                `${parquetMetricsBucket.bucketArn}/`,
-                                `${parquetMetricsBucket.bucketArn}/*`,
+                                this.parquetMetricsBucket.bucketArn,
+                                `${this.parquetMetricsBucket.bucketArn}/`,
+                                `${this.parquetMetricsBucket.bucketArn}/*`,
                             ]
                         }),
                         new PolicyStatement({
@@ -201,7 +201,7 @@ export class HealthPlatformSearchStack extends cdk.Stack {
         let parquetDeliveryStream = new CfnDeliveryStream(this, 'HealthPlatformEventsDeliveryStream', {
             deliveryStreamName: "HealthPlatformEventsDeliveryStream",
             extendedS3DestinationConfiguration: {
-                bucketArn: parquetMetricsBucket.bucketArn,
+                bucketArn: this.parquetMetricsBucket.bucketArn,
                 bufferingHints: {
                     intervalInSeconds: 60,
                     sizeInMBs: 64
