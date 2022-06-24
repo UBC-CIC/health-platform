@@ -1,7 +1,5 @@
 import AWS = require('aws-sdk');
 import { HealthPlatformTimestreamInsertClient, MetricsData } from './timestream/client-insert';
-import { HealthPlatformTimestreamQueryClient } from './timestream/client-query';
-var ddb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 /**
  * Simulates user events by generating data and inserting it into Timestream.

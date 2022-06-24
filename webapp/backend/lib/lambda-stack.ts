@@ -1,16 +1,12 @@
 import cdk = require('@aws-cdk/core');
 import * as ec2 from '@aws-cdk/aws-ec2';
-// import { PythonFunction } from "@aws-cdk/aws-lambda-python";
 import { Effect, PolicyDocument, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 import * as lambda from "@aws-cdk/aws-lambda";
 import { Function } from '@aws-cdk/aws-lambda';
 import { HealthPlatformVpcStack } from './vpc-stack';
-import alp = require('@aws-cdk/aws-lambda-python');
-import exec = require("child_process");
 
 export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly lambdaRole: Role;
-    // public readonly queryFunction: DockerImageFunction;
     public readonly queryFunction: Function;
     public readonly simulateFunction: Function;
     public readonly externalSensorFunction: Function;
@@ -94,18 +90,6 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
                 }),
             },
         });
-
-        // Unnecessary if using Timestream
-        //
-        // const queryDockerFile = path.join(__dirname, "..");
-        // this.queryFunction = new DockerImageFunction(this, 'QueryDockerFunction', {
-        //     code: DockerImageCode.fromImageAsset(queryDockerFile),
-        //     functionName: `QueryFunction`,
-        //     memorySize: 512,
-        //     role: this.lambdaRole,
-        //     timeout: cdk.Duration.seconds(30),
-        //     logRetention: RetentionDays.THREE_MONTHS,
-        // })
 
         this.queryFunction = new lambda.Function(this, 'TimestreamQueryFunction', {
             functionName: "Timestream-Query",

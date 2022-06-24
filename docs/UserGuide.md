@@ -29,9 +29,7 @@ An account can be created or a password can be changed by clicking the respectiv
 
 It is also possible to change a password through the dashboard by clicking on the user icon at the top right corner and clicking change password. This same menu is used to logout from an account.
 
-![alt text](./images/dashboard_user_guide/first_user_dynamo.PNG)
-
-The first user created will need to be assigned ADMIN permissions through DynamoDB for the rest of the user permissions to be assigned through the UI. Head to the DynamoDB page in the AWS console, click Explore Items and navigate to the users table. Click on the user_id and change the user_type to ADMIN.
+Note that the very first user created will be automatically given ADMIN permissions. All users created after that will be UNCLASSIFIED.
 
 ## Main Dashboard
 
