@@ -6,7 +6,8 @@ const s3 = new AWS.S3();
 const database = "patient-export-info";
 let url = ''
 let myKey = ''
-
+let returnMessage = ''
+let queryResults = {} as any;
 function getBucketPath(s3Raw: any) {
     // input in form s3://[bucketName]/path
     // extract bucketName and path
@@ -64,22 +65,43 @@ export const handler = async (event: any = {}, context: any, callback: any) => {
     const signedUrlExpireSeconds = 60 * 5; // your expiry time in seconds.
 
     for (let i = 0; i < 5; i++) {
+        await delay(3000)
         try {
              url = s3.getSignedUrl('getObject', {
                 Bucket: outputBucketName,
                 Key: myKey,
                 Expires: signedUrlExpireSeconds
             });
-
-            await delay(3000)
+            queryResults = await athena.getQueryResults(values as any).promise();
+           break;
         } catch (e) {
             console.log("Error on S3 retrieval")
         }
     }
-    if (url == null) {
-        throw new Error("cannot retrieve patient data")
+
+     
+    let rowCount = 0
+    if (queryResults['ResultSet'] != undefined){
+        for (let i in queryResults['ResultSet']['Rows']){
+            rowCount += 1
+            if (rowCount > 2){
+                break
+            }
+        }
+    }
+    console.log(rowCount, queryResults)
+
+    if (rowCount > 1){
+        returnMessage = url
+    }
+    else {
+        returnMessage = 'Patient data does not exist'
     }
 
-    return { data: url };
+    if (url == null) {
+        throw new Error("Cannot retrieve patient data")
+    }
+
+    return { data: returnMessage };
 
 };

@@ -464,6 +464,7 @@ export class HealthPlatformIotStack extends cdk.Stack {
 
             ],
             dataFormat: glue.DataFormat.PARQUET,
+            s3Prefix: 'data/'
           });
 
           new glue.Table(this, "PatientEventDataTable", {
