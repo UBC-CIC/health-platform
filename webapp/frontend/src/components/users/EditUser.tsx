@@ -57,6 +57,12 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
                     }
                 },
             });
+            var AWS = require('aws-sdk');
+            const client = new AWS.CognitoIdentityServiceProvider();
+            await client.adminDeleteUser({
+                UserPoolId: process.env.REACT_APP_USERPOOLID,
+                Username: props.user.user_id,
+            }).promise();
             console.log("deleteUsersDetail response:", response);
         } catch (e) {
             console.log("updateUsersDetail errors:", e);
