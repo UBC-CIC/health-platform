@@ -1,4 +1,5 @@
 
+
 import AWS = require("aws-sdk");
 
 const athena = new AWS.Athena();
@@ -8,6 +9,7 @@ let url = ''
 let myKey = ''
 let returnMessage = ''
 let queryResults = {} as any;
+
 function getBucketPath(s3Raw: any) {
     // input in form s3://[bucketName]/path
     // extract bucketName and path
@@ -24,21 +26,32 @@ function delay(milliseconds: number) {
 }
 
 export const handler = async (event: any = {}, context: any, callback: any) => {
-    let { patientId, eventType } = event.arguments;
+    let { patientId, eventType, startDate, endDate } = event.arguments;
     let EXPORT_DATA_PREFIX = ''
     let outputBucketName = ''
     let queryStringInput = ''
-
-    if (eventType === 'sensor-data'){
+    console.log(event.arguments)
+    if (eventType === 'sensor-data-all'){
         queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\''
         EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
         outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
     }
-    else if (eventType == 'event-data'){
+    else if (eventType == 'event-data-all'){
         queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-event-data" WHERE patient_id = \'' + patientId + '\''
         EXPORT_DATA_PREFIX = "health-platform-metrics-events-export-"
         outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
-    }   
+    }
+    else if (eventType == 'sensor-data-range'){
+        queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-data" WHERE patientid = \'' + patientId + '\' AND "timestamp" BETWEEN \'' + startDate +'\' AND \'' + endDate +'\''
+        EXPORT_DATA_PREFIX = "health-platform-metrics-patient-export-"
+        outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
+
+    }
+    else if (eventType == 'event-data-range'){
+        queryStringInput = 'SELECT * FROM "patient-export-db"."patient-export-event-data" WHERE patient_id = \'' + patientId + '\'AND "timestamp" BETWEEN \'' + startDate +'\' AND \'' + endDate +'\''
+        EXPORT_DATA_PREFIX = "health-platform-metrics-events-export-"
+        outputBucketName =  EXPORT_DATA_PREFIX + context.invokedFunctionArn.split(':')[4];
+    }
     
     // Fill Athena query params and bucket name based off GraphQL eventType
     var params = {
@@ -89,7 +102,6 @@ export const handler = async (event: any = {}, context: any, callback: any) => {
             }
         }
     }
-    console.log(rowCount, queryResults)
 
     if (rowCount > 1){
         returnMessage = url
