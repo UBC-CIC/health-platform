@@ -58,6 +58,8 @@ export class HealthPlatformCognitoStack extends Stack {
                                 // CloudWatch
                                 'cloudwatch:*',
                                 'logs:*',
+                                //SSM
+                                'ssm:*',
                             ],
                             resources: ['*']
                         })
