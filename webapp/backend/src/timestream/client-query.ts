@@ -14,6 +14,12 @@ export class HealthPlatformTimestreamQueryClient {
         this.client = client;
     }
 
+    
+    buildMinMaxQuery(patientId: string){
+        let patientVal = patientId
+        return `SELECT min(time), max(time) FROM HealthDatabase.HealthMetricsData WHERE patient_id = '${patientId}'`
+    }
+
     buildQuery(patientIds: string[], period: string, statistic: string, start: string, end: string): string {
         let statisticQueryVal = "";
         switch (statistic) {
@@ -70,7 +76,7 @@ export class HealthPlatformTimestreamQueryClient {
             ORDER BY patient_id, measurement_type, binned_timestamp ASC
         `;
     }
-
+    
     async getAllRows(query: string, nextToken?: string): Promise<HealthPlatformQueryResponse> {
         const params: QueryRequest = {
             QueryString: query

@@ -8,6 +8,7 @@ import { HealthPlatformVpcStack } from './vpc-stack';
 export class HealthPlatformLambdaStack extends cdk.Stack {
     public readonly lambdaRole: Role;
     public readonly queryFunction: Function;
+    public readonly queryPatientRangeFunction: Function;
     public readonly simulateFunction: Function;
     public readonly externalSensorFunction: Function;
     public readonly athenaS3QueryFunction: Function;
@@ -95,6 +96,21 @@ export class HealthPlatformLambdaStack extends cdk.Stack {
             functionName: "Timestream-Query",
             code: new lambda.AssetCode('build/src'),
             handler: 'timestream-query.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300),
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            vpc: vpcStack.vpc,
+            vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
+        });
+
+        this.queryPatientRangeFunction = new lambda.Function(this, 'TimeStreamQueryPatientRangeFunction', {
+            functionName: "Timestream-MinMaxRange-Query",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'client-minmax-query.handler',
             runtime: lambda.Runtime.NODEJS_14_X,
             role: this.lambdaRole,
             memorySize: 512,
