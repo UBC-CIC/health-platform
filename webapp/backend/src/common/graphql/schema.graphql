@@ -300,6 +300,7 @@ type SearchResponse {
 type Query @aws_cognito_user_pools
 @aws_iam {
     query(input: QueryRequest): QueryResponse
+	getPatientMinMaxRange(patientId: String): QueryResponse
 	searchEvents(input: SearchRequest): SearchResponse
 	getMessage(patientId:String, eventType: String, startDate: String, endDate: String): Message
 	getEventDetail(eventId: String!): EventDetail

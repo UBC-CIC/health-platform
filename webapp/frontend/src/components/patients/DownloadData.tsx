@@ -7,7 +7,7 @@ import { Box } from "@mui/system";
 import { API } from "aws-amplify";
 import { Fragment, useState } from "react";
 import { deletePatientsDetail, updatePatientsDetail, updateUsersDetail } from "../../common/graphql/mutations";
-import { getMessage } from "../../common/graphql/queries";
+import { getMessage, getPatientMinMaxRange } from "../../common/graphql/queries";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { string } from "yup/lib/locale";
@@ -19,7 +19,8 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
     const [patientDataVal, setPatientDataVal] = useState(false)
     const [error, setError] = useState(false)
     const [showDateRange, setShowDateRange] = useState(false);
-    // const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null)
+    const [min, setMin] = useState('')
+    const [max, setMax] = useState('')
     const [value, setValue] = useState<DateRange<Date>>([null, null]);
     // const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
     const [showCreate, setShowCreate] = useState(false)
@@ -31,6 +32,8 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
         setShowCreate(false);
         setError(false);
         setPatientDataVal(false);
+        setMin('')
+        setMax('')
 
     }
     const handleOpen = () => {
@@ -41,9 +44,22 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
 
     const [patientName, setPatientName] = useState(props.patient.name);
     
-    const handleDateDownload = async () => {
-       const [start, end] = [...value]
-       console.log(start?.toISOString, end?.toISOString)
+    const handleDateRange = async () => {
+        const response: any = await API.graphql({
+            query: getPatientMinMaxRange,
+            variables: { 
+                    patientId: props.patient.patient_id,
+                }
+        })
+        const minmax = response['data']['getPatientMinMaxRange']['rows'][0];
+        const [min, max] = response['data']['getPatientMinMaxRange']['rows'][0];
+
+        var mindate = new Date(min).toDateString()
+        var maxdate = new Date(max).toDateString()
+        setMin(mindate)
+        setMax(maxdate)
+        console.log(minmax)
+        console.log('min', min, mindate, 'max', max, maxdate)
     }
 
     const handleDownload = async (eventTypeInput: String) => {
@@ -89,6 +105,8 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
         setShowCreate(false)
         setShowDateRange(false)
         setPatientDataVal(false)
+        setMin('')
+        setMax('')
     }
 
     return (
@@ -114,7 +132,7 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
                                     
                                     <Button onClick={() => {
                                         setShowDateRange(true)
-                                        
+                                        handleDateRange()
                                         
                                     } } fullWidth={true} variant="outlined" size="large" sx={{ mt: 1 }} >
                                         Select a date range
@@ -122,7 +140,7 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
                                     </DialogContent>
                                     {showDateRange ? (
                                         <Box>
-                                            <DialogTitle sx={{ pl: 11}}> Please select a valid date range
+                                            <DialogTitle sx={{ pl: 8}}> Please select a valid date range from {min ? min : ''} to {max ? max : ''}
                                             </DialogTitle>
                                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                                 <Box sx={{ mb: 3, pl:8 }} className="date-time-picker-wrapper">
