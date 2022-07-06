@@ -59,7 +59,7 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
             });
             var AWS = require('aws-sdk');
             let cred = new AWS.CognitoIdentityCredentials({
-                IdentityPoolId: process.env.REACT_APP_USERPOOLID,
+                IdentityPoolId: process.env.REACT_APP_IDENTITYPOOLID,
                 region: "us-west-2",
             });
             AWS.config.update({
