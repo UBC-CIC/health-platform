@@ -403,6 +403,11 @@ export class HealthPlatformAppSyncStack extends Stack {
             fieldName: 'getMessage'
         });
 
+        api.addLambdaDataSource('TimeStreamMinMaxQueryDataSource', lambdaStack.queryPatientRangeFunction).createResolver({
+            typeName: 'Query',
+            fieldName: 'getPatientMinMaxRange'
+        });
+
         // Cloudformation Output
         new CfnOutput(this, "GraphQLEndpoint", {
             value: api.graphqlUrl

@@ -10,6 +10,14 @@ export const query = /* GraphQL */ `
     }
   }
 `;
+export const getPatientMinMaxRange = /* GraphQL */ `
+  query GetPatientMinMaxRange($patientId: String) {
+    getPatientMinMaxRange(patientId: $patientId) {
+      columns
+      rows
+    }
+  }
+`;
 export const searchEvents = /* GraphQL */ `
   query SearchEvents($input: SearchRequest) {
     searchEvents(input: $input) {
