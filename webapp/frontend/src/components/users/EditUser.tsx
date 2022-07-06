@@ -58,13 +58,15 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
                 },
             });
             var AWS = require('aws-sdk');
-            console.log(process.env.AWS_ACCESS_KEY_ID)
-            console.log(process.env.AWS_SECRET_ACCESS_KEY)
-            AWS.config.update({
-                region: "us-west-2",
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            });
+            // console.log(process.env.AWS_ACCESS_KEY_ID)
+            // console.log(process.env.AWS_SECRET_ACCESS_KEY)
+            // AWS.config.update({
+            //     region: "us-west-2",
+            //     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
+            //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            // });
+            console.log(process.env.AWS_CONFIG_FILE)
+            AWS.config.loadFromPath(process.env.AWS_CONFIG_FILE);
             var CognitoIdentityServiceProvider = AWS.CognitoIdentityServiceProvider;
             var client = new CognitoIdentityServiceProvider({ apiVersion: '2016-04-19', region: 'us-west-2' });
             await client.adminDeleteUser({
