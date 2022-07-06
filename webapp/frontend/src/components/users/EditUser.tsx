@@ -58,13 +58,10 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
                 },
             });
             var AWS = require('aws-sdk');
-            let cred = new AWS.CognitoIdentityCredentials({
+            console.log(process.env.REACT_APP_IDENTITYPOOLID)
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials({
                 IdentityPoolId: process.env.REACT_APP_IDENTITYPOOLID,
                 region: "us-west-2",
-            });
-            AWS.config.update({
-                region: "us-west-2",
-                credentials: cred,
             });
             // console.log(process.env.AWS_CONFIG_FILE)
             // AWS.config.loadFromPath(process.env.AWS_CONFIG_FILE);
