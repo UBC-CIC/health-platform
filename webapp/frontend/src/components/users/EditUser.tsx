@@ -58,13 +58,14 @@ export const EditPatient = (props: { numAdmin: number, user: UsersDetail }) => {
                 },
             });
             var AWS = require('aws-sdk');
-            var credentials = new AWS.SharedIniFileCredentials({profile: 'health-platform'});
-            AWS.config.credentials = credentials;
-            // AWS.config.update({
-            //     region: "us-west-2",
-            //     accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-            //     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            // });
+            let cred = new AWS.CognitoIdentityCredentials({
+                IdentityPoolId: process.env.REACT_APP_USERPOOLID,
+                region: "us-west-2",
+            });
+            AWS.config.update({
+                region: "us-west-2",
+                credentials: cred,
+            });
             // console.log(process.env.AWS_CONFIG_FILE)
             // AWS.config.loadFromPath(process.env.AWS_CONFIG_FILE);
             var CognitoIdentityServiceProvider = AWS.CognitoIdentityServiceProvider;
