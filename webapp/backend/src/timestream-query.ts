@@ -34,11 +34,17 @@ exports.handler = async (event: any = {},) => {
     console.log("Created timestream query client");
     const timestreamClient = new HealthPlatformTimestreamQueryClient(queryClient);
     const query = timestreamClient.buildQuery(input.patient_ids, input.period, input.statistic, input.start, input.end);
+    const minMaxRangeQuery = timestreamClient.buildMinMaxQuery(input.patient_ids)
+    const queryRangeResponse = await timestreamClient.getAllRows(minMaxRangeQuery)
     const queryResponse = await timestreamClient.getAllRows(query)
 
     console.log(`Columns: ${JSON.stringify(queryResponse.columns)}`);
     console.log(`Rows: ${JSON.stringify(queryResponse.rows)}`);
 
+    const responseRange = {
+        columns: queryRangeResponse.columns,
+        rows: queryRangeResponse.rows
+    }
     const response = {
         columns: queryResponse.columns,
         rows: queryResponse.rows
