@@ -36,6 +36,8 @@ const SIMULATE_TYPES = [
     {"name": "VOC", "id": "VOC"},
     {"name": "PM1", "id": "PM1"},
     {"name": "PM2.5", "id": "PM2.5"},
+    {"name": "Respiratory Rate", "id": "RespiratoryRate"},
+    {"name": "Oxygen Saturation", "id": "OxygenSaturation"},
 ];
 
 export const Simulate = (props: { 
