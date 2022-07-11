@@ -412,6 +412,37 @@ export class HealthPlatformIotStack extends cdk.Stack {
                 externalSensorLambdaTarget,
             ]
         });
+
+        const biostrapLambdaFunction = new lambda.Function(this, 'BiostrapSensorFunction', {
+            functionName: "Biostrap-Sensor-Function",
+            code: new lambda.AssetCode('build/src'),
+            handler: 'biostrap-sensor-handler.handler',
+            runtime: lambda.Runtime.NODEJS_14_X,
+            role: this.lambdaRole,
+            environment: {
+                "SENSOR_MAPPING_TABLE_NAME": HealthPlatformDynamoStack.SENSOR_TABLE,
+                "DELIVERY_STREAM_NAME": parquetDeliveryStream.deliveryStreamName!,
+            },
+            memorySize: 512,
+            timeout: cdk.Duration.seconds(300),
+            deadLetterQueueEnabled: true,
+            securityGroups: [
+                vpcStack.lambdaSecurityGroup
+            ],
+            // Vpc Interupts Biostrap api calls, API Gateway needed
+            // vpc: vpcStack.vpc,
+            // vpcSubnets: vpcStack.vpc.selectSubnets({ subnetType: ec2.SubnetType.PRIVATE_ISOLATED }),
+        });
+
+        // Scheduled CloudWatch jobs
+        var dailyLambdaSchedule = Schedule.rate(Duration.minutes(5));
+        const biostrapLambdaTarget = new LambdaFunction(biostrapLambdaFunction);
+        new Rule(this, 'BiostrapScheduledRules', {
+            schedule: dailyLambdaSchedule,
+            targets: [
+                biostrapLambdaTarget,
+            ]
+        });
         
         let iotTopicRule = new TopicRule(this, 'IoTTopicRule', {
             topicRuleName: "TopicRulePayload",
