@@ -28,10 +28,12 @@ const MenuProps = {
 };
 
 export const AIRTHINGS_WAVEPLUS = "AIRTHINGS_WAVEPLUS";
+export const BIOSTRAP = "BIOSTRAP"
 export const SENSORS = [
     {"name": "Apple Watch", "id": "AppleWatch"},
     {"name": "Gas Sensor", "id": "GasSensor"},
     {"name": "Airthings Wave Plus", "id": AIRTHINGS_WAVEPLUS},
+    {"name": "Biostrap", "id": BIOSTRAP},
 ];
 
 function getStyles(name: any, personName: any, theme: any) {
@@ -115,7 +117,15 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                 newSensor.watermark = new Date(0).toISOString();
                 newSensor.client_key = clientKey;
                 newSensor.secret_key = clientSecretKey;
+            } else if (sensorTypes.includes(BIOSTRAP)) {
+                const now = new Date()  
+                const secondsSinceEpoch = Math.round(now.getTime() / 1000)
+                newSensor.sensor_types = [BIOSTRAP]
+                newSensor.watermark = `${secondsSinceEpoch}000`;
+                newSensor.client_key = clientKey;
+                newSensor.secret_key = clientSecretKey;
             }
+            
             setSensorsToAdd([
                 ...sensorsToAdd,
                 newSensor,
@@ -326,6 +336,34 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                                             <TextField
                                                 required
                                                 label="Secret Key"
+                                                value={clientSecretKey}
+                                                onChange={(e) => {
+                                                    setClientSecretKey(e.target.value);
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                )
+                            }
+                            {
+                                sensorTypes.includes(BIOSTRAP) && (
+                                    <Box sx={{ mt: 3}}>
+                                        <hr />
+                                        <Box sx={{ mt: 1}}>
+                                            <Box sx={{ fontSize: 14, mb: 1 }}>
+                                                Head to the <a href="https://app.biostrap.com/" target="_blank" rel="noreferrer">Biostrap Dashboard</a> to find your account email and organization API Key for the Health Platform to automatically begin retrieving data..
+                                            </Box>
+                                            <TextField
+                                                required
+                                                label="Biostrap Account Email"
+                                                value={clientKey}
+                                                onChange={(e) => {
+                                                    setClientKey(e.target.value);
+                                                }}
+                                            />
+                                            <TextField
+                                                required
+                                                label="Organization API Key"
                                                 value={clientSecretKey}
                                                 onChange={(e) => {
                                                     setClientSecretKey(e.target.value);

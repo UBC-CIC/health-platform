@@ -19,6 +19,7 @@ import ReactApexChart from "react-apexcharts";
 import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { WAVEPLUS } from './sensor_config/airthings';
+import { BIOSTRAP } from './sensor_config/biostrap';
 import { pt } from 'date-fns/locale';
 
 const DEFAULT_HOURS_AGO = 12;
@@ -146,6 +147,10 @@ export const Dashboard = (props: {
 
                 if (st === "AIRTHINGS_WAVEPLUS") {
                     for (const s of WAVEPLUS.sensors) {
+                        modules.push(s);
+                    }
+                } else if (st === "BIOSTRAP") {
+                    for (const s of BIOSTRAP.sensors) {
                         modules.push(s);
                     }
                 } else {
