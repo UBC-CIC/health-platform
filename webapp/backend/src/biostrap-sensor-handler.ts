@@ -155,13 +155,12 @@ const processBiostrapData = async (sensor: Sensor, user_id: string): Promise<any
                             sensor.watermark = data["timestamp"].toString();
                             const sensorDao = new SensorDao(ddb);
                             await sensorDao.updateSensor(sensor);
-
-                            resolve(true);
                         } else {
                             console.log("Time is before high watermark");
                             resolve(false);
                         }
-                    }  
+                    }
+                    resolve(true)  
                 }
             });
         });
