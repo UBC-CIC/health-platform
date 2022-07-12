@@ -323,6 +323,9 @@ type Query @aws_cognito_user_pools
 
 	getUsersDetail(userId: String!): UsersDetail
 	listUsersDetails(filter: ModelUsersDetailFilterInput, limit: Int, nextToken: String): UsersDetailConnection
+	getPatientEventEarliestDate(userId: String!): EventDetailConnection
+	getPatientEventLatestDate(userId: String!): EventDetailConnection
+
 }
 
 #

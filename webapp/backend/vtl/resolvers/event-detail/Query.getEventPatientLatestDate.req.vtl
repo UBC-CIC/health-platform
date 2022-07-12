@@ -1,0 +1,16 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#user_id = :user_id",
+        "expressionNames" : {
+            "#user_id" : "user_id",
+        },
+        "expressionValues" : {
+            ":user_id" : $util.dynamodb.toDynamoDBJson($context.arguments.userId)
+        },
+    },
+    "index" : "eventUserGsi",
+    "scanIndexForward" : false,
+    "limit" : 1
+}

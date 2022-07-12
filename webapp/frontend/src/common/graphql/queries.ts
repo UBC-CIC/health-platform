@@ -248,3 +248,37 @@ export const listUsersDetails = /* GraphQL */ `
     }
   }
 `;
+export const getPatientEventEarliestDate = /* GraphQL */ `
+  query GetPatientEventEarliestDate($userId: String!) {
+    getPatientEventEarliestDate(userId: $userId) {
+      items {
+        event_id
+        user_id
+        start_date_time
+        end_date_time
+        medication
+        mood
+        food
+        notes
+      }
+      nextToken
+    }
+  }
+`;
+export const getPatientEventLatestDate = /* GraphQL */ `
+  query GetPatientEventLatestDate($userId: String!) {
+    getPatientEventLatestDate(userId: $userId) {
+      items {
+        event_id
+        user_id
+        start_date_time
+        end_date_time
+        medication
+        mood
+        food
+        notes
+      }
+      nextToken
+    }
+  }
+`;

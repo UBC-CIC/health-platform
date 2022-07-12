@@ -7,7 +7,7 @@ import { Box } from "@mui/system";
 import { API } from "aws-amplify";
 import { Fragment, useState } from "react";
 import { deletePatientsDetail, updatePatientsDetail, updateUsersDetail } from "../../common/graphql/mutations";
-import { getMessage, getPatientMinMaxRange } from "../../common/graphql/queries";
+import { getMessage, getPatientEventEarliestDate, getPatientEventLatestDate, getPatientMinMaxRange } from "../../common/graphql/queries";
 import { PatientsDetail, UsersDetail } from "../../common/types/API";
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import { string } from "yup/lib/locale";
@@ -22,7 +22,6 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
     const [min, setMin] = useState('')
     const [max, setMax] = useState('')
     const [value, setValue] = useState<DateRange<Date>>([null, null]);
-    // const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
     const [showCreate, setShowCreate] = useState(false)
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -45,22 +44,60 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
     const [patientName, setPatientName] = useState(props.patient.name);
     
     const handleDateRange = async () => {
+        let mindate = ''
+        let maxdate = ''
+
+        if (patientDataVal == true){
+            
+            try {
+
+            const response1: any = await API.graphql({
+                query: getPatientEventEarliestDate,
+                variables: { 
+                    userId: props.patient.patient_id,
+                }
+            })
+            const response2: any = await API.graphql({
+                query: getPatientEventLatestDate,
+                variables: { 
+                    userId: props.patient.patient_id,
+                }
+            })
+            const minval = response1['data']['getPatientEventEarliestDate']['items']['0']['start_date_time']
+            const maxval = response2['data']['getPatientEventLatestDate']['items']['0']['start_date_time']
+            console.log(mindate, maxdate)
+            mindate = new Date(minval).toDateString()
+            maxdate = new Date(maxval).toDateString()
+        }
+        catch (e){
+            console.log('error')
+        }
+
+        }
+        else {
         const response: any = await API.graphql({
             query: getPatientMinMaxRange,
             variables: { 
                     patientId: props.patient.patient_id,
                 }
         })
-        const minmax = response['data']['getPatientMinMaxRange']['rows'][0];
-        const [min, max] = response['data']['getPatientMinMaxRange']['rows'][0];
 
-        var mindate = new Date(min).toDateString()
-        var maxdate = new Date(max).toDateString()
+        console.log(response, patientDataVal)
+        const [min, max] = response['data']['getPatientMinMaxRange']['rows'][0];
+        mindate = new Date(min).toDateString()
+        maxdate = new Date(max).toDateString()
+    }
+    if (mindate && maxdate != null){
         setMin(mindate)
         setMax(maxdate)
-        console.log(minmax)
+    } else
+    {   
+        setShowCreate(false)
+        setError(true)
+    }
         console.log('min', min, mindate, 'max', max, maxdate)
     }
+
 
     const handleDownload = async (eventTypeInput: String) => {
         const [start, end] = [...value]
@@ -105,6 +142,7 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
         setShowCreate(false)
         setShowDateRange(false)
         setPatientDataVal(false)
+        setError(false)
         setMin('')
         setMax('')
     }
@@ -172,8 +210,8 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
                             
 
                                 <DialogActions style={{ marginLeft: 8 }}>
-                                    <Button onClick={handleClose}>Cancel</Button>
-                                    <Button onClick={handleBack}>Back</Button>
+                                <Button onClick={handleBack}>Back</Button>
+                                <Button onClick={handleClose}>Cancel</Button>
                                 </DialogActions>
                             </Box>
 
@@ -188,10 +226,7 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
                                             <DialogTitle> Fetching Patient Data ... </DialogTitle>
                                             <LinearProgress />
                                             </Box>
-                                            
-                                        
-                                      
-                                       
+
                                     </Box>
                                     : ( 
                                         <Box>
@@ -200,7 +235,8 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
                                          (   <Box>
                                             <DialogTitle> Error: Patient Data not found </DialogTitle>
                                             <DialogActions style={{ marginLeft: 8 }}>
-                                                <Button onClick={handleClose}>Cancel</Button>
+                                                <Button onClick={handleBack}>Back</Button>
+                                                <Button onClick={handleClose}>Cancel</Button> 
                                             </DialogActions> 
                                             
                                             </Box> )
@@ -208,7 +244,7 @@ export const DownloadData = (props: { patientId: string, patient: PatientsDetail
 
                                             (<Box>
                                             <DialogTitle>What type of data would you like to export?</DialogTitle>
-                                            <Button onClick={() => setShowCreate(true)} fullWidth={true} variant="outlined" size="large"> Download Patient Sensor Data </Button>
+                                            <Button onClick={() => setShowCreate(true) } fullWidth={true} variant="outlined" size="large"> Download Patient Sensor Data </Button>
                                             <div style={{ flex: '1 0 0' }} />
                                             <Button onClick={() => {setShowCreate(true); setPatientDataVal(true)}} fullWidth={true} variant="outlined" size="large" sx={{ mt: 1 }}> Download Patient Event Data </Button>
 

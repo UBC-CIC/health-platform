@@ -123,6 +123,20 @@ export class HealthPlatformAppSyncStack extends Stack {
         });
 
         eventDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getPatientEventEarliestDate',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventPatientEarliestDate.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventPatientEarliestDate.res.vtl`),
+        });
+
+        eventDetailTableDataSource.createResolver({
+            typeName: 'Query',
+            fieldName: 'getPatientEventLatestDate',
+            requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventPatientLatestDate.req.vtl`),
+            responseMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Query.getEventPatientLatestDate.res.vtl`),
+        });
+                                                                                           
+        eventDetailTableDataSource.createResolver({
             typeName: 'Mutation',
             fieldName: 'createEventDetail',
             requestMappingTemplate: MappingTemplate.fromFile(`${eventDetailResolverPath}/Mutation.createEventDetail.req.vtl`),
