@@ -125,6 +125,7 @@ export const ManageSensors = (props: { patientId: string, patient: PatientsDetai
                 newSensor.client_key = clientKey;
                 newSensor.secret_key = clientSecretKey;
             }
+            
             setSensorsToAdd([
                 ...sensorsToAdd,
                 newSensor,
