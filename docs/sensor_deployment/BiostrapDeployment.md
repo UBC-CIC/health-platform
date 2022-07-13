@@ -3,21 +3,21 @@
 
 2. Open the app and create a Biostrap account. 
 <p float="left">
-<img src="../images/biostrap_images/create_account_1.png" width=50%//>
-<img src="../images/biostrap_images/create_account_2.png" width=50%//>
-<img src="../images/biostrap_images/create_account_3.png" width=50%//>
+<img src="../images/biostrap_images/create_account_1.png" width="200"/>
+<img src="../images/biostrap_images/create_account_2.png" width="200"/>
+<img src="../images/biostrap_images/create_account_3.png" width="200"/>
 </p>
 
 3. Head to the Settings page at the bottom right hand corner and tap Add Device to begin connecting your devices. Wait until your wristband shows up then tap it to connect. If the connection is successful, you should see your device appear next to the Add Device button.
 <p float="left">
-<img src="../images/biostrap_images/add_device.png" width=50%//>
-<img src="../images/biostrap_images/locate_devices.png" width=50%//>
+<img src="../images/biostrap_images/add_device.png" width="200"/>
+<img src="../images/biostrap_images/locate_devices.png" width="200"/>
 </p>
 
 4. Next, head to Recording Settings. Ensure that Passive Biometric Recording Frequency is set to Every 5 Min, Daytime Biometric Recordings is enabled, and Daytime SPO2 Recordings is enabled.
 <p float="left">
-<img src="../images/biostrap_images/recording_settings_button.png" width=50%/>
-<img src="../images/biostrap_images/recording_settings.png" width=50%//>
+<img src="../images/biostrap_images/recording_settings_button.png" width="200"/>
+<img src="../images/biostrap_images/recording_settings.png" width="200"/>
 </p>
 
 # Step 2: Add Account to Organization and Retrieve API Key
