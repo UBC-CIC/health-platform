@@ -9,7 +9,7 @@
 | [Creating an Account and Account Options](#Creating-an-Account-and-Account-Options)          | Create an account for caregiver/admin access              |
 | [Main Dashboard](#Main-Dashboard)                                                            | How the main dashboard works                              |
 | [Add Events](#Add-Events)                                                                    | Adding any events                                         |
-| [Add Patients, Assign Caregivers, Assign Sensors, and Download Data](#add-patients-assign-caregivers-assign-sensors-and-download-data)  | Setting up patients for monitoring                        |
+| [Add Patients, Assign Caregivers, Assign Sensors, and Download Sensor and Event Data](#add-patients-assign-caregivers-assign-sensors-and-download-data)  | Setting up patients for monitoring                        |
 | [Manage Account User Types](#Manage-Account-User-Types)                                      | Manage account types                                      |
 | [Simulate Data](#Simulate-Data)                                                              | Simulate sensor data                                      |
 
@@ -91,14 +91,25 @@ There are 3 types of sensors that are currently supported by the dashboard. The 
 
 - Airthings Wave Plus: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/AirthingsDeployment.md).
 
-### Download Data
+### Download Sensor and Event Data
 
-![alt text](./images/dashboard_user_guide/download_data_dashboard.png)
+![alt text](./images/dashboard_user_guide/dashboard_download_data.png)
+
+To download a patient's sensor or event data, simply click on Export Data -> Download Sensor Data or Download Event Data.
+
+![alt text](./images/dashboard_user_guide/select_download_type.png)
 
 
-To download a patient's data, simply click on Download Data -> Download File for any of the assigned patients. It will fetch the patient data and download the CSV file to your machine. Please note that if a patient's dataset is very large, this may take a while.
+If you select 'Download All Data' it will fetch the patient data and download the CSV file to your machine. Please note that if a patient's dataset is very large, this may take a while.
+![alt text](./images/dashboard_user_guide/fetch_download_loading.png)
 
-![alt text](./images/dashboard_user_guide/csv_file_download.png)
+If you select 'Select A Date Range', you shall be prompted to select a range in between two dates. Select accordingly and click 'Download' to fetch the CSV file. 
+![alt text](./images/dashboard_user_guide/select_date_range.png)
+
+If the range selected is invalid or the individual patient's data does not exist, the following error shall be displayed.
+
+![alt text](./images/dashboard_user_guide/download_data_error.png)
+
 
 ## Manage Account User Types
 
