@@ -21,7 +21,7 @@
 
 
 ## Step 3: Health Platform Device Integration
-1. Log into the [Health Platform website](https://main.didcpzwpk1imq.amplifyapp.com) and navigate to the Patients page
+1. Log into the Health Platform website and navigate to the Patients page
 <img src="../images/dashboard_user_guide/patients_dashboard.PNG">
 
 2. Find the patient you want to add the sensor to, navigate to the sensor column, click on Manage -> Add Sensor 

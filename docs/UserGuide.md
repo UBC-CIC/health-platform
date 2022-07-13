@@ -91,6 +91,8 @@ There are 3 types of sensors that are currently supported by the dashboard. The 
 
 - Airthings Wave Plus: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/AirthingsDeployment.md).
 
+- Biostrap EVO Wristband: Follow the deployment guide [here](https://github.com/UBC-CIC/health-platform/blob/main/docs/sensor_deployment/BiostrapDeployment.md).
+
 ### Download Sensor and Event Data
 
 ![alt text](./images/dashboard_user_guide/dashboard_download_data.png)

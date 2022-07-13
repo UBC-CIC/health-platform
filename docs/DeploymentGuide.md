@@ -4,9 +4,11 @@
 
 ### [Health Platform Dashboard for monitoring sensor data](../webapp/README.md)
 
-# iOS/WatchOS Deployment Guide
+# Biometric Sensors Deployment Guides
 
-### [iOS and Apple Watch application to monitor vitals](https://github.com/UBC-CIC/health-platform-iOS-watchOS)
+### Option 1: [iOS and Apple Watch application to monitor vitals](https://github.com/UBC-CIC/health-platform-iOS-watchOS)
+
+### Option 2: [Biostrap EVO Wristband Sensor](../docs/sensor_deployment/BiostrapDeployment.md)
 
 # Environmental Sensors Deployment Guides
 

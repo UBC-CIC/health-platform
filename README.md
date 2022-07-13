@@ -1,6 +1,5 @@
 # Integrated Monitoring Health Platform
-
-Pacific Autism Family Network (PAFN) is a centre of excellence and network of supports for individuals with Autism Spectrum Disorder and their families. Individuals on the autism spectrum are often at risk of experiencing unpredictable epileptic seizures. Therefore, in collaboration with the UBC Cloud Innovation Centre (CIC), a solution has been developed to monitor an individual using wearable and environmental sensors. This platform collects and integrates data from wearable and environmental sensors into a single UI.
+2m Foundation, First Place: Global Leadership Institute and Pacific Autism Family Network are centres of excellence and networks of support for individuals with Autism Spectrum Disorder and their families. Individuals on the autism spectrum are often at risk of experiencing unpredictable epileptic seizures. Therefore, in collaboration with the UBC Cloud Innovation Centre (CIC), a solution has been developed to monitor an individual using wearable and environmental sensors. This platform collects and integrates data from wearable and environmental sensors into a single UI.
 
 | Index                                                 | Description                                               |
 |:------------------------------------------------------|:----------------------------------------------------------| 
@@ -27,7 +26,7 @@ For instructions on how to use the web app interface, refer to the [User Guide](
 
 # Changelog
 
-N/A
+View the changelog [here](docs/Changelog.md).
 
 # Credits
 
