@@ -41,7 +41,7 @@
 <img src="../images/biostrap_images/add_biostrap.PNG">
 
 - Device ID: In the Biostrap app, head to the settings page and find your device ID there.
-<img src="../images/biostrap_images/device_id.png">
+<img src="../images/biostrap_images/device_id.png" width="200">
 
 - Biostrap Account Email: The email you used to create your Biostrap account.
 
