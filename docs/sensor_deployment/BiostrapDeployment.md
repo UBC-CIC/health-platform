@@ -3,21 +3,21 @@
 
 2. Open the app and create a Biostrap account. 
 <p float="left">
-<img src="../images/biostrap_images/create_account_1.png"/>
-<img src="../images/biostrap_images/create_account_2.png"/>
-<img src="../images/biostrap_images/create_account_3.png"/>
+<img src="../images/biostrap_images/create_account_1.png" width=50%//>
+<img src="../images/biostrap_images/create_account_2.png" width=50%//>
+<img src="../images/biostrap_images/create_account_3.png" width=50%//>
 </p>
 
 3. Head to the Settings page at the bottom right hand corner and tap Add Device to begin connecting your devices. Wait until your wristband shows up then tap it to connect. If the connection is successful, you should see your device appear next to the Add Device button.
 <p float="left">
-<img src="../images/biostrap_images/add_device.png"/>
-<img src="../images/biostrap_images/locate_devices.png"/>
+<img src="../images/biostrap_images/add_device.png" width=50%//>
+<img src="../images/biostrap_images/locate_devices.png" width=50%//>
 </p>
 
 4. Next, head to Recording Settings. Ensure that Passive Biometric Recording Frequency is set to Every 5 Min, Daytime Biometric Recordings is enabled, and Daytime SPO2 Recordings is enabled.
 <p float="left">
-<img src="../images/biostrap_images/recording_settings_button.png"/>
-<img src="../images/biostrap_images/recording_settings.png"/>
+<img src="../images/biostrap_images/recording_settings_button.png" width=50%/>
+<img src="../images/biostrap_images/recording_settings.png" width=50%//>
 </p>
 
 # Step 2: Add Account to Organization and Retrieve API Key
@@ -38,14 +38,14 @@
 2. Find the patient you want to add the sensor to, navigate to the sensor column, click on Manage -> Add Sensor 
 
 3. Select the sensor type to be a Biostrap. Make sure to click save after filling out the required fields.
-<img src="../images/dashboard_user_guide/add_biostrap.PNG">
+<img src="../images/biostrap_images/add_biostrap.PNG">
 
 - Device ID: In the Biostrap app, head to the settings page and find your device ID there.
-<img src="../images/dashboard_user_guide/device_id.png">
+<img src="../images/biostrap_images/device_id.png">
 
 - Biostrap Account Email: The email you used to create your Biostrap account.
 
 - Organization API Key: The Organization key you create earlier in [Step 2](#step-2-add-account-to-organization-and-retrieve-api-key).
 
 4. The Biostrap sensor will now have been added to the dashboard and you will start to see Heart Rate, Heart Rate Variability, Respiratory rate, and Oxygen Saturation. 
-<img src="../images/dashboard_user_guide/biostrap_dashboard.PNG">
+<img src="../images/biostrap_images/biostrap_dashboard.PNG">
