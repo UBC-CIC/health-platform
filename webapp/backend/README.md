@@ -15,9 +15,13 @@ Ensure you are in the backend directory, then install the core dependencies:
 npm install
 ```
 
-If this command gives you an error, run the following command instead:
+If this command gives you an error, run the following commands instead:
 ```
-npm install -g npm@6.14.15
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm install 14.14.0
+nvm use 14.14.0
 ```
 
 Install dependencies required by the AWS Lambda functions. Note that this generates a separate `node_modules` directory in the `src` folder. This is done because everything under the `src` folder will be uploaded to AWS Lambda and we want to exclude the packages (e.g. `aws-sdk`) that already comes with AWS Lambda:
