@@ -32,6 +32,18 @@ npm install
 cd ..
 ```
 
+The run the respective npm build command for your operating system:
+
+For Mac OS
+```
+npm run build
+```
+
+For Windows OS
+```
+npm run build-windows
+```
+
 ## Step 2: CDK Deployment
 Initialize the CDK stacks (required only if you have not deployed this stack before). Note that by default, all stacks are created in `us-west-2` due to region restrictions for Amazon Timestream.
 ```
@@ -43,15 +55,7 @@ Deploy the CDK stacks (this will take 30-40 minutes):
 
 If you run into any issues while deploying, refer to [Troubleshooting](#troubleshooting) for solutions.
 
-For Mac OS
 ```
-npm run build
-cdk deploy --all --profile health-platform
-```
-
-For Windows OS
-```
-npm run build-windows
 cdk deploy --all --profile health-platform
 ```
 
