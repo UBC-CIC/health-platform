@@ -17,6 +17,12 @@ npm install
 
 If this command gives you an error, run the following commands instead:
 ```
+rm package-lock.json
+npm install
+```
+
+If that doesn't work try running the following commands:
+```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -49,6 +55,11 @@ Initialize the CDK stacks (required only if you have not deployed this stack bef
 ```
 cdk synth --profile health-platform
 cdk bootstrap aws://YOUR_AWS_ACCOUNT_ID/us-west-2 --profile health-platform
+```
+
+If the cdk synth command gives you an error, run your console as administrator and execute the following command: 
+```
+Set-ExecutionPolicy RemoteSigned
 ```
 
 Deploy the CDK stacks (this will take 30-40 minutes):

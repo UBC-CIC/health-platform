@@ -10,6 +10,8 @@ This page contains some prerequisites before you can start deploying the backend
 
 ## Dependencies
 Before you start deploying, you must have the following dependencies:
+- [NodeJS](https://nodejs.org/en/download/)
+- [Git](https://git-scm.com/downloads)
 - [AWS Account](https://aws.amazon.com/account/) 
 - [GitHub Account](https://github.com/) 
 - Install the [AWS CLI](https://aws.amazon.com/cli/) tool.
